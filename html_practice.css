@@ -1,11 +1,19 @@
-@charset "utf-8";
-
-img.message_morimoto_photo {
-    width: 200px;
-    height: 50px;
+.message_morimoto_photo {
+   ;
 }
 
-img.title_photo {
-    width: 25%;
-    height: auto;
+.message_morimoto_sign {
+     ;
+}
+
+.title_photo{
+    width: 145%;
+}
+
+.titlephoto {
+    object-fit: contain;
+}
+
+li {
+    list-style: none;
 }
