@@ -1,18 +1,68 @@
-.message_morimoto_photo {
-   ;
+/*header内について*/
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1vw 5vw 1vw 5vw;
 }
 
-.message_morimoto_sign {
-     ;
+.menu {
+    display: flex;
+    justify-content: space-evenly;
+    width: 87.5vw;
 }
 
-.title_photo{
-    width: 145%;
+.menu li {
+    width: 8vw;
 }
 
 .titlephoto {
-    object-fit: contain;
+    width: 12.5vw;
 }
+
+/*main*/
+
+/*message*/
+.message{
+    display: flex;
+    width: 100vw;
+}
+
+.message_text_section{
+    width: 65%;
+    padding: 0 2vw 0 5vw;
+}
+
+.message_title{
+    font-size: 30px;
+    padding: 0 0 0 5vw;
+}
+
+.message_body{
+    padding: 0 0 0 5vw;
+}
+
+.closing{
+    display: grid;
+    justify-content: flex-end;
+}
+
+.message_status{
+    justify-content: flex-end;
+}
+
+.message_photo_section{
+    width: 35%;
+}
+
+.morimoto_photo{
+    padding: 10% 10% 10% 10%;
+    max-width: 75%;
+    height: auto;
+}
+
+/*messageパート終わり*/
 
 li {
     list-style: none;
