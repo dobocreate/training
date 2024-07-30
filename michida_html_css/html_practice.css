@@ -1,17 +1,128 @@
-.message_morimoto_photo {
-   ;
+/*header内について*/
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1vh 5vw 1vh 5vw;
 }
 
-.message_morimoto_sign {
-     ;
+.menu {
+    display: flex;
+    justify-content: space-evenly;
+    width: 87.5vw;
 }
 
-.title_photo{
-    width: 145%;
+.menu li {
+    width: 8vw;
 }
 
 .titlephoto {
-    object-fit: contain;
+    width: 12.5vw;
+}
+
+/*main*/
+
+/*message*/
+.message{
+    display: flex;
+    width: 100vw;
+}
+
+.message_text_section{
+    width: 65%;
+    padding: 0 2vw 0 5vw;
+}
+
+.message_title{
+    font-size: 30px;
+    padding: 0 0 0 5vw;
+}
+
+.message_body{
+    padding: 0 0 0 5vw;
+}
+
+.closing{
+    display: grid;
+    justify-content: flex-end;
+}
+
+.message_status{
+    justify-content: flex-end;
+}
+
+.message_photo_section{
+    width: 35%;
+}
+
+.morimoto_photo{
+    padding: 10% 10% 10% 10%;
+    max-width: 75%;
+    height: auto;
+}
+
+/*messageパート終わり*/
+
+/*newsパート*/
+
+.news {
+    display: grid;
+    width: 100vw;
+    line-height: 1.0;  
+}
+
+.news_a_article {
+    padding: 1vh 0 1vh 6vw;
+}
+
+.news_title {
+    font-size: 22px;
+}
+
+.news_date {
+    font-size: 14px;
+}
+
+.news_description {
+    font-size: 16px; 
+}
+
+/*newsパート終わり*/
+
+/*informationパート*/
+
+.information {
+    margin: 3vh 8vw 3vh 8vw;
+    display: flex;
+    width: 100vw;
+    float: left;
+}
+
+.information_section {
+    padding: 1em 4em 4em 4em; 
+    border: solid 1px #9a9e9b;
+    width: 25vw;
+    margin: 3vw;
+}
+
+.information_botan {
+    display: flex;
+}
+
+.botan {
+    color: #fff;
+    font-size: 8%;
+    font-weight: bold;
+    background: #80f37c;
+    padding: 1.5% 2.5%;
+    border-radius: 1.5%;
+    transition: .3s;
+	justify-content: flex-end;
+}
+
+.botan:hover {
+    background: #e0f5e0;
 }
 
 li {
