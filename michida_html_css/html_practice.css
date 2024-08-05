@@ -1,24 +1,31 @@
 /*header内について*/
 
+body {
+    width: 60vw;
+    margin-right: auto;
+    margin-left: auto;
+}
+
 header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1vh 5vw 1vh 5vw;
 }
 
 .menu {
     display: flex;
     justify-content: space-evenly;
-    width: 87.5vw;
+    width: 70%;
 }
 
 .menu li {
-    width: 8vw;
+    width: 8%;
+    margin-right: 2%;
+    font-size: 1%;
 }
 
 .titlephoto {
-    width: 12.5vw;
+    width: 30%;
 }
 
 /*main*/
@@ -26,21 +33,20 @@ header {
 /*message*/
 .message{
     display: flex;
-    width: 100vw;
+    width: 100%;
 }
 
 .message_text_section{
     width: 65%;
-    padding: 0 2vw 0 5vw;
 }
 
 .message_title{
     font-size: 30px;
-    padding: 0 0 0 5vw;
+    padding: 0 5% 0 0;
 }
 
 .message_body{
-    padding: 0 0 0 5vw;
+    padding: 0 5% 0 0;
 }
 
 .closing{
@@ -68,12 +74,12 @@ header {
 
 .news {
     display: grid;
-    width: 100vw;
-    line-height: 1.0;  
+    width: 100%;
+    line-height: 1.0; 
 }
 
 .news_a_article {
-    padding: 1vh 0 1vh 6vw;
+    padding: 0 0 0 0;
 }
 
 .news_title {
@@ -93,17 +99,30 @@ header {
 /*informationパート*/
 
 .information {
-    margin: 3vh 8vw 3vh 8vw;
-    display: flex;
-    width: 100vw;
-    float: left;
+    display: grid;
+    grid-template-columns:  repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    background: #f38e7c;
+    row-gap: 2%;
+    column-gap: 2%;
 }
 
+
 .information_section {
-    padding: 1em 4em 4em 4em; 
-    border: solid 1px #9a9e9b;
-    width: 25vw;
-    margin: 3vw;
+    padding: 1em 2em 2em 2em; 
+    border: solid 1px #011105;
+    background: #7e7cf3;
+    display: grid;
+}
+
+.information_image {
+    width: 200px;
+    height: auto;
+    object-fit: cover;
+}
+
+.information_section_title {
+    background: #f71707;    
 }
 
 .information_botan {
@@ -124,6 +143,38 @@ header {
 .botan:hover {
     background: #e0f5e0;
 }
+
+
+
+/*informationパート終わり*/
+
+/*footerパート*/
+
+footer {
+    display: flex;
+}
+
+.recent_posts {
+    width: 33%;
+    background: #0ee64f;
+}
+
+.details {
+    display: flex;
+    width: 67%;
+}
+
+
+.details_column1 { 
+    width: 50%;  
+    background: #a59b12;
+}
+
+.details_column2 {
+    width: 50%;    
+    background: #1263a5;
+}
+
 
 li {
     list-style: none;
