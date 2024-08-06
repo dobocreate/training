@@ -1,43 +1,58 @@
 /*header内について*/
 
-body {
-    width: 60vw;
-    margin-right: auto;
-    margin-left: auto;
-}
+
 
 header {
+    width: 100vw;
+    height: 10vh;
+    border-bottom: solid 1px #c0bfbe;
+}
+
+.header_block {
+    width: 60vw;     
+    margin-right: 20vw;
+    margin-left: 20vw;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    padding: 2vh 0 0 0;
 }
 
 .menu {
     display: flex;
-    justify-content: space-evenly;
     width: 70%;
+    padding: 0 0 0 10vw;
 }
 
 .menu li {
-    width: 8%;
-    margin-right: 2%;
-    font-size: 1%;
+    width: auto;
+    margin: auto;
+    font-size: auto;
 }
 
 .titlephoto {
-    width: 30%;
+    width: auto;
+    height: 6vh;
 }
 
+
 /*main*/
+
+main {
+    width: 60vw;
+    margin-right: 20vw;
+    margin-left: 20vw;
+}
 
 /*message*/
 .message{
     display: flex;
     width: 100%;
+    border-bottom: solid 1px #c0bfbe;
+    padding: 0 0 2vh 0;
 }
 
 .message_text_section{
-    width: 65%;
+    width: 60%;
 }
 
 .message_title{
@@ -59,11 +74,11 @@ header {
 }
 
 .message_photo_section{
-    width: 35%;
+    width: 40%;
 }
 
 .morimoto_photo{
-    padding: 10% 10% 10% 10%;
+    padding: 10% 5% 5% 5%;
     max-width: 75%;
     height: auto;
 }
@@ -76,22 +91,26 @@ header {
     display: grid;
     width: 100%;
     line-height: 1.0; 
+    margin: 0 0 2vh 0;
 }
 
 .news_a_article {
-    padding: 0 0 0 0;
+    border-bottom: solid 1px #c0bfbe;
 }
 
 .news_title {
     font-size: 22px;
+    padding: 0 0 0 0.5vw;
 }
 
 .news_date {
     font-size: 14px;
+    padding: 0 0 0 1vh;
 }
 
 .news_description {
-    font-size: 16px; 
+    font-size: 16px;
+    padding: 0 0 0 1vh; 
 }
 
 /*newsパート終わり*/
@@ -99,50 +118,69 @@ header {
 /*informationパート*/
 
 .information {
+    height: 76vh;
     display: grid;
-    grid-template-columns:  repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    background: #f38e7c;
-    row-gap: 2%;
+    grid-template-columns:  repeat(3,1fr);
+    grid-template-rows: repeat(2,1fr);
     column-gap: 2%;
+    row-gap: 2%;
+    padding: 1vh 0 3vh 0;    
+    border-bottom: solid 1px #c0bfbe;
 }
 
 
 .information_section {
-    padding: 1em 2em 2em 2em; 
-    border: solid 1px #011105;
-    background: #7e7cf3;
+    border: solid 2px #bbb8b8;
     display: grid;
+    grid-template-columns:  1fr 1fr 8fr 8fr 1fr 1fr;
+    grid-template-rows: 8fr 3fr 4fr 3;
 }
 
-.information_image {
-    width: 200px;
-    height: auto;
+.information_image{
+    grid-column: 3 / 5;
+    grid-row: 1 / 2;
+    max-width: 300px; 
+    max-height: 150px;
+    overflow: hidden;
+}
+
+.information_image img {
+    width: 100%; 
+    height: auto; 
     object-fit: cover;
 }
 
 .information_section_title {
-    background: #f71707;    
+    grid-column: 2 / 4;
+    grid-row: 2 / 3;
+    font-size: 20px;
+
+}
+
+.information_section_description {
+    grid-column: 2 / 6;
+    grid-row: 3 / 4;
 }
 
 .information_botan {
-    display: flex;
+    grid-column: 4 / 5;
+    grid-row: 4 / 5;
 }
 
 .botan {
-    color: #fff;
-    font-size: 8%;
-    font-weight: bold;
-    background: #80f37c;
-    padding: 1.5% 2.5%;
-    border-radius: 1.5%;
-    transition: .3s;
-	justify-content: flex-end;
+    background-color: #84db69;
+    border: none;
+    padding: 10px 10px;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    display: inline-block;
+    cursor: pointer;
 }
 
 .botan:hover {
     background: #e0f5e0;
 }
+
 
 
 
@@ -152,11 +190,25 @@ header {
 
 footer {
     display: flex;
+    height: 25vh;
+    padding: 5vh 0 0 0;
+    width: 60vw;
+    margin-right: 20vw;
+    margin-left: 20vw;
 }
 
 .recent_posts {
     width: 33%;
-    background: #0ee64f;
+    padding: 0 5vw 0 0;
+}
+
+.recent_posts_head{
+    font-size: 30px;
+}
+
+.recent_posts_section{
+    border-bottom: solid 1px #c0bfbe;
+    font-size: 15px;
 }
 
 .details {
@@ -166,13 +218,17 @@ footer {
 
 
 .details_column1 { 
-    width: 50%;  
-    background: #a59b12;
+    width: 45%;  
+    padding: 3vh 0 0 1vh;
 }
 
 .details_column2 {
-    width: 50%;    
-    background: #1263a5;
+    width: 45%;   
+    padding: 3vh 0 0 1vh;
+}
+
+.details_factor{
+    border-bottom: solid 1px #c0bfbe;
 }
 
 
