@@ -1,6 +1,4 @@
-/*header内について*/
-
-
+/* header内について */
 
 header {
     width: 100vw;
@@ -34,8 +32,7 @@ header {
     height: 6vh;
 }
 
-
-/*main*/
+/* main */
 
 main {
     width: 60vw;
@@ -43,49 +40,53 @@ main {
     margin-left: 20vw;
 }
 
-/*message*/
-.message{
+/* message */
+.message {
     display: flex;
     width: 100%;
     border-bottom: solid 1px #c0bfbe;
     padding: 0 0 2vh 0;
 }
 
-.message_text_section{
+.message_text_section {
     width: 60%;
 }
 
-.message_title{
+.message_title {
     font-size: 30px;
     padding: 0 5% 0 0;
 }
 
-.message_body{
+.message_body {
     padding: 0 5% 0 0;
 }
 
-.closing{
+.closing {
     display: grid;
     justify-content: flex-end;
 }
 
-.message_status{
-    justify-content: flex-end;
+
+.message_status p {
+    text-align: right;
+    line-height: 1;
 }
 
-.message_photo_section{
+.message_photo_section {
     width: 40%;
 }
 
-.morimoto_photo{
+.morimoto_photo {
     padding: 10% 5% 5% 5%;
     max-width: 75%;
     height: auto;
 }
 
-/*messageパート終わり*/
 
-/*newsパート*/
+
+/* messageパート終わり */
+
+/* newsパート */
 
 .news {
     display: grid;
@@ -94,7 +95,7 @@ main {
     margin: 0 0 2vh 0;
 }
 
-.news_a_article {
+.news_article {
     border-bottom: solid 1px #c0bfbe;
 }
 
@@ -113,30 +114,30 @@ main {
     padding: 0 0 0 1vh; 
 }
 
-/*newsパート終わり*/
+/* newsパート終わり */
 
-/*informationパート*/
+/* informationパート */
 
 .information {
     height: 76vh;
     display: grid;
-    grid-template-columns:  repeat(3,1fr);
+    grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(2,1fr);
-    column-gap: 2%;
+    column-gap: 2%;   
     row-gap: 2%;
     padding: 1vh 0 3vh 0;    
     border-bottom: solid 1px #c0bfbe;
 }
 
-
 .information_section {
     border: solid 2px #bbb8b8;
+    border-radius: 6px; 
     display: grid;
     grid-template-columns:  1fr 1fr 8fr 8fr 1fr 1fr;
-    grid-template-rows: 8fr 3fr 4fr 3;
+    grid-template-rows: 4fr 2fr 2fr 1.5fr;
 }
 
-.information_image{
+.information_image {
     grid-column: 3 / 5;
     grid-row: 1 / 2;
     max-width: 300px; 
@@ -154,7 +155,6 @@ main {
     grid-column: 2 / 4;
     grid-row: 2 / 3;
     font-size: 20px;
-
 }
 
 .information_section_description {
@@ -162,31 +162,31 @@ main {
     grid-row: 3 / 4;
 }
 
-.information_botan {
-    grid-column: 4 / 5;
+.information_button {
+    grid-column: 4 / 6;
     grid-row: 4 / 5;
 }
 
-.botan {
-    background-color: #84db69;
-    border: none;
-    padding: 10px 10px;
+.button {
+    background-color: #96e47f;
+    border-radius: 4px;
+    border: none; 
+    padding: 12px 0 12px 17px;
     text-decoration: none;
     color: rgb(255, 255, 255);
     display: inline-block;
     cursor: pointer;
+    width: 90%;
+    font-size: 13px;
 }
 
-.botan:hover {
-    background: #e0f5e0;
+.button:hover {
+    background: #c0f8c0;
 }
 
+/* informationパート終わり */
 
-
-
-/*informationパート終わり*/
-
-/*footerパート*/
+/* footerパート */
 
 footer {
     display: flex;
@@ -200,15 +200,39 @@ footer {
 .recent_posts {
     width: 33%;
     padding: 0 5vw 0 0;
+    background-color: aquamarine;
 }
 
-.recent_posts_head{
-    font-size: 30px;
+.recent_posts_head {
+    font-size: 20px;
+    background-color: coral;
 }
 
-.recent_posts_section{
-    border-bottom: solid 1px #c0bfbe;
-    font-size: 15px;
+.recent_posts_section {
+    border-bottom: solid 1px #04000c;
+    background-color: chocolate;
+}
+
+.post_info {
+    display: flex;
+    background-color: #fa0202;
+}
+
+.post_status {
+    height: 100%;
+    background-color: #6e726e;
+    border-radius: 3px;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+    font-size: 11px;
+    margin: 0px;
+    padding: 2px;
+}
+
+.post_date {
+    font-size: 14px;
+    background-color: aqua;
+    margin: 0px;
 }
 
 .details {
@@ -216,21 +240,22 @@ footer {
     width: 67%;
 }
 
-
-.details_column1 { 
+.details_column { 
     width: 45%;  
     padding: 3vh 0 0 1vh;
 }
 
-.details_column2 {
-    width: 45%;   
-    padding: 3vh 0 0 1vh;
-}
-
-.details_factor{
+.details_factor {
     border-bottom: solid 1px #c0bfbe;
+    height: 16px;
+    padding: 0 0 8px 8px;
 }
 
+.details_factor p {
+    font-size: 12px;
+}
+
+/* footerパート終わり */
 
 li {
     list-style: none;
