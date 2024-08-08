@@ -211,15 +211,19 @@ footer {
 .recent_posts_section {
     border-bottom: solid 1px #04000c;
     background-color: chocolate;
+    height: 20%;
+    display: grid;
 }
 
 .post_info {
     display: flex;
-    background-color: #fa0202;
+    margin: 0px;
+    height: 18px;
 }
 
 .post_status {
     height: 100%;
+    align-items:center;
     background-color: #6e726e;
     border-radius: 3px;
     cursor: pointer;
@@ -230,9 +234,18 @@ footer {
 }
 
 .post_date {
-    font-size: 14px;
     background-color: aqua;
     margin: 0px;
+}
+
+.recent_posts_description {
+    background-color: rgb(47, 0, 255);
+    font-size: 12px;
+    padding: 0px;
+}
+
+.recent_posts_description p {
+    margin: 1px 0px 1px 2px;
 }
 
 .details {
