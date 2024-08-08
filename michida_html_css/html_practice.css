@@ -50,6 +50,7 @@ main {
 
 .message_text_section {
     width: 60%;
+    /* background-color: #099904; */
 }
 
 .message_title {
@@ -58,7 +59,8 @@ main {
 }
 
 .message_body {
-    padding: 0 5% 0 0;
+    padding: 0 0 0 0;
+    /* background-color: #00ccff; */
 }
 
 .closing {
@@ -66,20 +68,31 @@ main {
     justify-content: flex-end;
 }
 
+.message_status {
+    /* background-color: #ff0000; */
+    font-size: 15px;
+}
 
 .message_status p {
     text-align: right;
-    line-height: 1;
+    line-height: 0.4;
 }
 
 .message_photo_section {
     width: 40%;
+    /* background-color: #eeff00; */
 }
 
-.morimoto_photo {
-    padding: 10% 5% 5% 5%;
-    max-width: 75%;
+.morimoto_photo_box {
+    /* background-color: #2f00ff; */
+    padding: 5% 5% 5% 10%;
+    max-width: 95%;
     height: auto;
+}
+
+.morimoto_photo_box img {
+    border-radius: 8px;
+    max-width: 110%;
 }
 
 
@@ -91,7 +104,7 @@ main {
 .news {
     display: grid;
     width: 100%;
-    line-height: 1.0; 
+    line-height: 0.8; 
     margin: 0 0 2vh 0;
 }
 
@@ -100,8 +113,12 @@ main {
 }
 
 .news_title {
-    font-size: 22px;
+    font-size: 24px;
     padding: 0 0 0 0.5vw;
+}
+
+.news_title h6 {
+    font-weight: normal;
 }
 
 .news_date {
@@ -119,7 +136,7 @@ main {
 /* informationパート */
 
 .information {
-    height: 76vh;
+    /* height: 76vh; */
     display: grid;
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(2,1fr);
@@ -197,22 +214,25 @@ footer {
     margin-left: 20vw;
 }
 
+/* postパート */
+
 .recent_posts {
     width: 33%;
     padding: 0 5vw 0 0;
-    background-color: aquamarine;
+    /* background-color: aquamarine; */
 }
 
 .recent_posts_head {
     font-size: 20px;
-    background-color: coral;
+    /* background-color: coral; */
 }
 
 .recent_posts_section {
     border-bottom: solid 1px #04000c;
-    background-color: chocolate;
+    /* background-color: chocolate; */
     height: 20%;
     display: grid;
+    margin: 2px 0 0 0;
 }
 
 .post_info {
@@ -229,24 +249,27 @@ footer {
     cursor: pointer;
     color: rgb(255, 255, 255);
     font-size: 11px;
-    margin: 0px;
+    margin: 0px 0px 1px 2px;
     padding: 2px;
 }
 
 .post_date {
-    background-color: aqua;
-    margin: 0px;
+    /* background-color: aqua; */
+    margin: 1px;
 }
 
 .recent_posts_description {
-    background-color: rgb(47, 0, 255);
+    /* background-color: rgb(47, 0, 255); */
     font-size: 12px;
     padding: 0px;
+    margin: 0px;
 }
 
 .recent_posts_description p {
     margin: 1px 0px 1px 2px;
 }
+
+/* postパート終了 */
 
 .details {
     display: flex;
