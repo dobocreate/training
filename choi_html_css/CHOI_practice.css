@@ -13,9 +13,10 @@ header {
   width: 100%;
   display: flex;
   justify-content: center;
+  
 
   align-items: center;
-  background-color: #f3eeeda0;
+  background-color: #ffffffa0;
   padding: 10px 20px;
  }
 
@@ -26,10 +27,20 @@ header {
 header .li {
   float: left;
   margin: 5px;
+  padding: 5px;
   /* font-family: */
+ 
 }
 
-header .global-nav {
+ul .a{
+  text-decoration-line: none;
+  font-size: 15px;
+  color:inherit;
+  font-weight: 600;
+  
+}
+
+ul{
   list-style: none;
   margin: 0;
   padding: 0;
@@ -39,7 +50,7 @@ header .global-nav {
 .all{
   
   
-  width: 70%;
+  width: 80%;
 
   
   
@@ -63,6 +74,9 @@ header .global-nav {
 }
 .sign {
   box-sizing: content-box;
+  text-align: right;
+  line-height: 0%;
+  padding: 10px;
 }
 
 .sign-img {
@@ -91,6 +105,13 @@ header .global-nav {
   margin: 0 auto;
   width: 100%;
   border-top: solid 1px gray;
+}
+
+.news_title{
+  text-decoration-line: none;
+  
+  color:inherit;
+  
 }
 
 .wrap-container {
@@ -133,3 +154,96 @@ header .global-nav {
 
   border-color: rgb(205, 241, 193);
 }
+
+ 
+footer{
+  display: flex;
+  flex-direction: row;
+  height: 400px;
+ 
+  font-size: 13px;
+
+}
+
+.info{
+  display:flex;
+  width: 50%;
+  justify-content: center;
+  flex-direction: column;
+
+
+  padding: auto;
+  
+
+
+}
+ .info_item{
+
+  box-sizing:border-box;
+  
+  
+ 
+  
+  
+
+ }
+.button2{
+  
+
+  background-color: gray;
+  color: hsl(100, 100%, 100%);
+
+  
+
+  border: none;
+  /* padding: 10px; */
+
+}
+
+ .foot_li{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+ }
+
+ .foot_li_item{
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  border: none;
+
+  width: 100%;
+  margin: 5px;
+  
+  
+  border-bottom: solid 1px gray;}
+
+  .button3{
+    background-color: white;
+    border-bottom: solid 1px gray;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    height: 10%;
+    width: 100%;
+    margin: 20px;
+    color: gray;
+    text-align: left;
+    
+  }
+
+  .button3:hover {
+    background-color:rgba(76, 11, 11, 0.548);
+    color:blue;}
+
+ .end{
+  box-sizing: border-box;
+  text-align: center;
+ }
+ .endtexr{text-align: center;}
+
+
+
