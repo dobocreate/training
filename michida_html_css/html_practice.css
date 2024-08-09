@@ -50,7 +50,6 @@ main {
 
 .message_text_section {
     width: 60%;
-    /* background-color: #099904; */
 }
 
 .message_title {
@@ -60,7 +59,6 @@ main {
 
 .message_body {
     padding: 0 0 0 0;
-    /* background-color: #00ccff; */
 }
 
 .closing {
@@ -69,7 +67,6 @@ main {
 }
 
 .message_status {
-    /* background-color: #ff0000; */
     font-size: 15px;
 }
 
@@ -80,11 +77,9 @@ main {
 
 .message_photo_section {
     width: 40%;
-    /* background-color: #eeff00; */
 }
 
 .morimoto_photo_box {
-    /* background-color: #2f00ff; */
     padding: 5% 5% 5% 10%;
     max-width: 95%;
     height: auto;
@@ -94,8 +89,6 @@ main {
     border-radius: 8px;
     max-width: 110%;
 }
-
-
 
 /* messageパート終わり */
 
@@ -136,7 +129,6 @@ main {
 /* informationパート */
 
 .information {
-    /* height: 76vh; */
     display: grid;
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(2,1fr);
@@ -219,17 +211,14 @@ footer {
 .recent_posts {
     width: 33%;
     padding: 0 5vw 0 0;
-    /* background-color: aquamarine; */
 }
 
 .recent_posts_head {
     font-size: 20px;
-    /* background-color: coral; */
 }
 
 .recent_posts_section {
     border-bottom: solid 1px #04000c;
-    /* background-color: chocolate; */
     height: 20%;
     display: grid;
     margin: 2px 0 0 0;
@@ -254,12 +243,10 @@ footer {
 }
 
 .post_date {
-    /* background-color: aqua; */
     margin: 1px;
 }
 
 .recent_posts_description {
-    /* background-color: rgb(47, 0, 255); */
     font-size: 12px;
     padding: 0px;
     margin: 0px;
