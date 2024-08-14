@@ -37,3 +37,19 @@ color: black;
 border-radius: 10px;
 
 }
+.DeleatButton{background-color: gray;
+    color: black;
+    border-radius: 10px;
+    }
+
+.todo-item{
+    display: flex;
+    flex-direction: row;
+    background-color: beige;
+    
+    border-radius: 5px;
+    padding: 20px 16px;
+}
+.todo-text{
+    padding: 10px 100px;
+}
