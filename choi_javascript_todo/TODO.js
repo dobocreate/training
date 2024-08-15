@@ -25,67 +25,57 @@ function InputText(){
 // TODOlist.append(AddText);
 // TODOlist.appendChild(DoButton);
 
+//ボタン制作
+
+//  const DeleatButton = document.querySelector('.DeleatButton');
+//  console.log(DeleatButton);
+//  console.log(DeleatButton.parentNode);
 
  
+//  const DeletTarget = DeleatButton.parentNode;
+
+//  DeleatButton.addEventListener('click', function(){DeleatBox(DeletTarget);});
+
+//  function DeleatBox(target) {
+//     document.getElementById("TODO-area").removeChild(target);
+//     console.log("3");
+// }
+
+
+
+
 
 
 
  function Createlist(addtext)
  {
- const template = document.getElementsByClassName("todo-item")[0]
+ const template = document.getElementById("template")
  const TODOlist = template.cloneNode(true)
  
  const text =TODOlist.querySelector('.todo-text');
  text.append(addtext);
 
- const DeleatButton = TODOlist.querySelector('.DeleatButton');
+ const CloneDeletButton = TODOlist.querySelector('.DeleatButton');
+
+ const DeletTarget2=  TODOlist
+
  
 
-  
- 
- document.getElementsByClassName("TODO-area")[0].appendChild(TODOlist);
+ CloneDeletButton.addEventListener('click', function(){DeleatBox(DeletTarget2);});
+ document.getElementById("TODO-area").appendChild(TODOlist);
  console.log("2");
 
  console.log(TODOlist);
 
 
-//  DeleatButton.addEventListener('click',DeleatBox(TODOlist));
 
-
- 
-
- 
- };
-
-
-
-
- 
-
-  
-
- let N = 0;  // 인덱스 초기화
- const deleteButtons = document.getElementsByClassName("DeleatButton");
- const todoItems = document.getElementsByClassName("todo-item");
-
-//  deleteButtons[0].addEventListener('click',DeleatBox(todoItems[0]))
- 
- 
-
- while (N < deleteButtons.length) {
-     deleteButtons[N].addEventListener('click', function() {
-         DeleatBox(todoItems[N]);
-     });
-     console.log("4");
-     N++;
-     
- }
- 
- function DeleatBox(target) {
-     document.getElementsByClassName("TODO-area")[0].removeChild(target);
-     console.log("3");
  }
 
+
+
+
+
+ 
 
 
 
