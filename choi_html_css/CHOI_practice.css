@@ -71,7 +71,6 @@ ul {
   object-fit: contain;
 }
 
-
 .morimoto-img {
   object-fit: contain;
   width: 50%;
@@ -79,7 +78,6 @@ ul {
   padding: 5% 5%;
   border-radius: 50px;
 }
-
 
 .line-container {
   margin: 5px;
@@ -105,7 +103,6 @@ ul {
   border-top: solid 1px gray;
 }
 
-
 .wrap-it {
   box-sizing: content-box;
   width: 300px;
@@ -117,7 +114,6 @@ ul {
   position: relative;
   border-radius: 10px;
 }
-
 
 .wrap-it>img {
   width: 100%;
@@ -141,7 +137,6 @@ ul {
   border-color: rgb(205, 241, 193);
 }
 
-
 footer {
   display: flex;
   flex-direction: row;
@@ -160,7 +155,6 @@ footer {
 .info_item {
   box-sizing: border-box;
 }
-
 
 .button2 {
   background-color: gray;
