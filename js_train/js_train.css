@@ -1,0 +1,29 @@
+
+main {
+    width: 1600px;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: blue;
+}
+
+.information {
+    width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.information_section {
+    width: 230px;
+    border:  2px #bbb8b8;
+    border-radius: 6px; 
+    display: grid;
+    background-color: #fa0000;
+}
+
+.information_button {
+    text-align: center;
+}
+
+.information_section button {
+    width: 50px;
+}
