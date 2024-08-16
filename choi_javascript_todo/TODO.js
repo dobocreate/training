@@ -1,81 +1,85 @@
-//버튼을 클릭했을때, 이벤트 발생
-document.getElementsByClassName("input-button")[0].addEventListener('click',InputText );
+//ボタンをクリックすると、イベント発生
+document.getElementsByClassName("input-button")[0].addEventListener('click', InputText);
 
-
-//검색창에 등록한 정보를 객체화 하는 함수
+// 検索窓に登録した情報をオブジェクト化する関数
 function InputText(){
-       const AddText = document.getElementsByClassName("text")[0].value ;
-     document.getElementsByClassName("text")[0].value = ""; //초기화
-     console.log("1");
 
-     document.getElementsByClassName("input-button")[0].addEventListener('click',Createlist(AddText)); 
-     
-    
-         }
+  const AddText = document.getElementsByClassName("text")[0].value;
+  document.getElementsByClassName("text")[0].value = ""; //初期化
+  
+  //未完了リストを作るEventListener
+  document.getElementsByClassName("input-button")[0].addEventListener('click', CreateToDoList(AddText));
+}
 
-// const TODOlist = document.createElement('div');
-// const DoButton = document.createElement('button');
+//未完了リストが削除
+function DeleatBox(target){
 
-// DoButton.className="DoButton";
+  document.getElementById("ToDo-Area").removeChild(target);
 
-// DoButton.append("Do")
-// TODOlist.className="TODO_BOX" ;
+}
+
+//完了リストが削除
+function DeleatClearBox(target){
+
+  document.getElementById("Clear-Area").removeChild(target);
+
+}
+
+//Clearボタンを押したら、Claer-Areaに移る。
+function CreateToDoList(addtext) {
+
+  //未完成リストに関するCloneを作る
+  const template = document.getElementById("todo-item");
+  const ToDoList = template.cloneNode(true);
 
 
-// TODOlist.append(AddText);
-// TODOlist.appendChild(DoButton);
+  const ToDoTextBox = ToDoList.querySelector('.todo-text');
 
-//ボタン制作
+  //入力箱の単語をCloneのTextBoxに反映する。
+  ToDoTextBox.append(addtext);
+  
+  // ボタンのObject化
+  const CloneDeletButton = ToDoList.querySelector('.DeleatButton');
+  const CloneClearButton = ToDoList.querySelector('.ClearButton');
 
-//  const DeleatButton = document.querySelector('.DeleatButton');
-//  console.log(DeleatButton);
-//  console.log(DeleatButton.parentNode);
+  //ToDo-Areaに未完了リストを入れる
+  document.getElementById("ToDo-Area").appendChild(ToDoList);
 
+  //未完了リストを完了リストに移るEvenListener
+  CloneClearButton.addEventListener('click',function(){CreateClearAreaColne(ToDoList);});
+  //未完了リストの削除に関するEvenListener
+  CloneDeletButton.addEventListener('click', function (){ DeleatBox(ToDoList); });
+  
+
+}
+
+//未完了リストを完了リストに移る
+function CreateClearAreaColne(claertarget) {
+
+  //클론 생성
+  const template = document.getElementById("clear-item")
+  const Clearlist = template.cloneNode(true) //cloneを作る
  
-//  const DeletTarget = DeleatButton.parentNode;
+  //
+  const ClearText = Clearlist.querySelector('.clear-text');
+  ClearText.append(claertarget.childNodes[1]);//0ではなく、1
 
-//  DeleatButton.addEventListener('click', function(){DeleatBox(DeletTarget);});
+  const ClearDeletButton = Clearlist.querySelector('.DeleatButton');
 
-//  function DeleatBox(target) {
-//     document.getElementById("TODO-area").removeChild(target);
-//     console.log("3");
-// }
+  const ClearDoButton = Clearlist.querySelector('.DoButton');
 
+  
+   
+  document.getElementById("Clear-Area").appendChild(Clearlist);
+  document.getElementById("ToDo-Area").removeChild(claertarget);
 
-
-
-
-
-
- function Createlist(addtext)
- {
- const template = document.getElementById("template")
- const TODOlist = template.cloneNode(true)
- 
- const text =TODOlist.querySelector('.todo-text');
- text.append(addtext);
-
- const CloneDeletButton = TODOlist.querySelector('.DeleatButton');
-
- const DeletTarget2=  TODOlist
-
- 
-
- CloneDeletButton.addEventListener('click', function(){DeleatBox(DeletTarget2);});
- document.getElementById("TODO-area").appendChild(TODOlist);
- console.log("2");
-
- console.log(TODOlist);
+  ClearDeletButton.addEventListener("click",function(){DeleatClearBox(Clearlist);})
+  ClearDoButton.addEventListener("click",function(){CreateToDoList(ClearText);})
+  ClearDoButton.addEventListener('click',function(){DeleatClearBox(Clearlist);})
+  
 
 
-
- }
-
-
-
-
-
- 
+}
 
 
 
