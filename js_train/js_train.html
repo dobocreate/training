@@ -28,23 +28,31 @@
             
             <div class="input_section">
                 <div class="input_form">
-                    <label for="model_name">モデル名</label>
+                    <label for="model_name">プロジェクト名</label>
                     <input type="text" id="model_name" name="model_name" required minlength="4" maxlength="8" size="10" />
                 </div>    
                 <div class="input_form">
-                    <label for="geology">地質</label>
-                    <input type="text" id="geology" name="geology" required minlength="4" maxlength="8" size="10" />
-                </div>    
-                <div class="input_form">
-                    <label for="age">年代</label>
-                    <input type="text" id="age" name="age" required minlength="4" maxlength="8" size="10" />
+                    <label for="model_name">プロジェクトid</label>
+                    <input type="text" id="model_id" name="model_id" required minlength="4" maxlength="8" size="10" />
                 </div>    
             </div>
             <div class="information_button">
-                <button>追加</button>
+                <button id="model_add_button">追加</button>
             </div>
         </div>
 
+    </div>
+
+    <div class="task_section">
+        <div class="imcomplete_task" >
+            <div class="task_status">
+                <h6>未完了タスク</h6>
+            </div>
+            <div class="one_imcomplete_task" id="imcomplete_task"></div>
+        </div>
+        <div class="completed_task" id="completed_task">
+            <h6>完了タスク</h6>
+        </div>
     </div>
 
 </main>
@@ -52,6 +60,10 @@
 <footer>
     <p>@dobocreate.corp</p>
 </footer>
+
+
+<script src="js_train.js"></script>
+
 </body>
 
 </html>

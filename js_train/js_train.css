@@ -3,7 +3,6 @@ main {
     width: 1600px;
     margin-right: auto;
     margin-left: auto;
-    background-color: blue;
 }
 
 .information {
@@ -14,10 +13,9 @@ main {
 
 .information_section {
     width: 230px;
-    border:  2px #bbb8b8;
+    border:  2px solid #8b8a8f;
     border-radius: 6px; 
     display: grid;
-    background-color: #fa0000;
 }
 
 .information_button {
@@ -26,4 +24,17 @@ main {
 
 .information_section button {
     width: 50px;
+}
+
+.task_section {
+    /* background-color: rgb(66, 210, 30); */
+}
+
+.imcomplete_task {
+    display: grid;
+    background-color: rgb(66, 210, 30);
+}
+
+.one_imcomplete_task {
+    background-color: red;
 }
