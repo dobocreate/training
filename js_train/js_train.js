@@ -33,23 +33,23 @@ function move_task(task2_id) {
     target2_clone.remove();
     console.log(document.getElementById(target2_delete_btn));
     document.getElementById(target2_delete_btn).addEventListener('click',() => delete_done_task(target2_delete_btn));
-    document.getElementById(target2_complete_btn).addEventListener('click',() => restore_task(target2.id));
+    document.getElementById(target2_complete_btn).addEventListener('click',() => restore_task(target2_complete_btn));
     
-    // let target3_clone = document.getElementById(target2.id);
-    // console.log(target3_clone);
 }
 
 function restore_task(task3_id) {
 
-    // console.log(task3_id);
-    // console.log(document);
+    console.log(task3_id);
+
     let target3_project_id = task3_id.replace('complete_btn_','done_task_');
-    // let target3_clone = document.getElementById(target3_project_id);
-    let target3_clone = document.getElementById(task3_id);
+    console.log(target3_project_id);
+
+    let target3_clone = document.getElementById(target3_project_id);
     console.log(target3_clone);
     let target3 = target3_clone.cloneNode(true);
     console.log(target3);
     target3.id = target3_project_id.replace('done_','');
+
     let target3_complete_btn = task3_id; 
     let target3_delete_btn = task3_id.replace('complete_btn_','del_btn_');
     console.log(target3_delete_btn);
@@ -71,7 +71,6 @@ function make_task() {
     let div_element = document.createElement('div');
     div_element.className = 'task_' + project_id;
     div_element.id = 'task_' + project_id;
-    // const div_id = div_element.id;
 
     let p_element = document.createElement('p');
     p_element.textContent = project_name;
