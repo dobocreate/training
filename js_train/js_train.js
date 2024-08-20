@@ -2,6 +2,7 @@ function delete_task(task_id) {
 
     let target_project_id = task_id.replace('del_btn_','task_');
     let del_target = document.getElementById(target_project_id);
+    console.log(del_target);
     del_target.remove();
     console.log('deleted');
    
@@ -17,17 +18,6 @@ function delete_done_task(task_id) {
    
 }
 
-function debug_change_style(button_id) {
-    let buttonElement = document.getElementById(button_id);
-    if (buttonElement) {
-        buttonElement.style.backgroundColor = 'red'; // 背景色を赤に変更
-        buttonElement.style.color = 'white'; // テキスト色を白に変更
-        console.log('Style changed for button:', button_id);
-    } else {
-        console.log('Button not found for ID:', button_id);
-    }
-}
-
 function move_task(task2_id) {
 
     let target2_project_id = task2_id.replace('complete_btn_','task_');
@@ -40,10 +30,11 @@ function move_task(task2_id) {
     console.log('target2_delete_botan :'+target2_delete_btn);
     let completed_task = document.getElementById('completed_task');
     completed_task.appendChild(target2);
-    document.getElementById(target2_delete_btn).addEventListener('click',() => debug_change_style(target2_delete_btn));
+    target2_clone.remove();
+    console.log(document.getElementById(target2_delete_btn));
     document.getElementById(target2_delete_btn).addEventListener('click',() => delete_done_task(target2_delete_btn));
     document.getElementById(target2_complete_btn).addEventListener('click',() => restore_task(target2.id));
-    target2_clone.remove();
+    
     // let target3_clone = document.getElementById(target2.id);
     // console.log(target3_clone);
 }
@@ -52,17 +43,22 @@ function restore_task(task3_id) {
 
     // console.log(task3_id);
     // console.log(document);
-    // let target3_project_id = task3_id.replace('complete_btn_','done_task_');
+    let target3_project_id = task3_id.replace('complete_btn_','done_task_');
     // let target3_clone = document.getElementById(target3_project_id);
     let target3_clone = document.getElementById(task3_id);
     console.log(target3_clone);
     let target3 = target3_clone.cloneNode(true);
     console.log(target3);
-    target3.id = target3_project_id -'done_';
+    target3.id = target3_project_id.replace('done_','');
+    let target3_complete_btn = task3_id; 
+    let target3_delete_btn = task3_id.replace('complete_btn_','del_btn_');
+    console.log(target3_delete_btn);
     let completed_task = document.getElementById('imcomplete_task');
     completed_task.appendChild(target3);
-    document.getElementById(target3.id).addEventListener('click',() => delete_task(target3.id));
     target3_clone.remove();
+    document.getElementById(target3_delete_btn).addEventListener('click',() => delete_task(target3_delete_btn));
+    document.getElementById(target3_complete_btn).addEventListener('click',() => move_task(target3_complete_btn));
+   
 }
 
 
