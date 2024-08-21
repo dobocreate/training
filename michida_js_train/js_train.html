@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>TODOアプリケーション | DOBOCREATE Corp.</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="js_train.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <h2>TODO LIST </h2>
+
+</header>
+
+<main>
+
+    <div class="information">
+        
+        <div class="task_input_section">
+            
+            <div class="input_section">
+
+                <div class="input_form">
+                    <label for="filled_task">予定を入力してください　　　</label>
+                    <input type="text" id="filled_task" name="filled_task" required minlength="4" maxlength="40" size="50" />
+                </div>
+
+            </div>
+
+            <div class="task_add_button">
+                <button id="task_add_button">追加</button>
+            </div>
+            
+        </div>
+
+    </div>
+
+    <div class="task_section">
+
+        <div class="imcomplete_section" >
+
+            <div class="task_status">
+                <h6>未完了タスク</h6>
+            </div>
+
+            <div class="imcomplete_task" id="imcomplete_task"></div>
+
+        </div>
+
+        <div class="completed_section" >
+            
+            <div class="task_status">
+                <h6>完了タスク</h6>
+            </div>
+
+            <div class="completed_task" id="completed_task"></div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<footer></footer>
+
+<script src="js_train.js"></script>
+
+</body>
+
+</html>
