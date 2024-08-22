@@ -9,7 +9,7 @@ h2 {
     font-family: fantasy;
 }
 
-/*入力を行う領域について*/
+/* 入力を行う領域について */
 
 .input_form label {
     font-family: sans-serif;
@@ -37,7 +37,7 @@ h2 {
     width: 50px;
 }
 
-/*タスクを表示する領域について*/
+/* タスクを表示する領域について */
 
 .task_section {
     display: flex;
@@ -57,7 +57,7 @@ h6 {
     font-size: 25px;
 }
 
-/*各タスクの装飾*/
+/* 各タスクの装飾 */
 
 [class^="task__"] {
     width: 650px;
