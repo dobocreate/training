@@ -1,11 +1,8 @@
-
 main {
     width: 1600px;
     margin-right: auto;
     margin-left: auto;
 }
-
-
 
 h2 {
     font-size: 45px;
@@ -76,14 +73,12 @@ h6 {
     font-size: 14px;
     margin: 0 0 8px 0;
     padding: 0;
-    /* background-color: red; */
 }
 
 [class^="task_comp_btn_p_"] {
     font-size: 14px;
     margin: 0 0 8px 0;
     padding: 0;
-    /* background-color: blue; */
 }
 
 [class^="task_del_button_"] {
