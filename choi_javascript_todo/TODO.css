@@ -1,4 +1,4 @@
-.input-area { 
+.input-area {
     display: flex;
     flex-direction: row;
     background-color: aqua;
@@ -8,12 +8,12 @@
 }
 
 .input-button {
-background-color: gray;
-color: black;
-border-radius: 10px;
+    background-color: gray;
+    color: black;
+    border-radius: 10px;
 }
 
-#ToDo-Area{
+#ToDo-Area {
     display: flex;
     padding: 200px 16px;
     background-color: aquamarine;
@@ -22,18 +22,19 @@ border-radius: 10px;
     border-radius: 10px;
 }
 
-.ClearButton{
+.ClearButton {
     background-color: gray;
     color: black;
     border-radius: 10px;
 }
 
-.DeleteButton{background-color: gray;
+.DeleteButton {
+    background-color: gray;
     color: black;
     border-radius: 10px;
 }
 
-#todo-item{
+#todo-item {
     display: flex;
     flex-direction: row;
     background-color: beige;
@@ -42,11 +43,15 @@ border-radius: 10px;
     border-radius: 10px;
 }
 
-.todo-text{
+.todo-text {
     padding: 10px 100px;
 }
 
-#Clear-Area{
+.clear-text{
+    padding: 10px 100px;
+}
+
+#Clear-Area {
     display: flex;
     padding: 200px 16px;
     background-color: rgb(133, 255, 127);
@@ -55,7 +60,7 @@ border-radius: 10px;
     border-radius: 10px;
 }
 
-#clear-item { 
+#clear-item {
     display: flex;
     flex-direction: row;
     background-color: beige;
