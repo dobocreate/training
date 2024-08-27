@@ -18,7 +18,7 @@ function DeleteBox(target) {
 };
 
 // 完了リストが削除
-function DeleatClearBox(target) {
+function DeleteClearBox(target) {
 
   document.getElementById("Clear-Area").removeChild(target);
 };
@@ -68,7 +68,7 @@ function CreateClearAreaClone(clear_target, clear_text) {
   document.getElementById("ToDo-Area").removeChild(clear_target);
 
   // 未完了、削除ボタンに関するEventListener
-  ClearDeleteButton.addEventListener("click", function () { DeleatClearBox(ClearList); });
+  ClearDeleteButton.addEventListener("click", function () { DeleteClearBox(ClearList); });
   ClearDoButton.addEventListener("click", function () { CreateToDoList(ToDoText); });
-  ClearDoButton.addEventListener("click", function () { DeleatClearBox(ClearList); });
+  ClearDoButton.addEventListener("click", function () { DeleteClearBox(ClearList); });
 };
