@@ -1,0 +1,63 @@
+@import url(../sanitize.css);
+
+div.logo{
+    text-align:center;
+}
+div.greeting{
+    text-align:left;
+}
+div.CEO{
+    text-align:right;
+}
+div.bun{
+    text-align:left;
+}
+div.sign{
+    text-align:center;
+}
+h1 {
+  font-size: 48px; 
+}
+h {
+    font-size: 24 px; 
+  }
+  div.content1 {
+    
+    margin: 20px;
+    border-top: 1px solid #acb7b7;
+    
+    width: 75%;
+  }
+div.content {
+  width: 75%;
+  margin: 20px;
+  border: 1px solid #acb7b7;
+  padding: 10px;
+  
+}
+div.container{
+    display: flex; /* 横並び */
+            flex-wrap: wrap; /* 画面幅を超えた場合に折り返し */
+            gap: 20px; /* 各ブロック間の隙間 */
+            justify-content: space-between; /* 横方向の配置を調整 */
+        }
+div.block {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: calc(33.333% - 20px); /* 3列レイアウト (間隔を調整) */
+            box-sizing: border-box; /* パディングを幅に含める */
+        }
+div.block img {
+            max-width: 100%; /* 画像が親要素を超えないようにする */
+            height: auto;
+        }
+div.hover-mokuji:hover{
+    color: FF000;
+    font-size: 20px;
+    font-weight: #57c0e9;
+}
+
+
+p {
+  font-size: 12px;
+}
