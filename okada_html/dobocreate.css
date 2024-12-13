@@ -1,62 +1,78 @@
 @import url(../sanitize.css);
-
-  .logo img{
-      float:center;
+header{
+  background-color: #fff;
+  width: 100%;
+  display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+header a{
+  color: #000000;
+  margin: 8px;
+  padding: 20px;
+}
+body{
+  margin: 10px auto;
+  padding: 5%;
+  
+}
+  section{
+    display: flex;
+    flex-direction: row;
+    padding: 10%;
+   
   }
   section h1{
     margin: 0;
     font-size: 32px;
     font-weight: bold;
-    text-align: center;
+    
   }
-  .greetiong img{
-      float:left;
-      margin: 0,10px 10px 0;
+  .sign{
+    display: flex;
+    flex-direction: flex
   }
-  .sign img{
-      text-align:center;
+  
+  a{
+    text-decoration: none;
+    color: #999;
   }
-  h1 {
-    font-size: 48px; 
+  a:hover{
+    text-decoration: underline;
+    background-color: #e7e7d1;
+    color: rgb(3, 167, 243);
   }
-  h{
-      font-size: 24 px; 
-  }
-  div.content1 {
+  .content1 {
     margin: 20px;
     border-top: 1px solid #acb7b7;
+    border-bottom:1px solid #acb7b7;
     width: 75%;
   }
   .content {
-    width: 75%;
-    margin: 20px;
-    border: 1px solid #acb7b7;
-    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     
+    margin: 20px;
+    padding: 10px;
   }
-  .container{
-      display: flex; /* 横並び */
-              flex-wrap: wrap; /* 画面幅を超えた場合に折り返し */
-              gap: 20px; /* 各ブロック間の隙間 */
-              justify-content: space-between; /* 横方向の配置を調整 */
-          }
-  .block {
-              border: 1px solid #ccc;
-              padding: 10px;
-              width: calc(33.333% - 20px); /* 3列レイアウト (間隔を調整) */
-              box-sizing: border-box; /* パディングを幅に含める */
-          }
-  .block img {
-              max-width: 100%; /* 画像が親要素を超えないようにする */
-              height: auto;
-          }
-  .hover-mokuji:hover{
-      color: FF000;
-      font-size: 20px;
-      font-weight: #57c0e9;
+  .box {
+    display: flex;
+    flex-direction: column;
+    width: 320px;
+    margin: 20px;
+    border: 1px solid #d6e0e0;
+    padding: 20px;
+   
   }
-
-
-  p {
-    font-size: 12px;
+  .box img {
+    max-width: 100%; /* 画像が親要素を超えないようにする */
+    height: auto;
+    justify-content: center;
+  }
+  .mokuji{
+    background-color: #fff;
+    width: 100%;
+    display: flex;
+      flex-direction: row;
   }
