@@ -1,21 +1,25 @@
 @import url(../sanitize.css);
-header{
-  background-color: #fff;
-  width: 100%;
-  display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-header a{
-  color: #000000;
-  margin: 8px;
-  padding: 20px;
-}
 body{
+  background-color: #fff;
   margin: 10px auto;
   padding: 5%;
   
 }
+  header{
+    background-color: #fff;
+    width: 100%;
+    display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+  }
+  header a{
+    color: #000000;
+    margin: 8px;
+    padding: 20px;
+  }
+  header a:hover{
+    text-decoration: underline;
+  }
   section{
     display: flex;
     flex-direction: row;
@@ -28,31 +32,25 @@ body{
     font-weight: bold;
     
   }
-  .sign{
-    display: flex;
-    flex-direction: flex
-  }
   
-  a{
+  .container a{
     text-decoration: none;
     color: #999;
   }
-  a:hover{
+  .container a:hover{
     text-decoration: underline;
-    background-color: #e7e7d1;
-    color: rgb(3, 167, 243);
   }
-  .content1 {
-    margin: 20px;
-    border-top: 1px solid #acb7b7;
-    border-bottom:1px solid #acb7b7;
-    width: 75%;
+  .box1{
+    border-bottom:1px solid #999;
+    border-top:1px solid #999;
+  }
+  .box2{
+    border-bottom:1px solid #999;
   }
   .content {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    
     margin: 20px;
     padding: 10px;
   }
@@ -63,16 +61,69 @@ body{
     margin: 20px;
     border: 1px solid #d6e0e0;
     padding: 20px;
-   
   }
   .box img {
     max-width: 100%; /* 画像が親要素を超えないようにする */
     height: auto;
     justify-content: center;
   }
+  .box button{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border: none;
+    background-color: #b6e098;
+    color: #fff;
+    padding: 5px;
+    margin: 5px;
+    width: 40%;
+    height: 10%;
+    text-align: center;
+  }
+  .box button:hover{
+    background-color: #b6e098dc;
+    box-shadow:0,0,8px  #ecfaee;
+  }
+  .recent{
+    background-color: aliceblue;
+    width: 50%;
+  }
+  .recent a{
+    text-decoration: none;
+    color: #999;
+  }
+  .recent a:hover{
+    text-decoration: underline;
+  }
+  .recent button{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border: none;
+    border-radius: 3px;
+    background-color: #999;
+    color: #fff;
+    padding: 5px;
+    margin: 5px;
+    width: 8%;
+    height: 10%;
+    text-align: center;
+  }
+  .box4{
+    border-bottom: 1px solid #999;
+  }
   .mokuji{
     background-color: #fff;
     width: 100%;
     display: flex;
-      flex-direction: row;
+    flex-direction: row;
+  }
+  .mokuji a{
+    width: auto;
+    text-decoration: none;
+    color: #999;
+  }
+  .mokuji a:hover{
+    background-color: #e7e7d1;
+    color: rgb(3, 167, 243);
   }
