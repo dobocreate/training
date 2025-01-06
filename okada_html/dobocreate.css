@@ -3,7 +3,7 @@ body{
   font-size: 16px;
   background-color: #fff;
   margin: 10px 10px 10px 10px;
-  padding: 5px 170px 5px 170px ;
+  padding: 5px 130px 5px 130px ;
   justify-content: center;
 }
 h1{
@@ -11,14 +11,14 @@ h1{
 }
 
   header{
-    font-weight: bold;
+    font-weight: bold;☞
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     color: #000;
     margin: 10px;
-    padding: 5px;
-    border-bottom: 1px solid #999;
+    
+    border-bottom: 1px solid #cfcfcf;
   }
   .logo{
     padding-right: 0px;
@@ -53,13 +53,13 @@ h1{
   .container{
     margin: 0%;
     padding: 15px 5px;
-    font-size: 16px;
+    font-size: 14px;
   }
   .container time{
     color:#767575;
   }
   .container a{
-    font-size: 20px;
+    font-size: 16px;
     color: #505050;
     text-decoration: none;
   }
@@ -69,17 +69,19 @@ h1{
   .box1{
     margin: 5px 5px;
     padding: 8px 5px;
-    border-bottom:1px solid #999;
-    border-top:1px solid #999;
+    border-bottom:1px solid #cfcfcf;
+    border-top:1px solid #cfcfcf;
   }
   .box2{
     padding: 8px 5px;
-    border-bottom:1px solid #999;
+    border-bottom:1px solid #cfcfcf;
   }
   .content {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
+    
     margin: 20px;
     padding: 10px;
   }
@@ -93,6 +95,7 @@ h1{
     height: 400px;
     margin: 8px;
     border: 1px solid #d6e0e0;
+    border-radius: 5px;
     padding: 5px 18px 5px 18px;
   }
   .box3 p{
