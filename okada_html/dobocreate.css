@@ -1,21 +1,15 @@
 @import url(../sanitize.css);
 body{
-  font-size: 20px;
+  font-size: 16px;
   background-color: #fff;
-  margin: 3% 1%;
-  padding: 0% 5%;
+  margin: 10px 10px 10px 10px;
+  padding: 5px 170px 5px 170px ;
   justify-content: center;
-  
 }
 h1{
   font-weight: bold;
 }
-a{
-  color: #000;
-}
-a:hover{
-  text-decoration: underline;
-}
+
   header{
     font-weight: bold;
     display: flex;
@@ -24,24 +18,25 @@ a:hover{
     color: #000;
     margin: 10px;
     padding: 5px;
+    border-bottom: 1px solid #999;
   }
   .logo{
-    padding-right: 3%;
+    padding-right: 0px;
   }
   section{
     display: flex;
     flex-direction: row;
-    margin: 15px 10px;
+    margin: 8px 10px 10px 10px;
     padding: 5px;
   }
   section h1{
-    font-size: 55px;
+    font-size: 32px;
   }
   section p{
-    font-size: 21px;
+    font-size: 18px;
     margin-right: 5%;
   }
-  .name p{
+  .name {
     display: flex;
     flex-direction: row-reverse;
     margin-right: 5%;
@@ -57,14 +52,14 @@ a:hover{
   }
   .container{
     margin: 0%;
-    padding: 15px 0px;
-    font-size: 20px;
+    padding: 15px 5px;
+    font-size: 16px;
   }
   .container time{
     color:#767575;
   }
   .container a{
-    font-size: 24px;
+    font-size: 20px;
     color: #505050;
     text-decoration: none;
   }
@@ -73,18 +68,18 @@ a:hover{
   }
   .box1{
     margin: 5px 5px;
-    padding: 8px 5px 0px 0px;
+    padding: 8px 5px;
     border-bottom:1px solid #999;
     border-top:1px solid #999;
   }
   .box2{
-    padding: 8px 5px 0px 0px;
+    padding: 8px 5px;
     border-bottom:1px solid #999;
   }
   .content {
     display: flex;
     flex-direction: row;
-    
+    flex-wrap: wrap;
     margin: 20px;
     padding: 10px;
   }
@@ -92,29 +87,24 @@ a:hover{
     font-size: 24px ;
   }
   .box3 {
-   box-sizing: content-box;
     display: flex;
     flex-direction: column;
-    width: 320px;
-    margin: 20px 20px;
+    width: 300px;
+    height: 400px;
+    margin: 8px;
     border: 1px solid #d6e0e0;
-    padding: 20px 20px;
+    padding: 5px 18px 5px 18px;
   }
   .box3 p{
-    height: 100px;
-    width: 350px;
-
+    height:150px;
   }
   .box3 img {
-    max-width: 100%; 
-    height: 150px;
-    padding: 2%;
+    width: 308px; 
+    max-height: 154px;
+    padding: 2px;
     justify-content: center;
   }
   .box3 button{
-    display: flex;
-    flex-direction: row;
-    
     border: none;
     background-color: #b0d16e;
     color: #fff;
@@ -124,18 +114,19 @@ a:hover{
     height: 40px;
     text-align: center;
     border-radius: 2px;
+    justify-content: flex-end
   }
   .box3 button:hover{
     background-color: #c2e679;
     box-shadow: 0px 4px 4px  #879389;
   }
-  .map img{
-    object-fit: cover;
+  .right{
+    display: flex;
+    flex-direction: row-reverse;
   }
   .last{
     display: flex;
     flex-direction: row;
-    
   }
   .recent{
     width: 100%;
@@ -169,26 +160,24 @@ a:hover{
     border-bottom: 1px solid #999;
   }
   .binder{
-    font-size: 20px;
-    border-bottom: #999;
-    width: 50%;
-    margin: 150px 150px 0px 150px;
+    font-size: 18px;
+    width: 700px;
+    margin: 100px 0px 0px 0px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
   }
-  .binder a{
-    width: 100%;
-    text-decoration: none;
-    color: #505050;
-  }
-  .binder a:hover{
-    width: 100%;
-    background-color: #f7f7fa;
-    color: rgb(0, 8, 165);
-  }
   .box6{
-    
+    text-align: left;
+    align-items: flex-end;
+    text-decoration: none;
+    font-style: #505050;
+    border-bottom: 1px solid #999;
+    width: 300px;
+  }
+  .box6:hover{
+    background-color: #f7f7fa;
+    color: rgb(12, 24, 243);
   }
   footer p{
    text-align: center;
