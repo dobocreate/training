@@ -7,6 +7,9 @@ body{
   padding: 5px 170px 5px 170px;
   justify-content: center;
 }
+h1{
+  font-weight: bold;
+}
 header{
   font-weight: bold;
   display: flex;
@@ -33,6 +36,9 @@ section{
   flex-direction: row;
   margin: 8px 10px 10px 10px;
   padding: 5px;
+}
+section h1{
+  font-size: 32px;
 }
 .section_greeting_text{
   padding: 0px 30px 0px 10px;
@@ -85,6 +91,9 @@ section{
   justify-content: center;
   margin: 20px;
   padding: 10px;
+}
+.info h1{
+  font-size: 24px ;
 }
 .info_content{
   display: flex;
