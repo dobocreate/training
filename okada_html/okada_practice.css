@@ -5,10 +5,10 @@ body{
 .sub_body{
   margin: 10px;
   padding: 5px 170px 5px 170px;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-}
-h1{
-  font-weight: bold;
+  align-items: center;
 }
 header{
   font-weight: bold;
@@ -19,12 +19,13 @@ header{
   margin: 0%;
   padding: 0px;
   border-bottom: 1px solid #e2e2e0;
+  justify-content: center;
 }
 .logo{
   margin-left: 100px;
   padding-right: 0px;
 }
-.header_content {
+.header_content{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -36,16 +37,15 @@ section{
   flex-direction: row;
   margin: 8px 10px 10px 10px;
   padding: 5px;
-}
-section h1{
-  font-size: 32px;
+  justify-content: center;
 }
 .section_greeting_text{
   padding: 0px 30px 0px 10px;
   margin: 0px 30px 0px 10px;
   font-size: 16px;
+  max-width: 700px;
 }
-.section_name {
+.section_name{
   display: flex;
   flex-direction: row-reverse;
   margin-right: 5%;
@@ -53,18 +53,21 @@ section h1{
 .section_ceo img{
   border-radius: 10px;
   }
-.section_sign {
+.section_sign{
   display: flex;
   flex-direction: row-reverse;
 }
 .news{
-  margin: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 10px 5px;
   font-size: 14px;
-  justify-content: center;
+  width: 100%;
+  max-width: 1700px;
 }
 .news time{
-    color:#767575;
+  color:#767575;
 }
 .news a{
   font-size: 18px;
@@ -75,7 +78,6 @@ section h1{
   text-decoration: underline;
 }
 .news_first{
-  margin: 5px 5px;
   padding: 8px 5px;
   border-bottom:1px solid #999;
   border-top:1px solid #999;
@@ -92,12 +94,10 @@ section h1{
   margin: 20px;
   padding: 10px;
 }
-.info h1{
-  font-size: 24px ;
-}
 .info_content{
   display: flex;
   flex-direction: column;
+  border-radius: 2%;
   width: 300px;
   height: 400px;
   margin: 8px;
@@ -107,7 +107,7 @@ section h1{
 .info_content p{
   height:150px;
 }
-.info_content img {
+.info_content img{
   width: 308px; 
   max-height: 154px;
   padding: 2px;
@@ -136,11 +136,12 @@ section h1{
 .footer_last{
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-self: center;
 }
 .footer_recent{
-  width: 100%;
-  margin-right: 150px;
+  width: 500px;
+  max-width: 1700px;
+  margin-right: 100px;
   border-bottom: #999;
   color: #505050;
 }
@@ -172,19 +173,19 @@ section h1{
 .footer_recent_article{
   border-bottom: 1px solid #999;
 }
-.footer_recent_map{
+.footer_recent_map_article{
   text-align: left;
-  align-items: flex-end;
+  align-items: center;
   text-decoration: none;
   font-style: #505050;
   border-bottom: 1px solid #999;
   width: 300px;
 }
-.footer_recent_map :hover{
+.footer_recent_map_article :hover{
   background-color: #f7f7fa;
   color: rgb(12, 24, 243);
 }
-.footer p{
+.footer_logo p{
   text-align: center;
   color: #767575;
   font-size: 14px;
