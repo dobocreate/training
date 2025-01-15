@@ -1,0 +1,53 @@
+*{margin: 0px; padding: 0px;}
+ul{list-style: none;}
+a{text-decoration: none;}
+header{
+    width: 3000px;
+    height: 170px;
+    background-color:white;
+    position:relative;
+    border-bottom: 1px solid #dfdfdf;
+}
+#logo{
+    position: absolute;
+    top:30px;
+    left:30px;
+}
+
+nav{
+    position: absolute;
+    bottom:10px;
+    left: 450px;
+    font-size: 24px;
+    top: 50%;
+}
+
+nav li{
+    display: inline;
+    margin-left: 10px;
+}
+
+nav li a{color:black}
+
+#introduce{
+    
+    margin-top:50px;
+    width:2000p     x;
+}
+#introduce_first{
+    font-weight: bold;
+    font-size:36px;
+    margin-left:200px;
+}
+#introduce_word{
+    margin-top: 30px;
+    float:left;
+    width: 1000px;
+    height: 500px;
+    margin-left:200px;
+    margin-right:50px;
+    font-size: 24px;
+}
+#introduce_img_face{float:left;}
+
+
