@@ -1,21 +1,23 @@
 *{margin: 0px; padding: 0px;}
 ul{list-style: none;}
 a{text-decoration: none;}
+
 header{
-    width: 3000px;
+    width: 100%;
     height: 170px;
     background-color:white;
     position:relative;
+    margin:0 auto;
     border-bottom: 1px solid #dfdfdf;
 }
 #logo{
-    position: absolute;
+    position:absolute;
     top:30px;
     left:30px;
 }
 
 nav{
-    position: absolute;
+    position:absolute;
     bottom:10px;
     left: 450px;
     font-size: 24px;
@@ -32,9 +34,10 @@ nav li a{color:black}
 #introduce{
     
     margin-top:50px;
-    width:2000p     x;
+    width:2000px;
+    height: 100%;
 }
-#introduce_first{
+.introduce_first{
     font-weight: bold;
     font-size:36px;
     margin-left:200px;
@@ -51,3 +54,39 @@ nav li a{color:black}
 #introduce_img_face{float:left;}
 /* 1/15일에와서 flex쓰는방법알아서 div고치기 */
 
+#site_contatiner{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap:wrap;
+
+}
+.site_img{
+    object-position: center top;
+}
+.site_box{
+    border: 1px solid #919191;
+    width : 400px;
+    height : 450px;
+    margin: 15px;
+}
+
+.site_box_bold{
+    font-weight: bold;
+    font-size:26px;
+    text-align: left;
+    margin-top: 40px;
+    margin-left:10px
+}
+
+.site_box_intro{
+    text-align: left;
+    margin-top: 10px;
+    margin-left:10px
+}
+
+.saishin_box{
+    border-top: 1px solid #919191;
+    border-bottom: 1px solid #919191;
+}
