@@ -1,27 +1,30 @@
 *{margin: 0px; padding: 0px;}
 ul{list-style: none;}
 a{text-decoration: none;}
+#page{
+    max-width:1110px; margin:0 auto;
+}
 
-header{
+
+header{    
+    position: sticky;
+    top:0;
     width: 100%;
     height: 170px;
-    background-color:white;
     position:relative;
-    margin:0 auto;
+    background-color:white;
     border-bottom: 1px solid #dfdfdf;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }
 #logo{
-    position:absolute;
-    top:30px;
-    left:30px;
+    width:auto;
 }
 
 nav{
-    position:absolute;
-    bottom:10px;
-    left: 450px;
     font-size: 24px;
-    top: 50%;
 }
 
 nav li{
@@ -31,62 +34,162 @@ nav li{
 
 nav li a{color:black}
 
-#introduce{
-    
-    margin-top:50px;
-    width:2000px;
-    height: 100%;
-}
-.introduce_first{
-    font-weight: bold;
-    font-size:36px;
-    margin-left:200px;
-}
-#introduce_word{
-    margin-top: 30px;
-    float:left;
-    width: 1000px;
-    height: 500px;
-    margin-left:200px;
-    margin-right:50px;
-    font-size: 24px;
-}
-#introduce_img_face{float:left;}
-/* 1/15일에와서 flex쓰는방법알아서 div고치기 */
-
-#site_contatiner{
-    width: 100%;
+.introduce_container{
+    margin-top:80px;
+    width:100%;
     height: 100%;
     display: flex;
     justify-content: center;
-    flex-wrap:wrap;
+    flex-wrap: wrap-reverse;
+}
+
+.introduce_first{
+    width: 1000px;
+    font-weight: bold;
+    font-size:36px;
+    margin-bottom: 40px;
+}
+#introduce_word{
+    width: 708px;
+    height: 525px;
+    font-size: 28px;
+}
+#introduce_word p{
+    font-size: 16px;
+}
+
+#introduce_img_face{
+    text-align: end;
 
 }
-.site_img{
-    object-position: center top;
+#introduce_img_sign{
+    text-align: end;
 }
+
+
+
+
+
+
+
+#saishinnews{
+    display: flex;
+    align-items: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.saishin_box{
+    padding-top: 20px;
+    width:100%;
+    height:128px;
+    border-top: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.saishin_box a{
+    font-size: 20px;
+}
+
+
+
+
+
+
+#site_contatiner{
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap:wrap;
+}
+
 .site_box{
-    border: 1px solid #919191;
-    width : 400px;
-    height : 450px;
-    margin: 15px;
+
+    border: 1px solid #dfdfdf;
+    width : 320px;
+    height : 350px;
+    margin: 7px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .site_box_bold{
     font-weight: bold;
-    font-size:26px;
-    text-align: left;
-    margin-top: 40px;
-    margin-left:10px
+    font-size:24px;
 }
 
 .site_box_intro{
-    text-align: left;
-    margin-top: 10px;
-    margin-left:10px
+    font-size:16px;
+
 }
 
-.saishin_box{
-    border-top: 1px solid #919191;
-    border-bottom: 1px solid #919191;
+.site_img{
+    width : 150px;
+    height : 150px;
+    align-self: center;
 }
+
+.site_box button{
+    background-color: #B0D16E;
+    font-size: 14px;
+    color: white;
+    width : 140px;
+    height : 30px;
+    align-self: self-end;
+    border-color: white;
+}
+
+
+
+
+
+#saishintougo h1{
+    font-size: 16px;
+}
+
+.saishintougonaiyou{
+    padding: 15px;
+    font-size: 14px;
+    width:349px;
+    height: 69px;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.saishintougonaiyou a{
+    font-size: 12px;
+}
+
+.saishinsitemap{
+    display: flex;
+    justify-content: center;
+    flex-wrap:wrap;
+}
+
+.site_map li a{
+    color:black;
+}
+
+.site_map li a:hover{
+    color:rgb(72, 98, 184);
+}
+
+.site_map li {
+    padding-left:10px;
+    padding-top: 10px;
+    width:349px;
+    height:35px;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.site_map li:hover{
+    background:#cecece;
+}
+
+
+
