@@ -1,195 +1,207 @@
-*{margin: 0px; padding: 0px;}
-ul{list-style: none;}
-a{text-decoration: none;}
-#page{
-    max-width:1110px; margin:0 auto;
+* {
+  margin: 0px;
+  padding: 0px;
+}
+ul {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+#page {
+  max-width: 1110px;
+  margin: 0 auto;
 }
 
-
-header{    
-    position: sticky;
-    top:0;
-    width: 100%;
-    height: 170px;
-    position:relative;
-    background-color:white;
-    border-bottom: 1px solid #dfdfdf;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: white;
+  border-bottom: 1px solid #dfdfdf;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
-#logo{
-    width:auto;
-}
-
-nav{
-    font-size: 24px;
+#logo {
+  width: auto;
 }
 
-nav li{
-    display: inline;
-    margin-left: 10px;
+nav {
+  font-size: 24px;
 }
 
-nav li a{color:black}
-
-.introduce_container{
-    margin-top:80px;
-    width:100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap-reverse;
+nav li {
+  display: inline;
 }
 
-.introduce_first{
-    width: 1000px;
-    font-weight: bold;
-    font-size:36px;
-    margin-bottom: 40px;
-}
-#introduce_word{
-    width: 708px;
-    height: 525px;
-    font-size: 28px;
-}
-#introduce_word p{
-    font-size: 16px;
+nav li a {
+  padding: 14px 18px;
+  font-size: 14px;
+  color: black;
+  font-weight: bold;
 }
 
-#introduce_img_face{
-    text-align: end;
-
-}
-#introduce_img_sign{
-    text-align: end;
-}
-
-
-
-
-
-
-
-#saishinnews{
-    display: flex;
-    align-items: center;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
+.introduce_container {
+  align-items: center;
+  margin-top: 80px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap-reverse;
 }
 
-.saishin_box{
-    padding-top: 20px;
-    width:100%;
-    height:128px;
-    border-top: 1px solid #dfdfdf;
-    border-bottom: 1px solid #dfdfdf;
+.introduce_first {
+  width: 1000px;
+  font-weight: bold;
+  font-size: 36px;
+  margin-bottom: 40px;
+}
+#introduce_word {
+  width: 708px;
+  height: 525px;
+  font-size: 28px;
+}
+#introduce_word p {
+  font-size: 16px;
 }
 
-.saishin_box a{
-    font-size: 20px;
+#introduce_img_face {
+  margin-left: 20px;
+  text-align: end;
+}
+#introduce_img_sign {
+  text-align: end;
 }
 
-
-
-
-
-
-#site_contatiner{
-    padding: 10px;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    flex-wrap:wrap;
+#saishinnews {
+  display: flex;
+  align-items: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
 }
 
-.site_box{
-
-    border: 1px solid #dfdfdf;
-    width : 320px;
-    height : 350px;
-    margin: 7px;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+.saishin_box {
+  padding-top: 20px;
+  width: 100%;
+  height: 128px;
+  border-top: 1px solid #dfdfdf;
+  border-bottom: 1px solid #dfdfdf;
 }
 
-.site_box_bold{
-    font-weight: bold;
-    font-size:24px;
+.saishin_box a {
+  font-size: 20px;
 }
 
-.site_box_intro{
-    font-size:16px;
-
+#site_contatiner {
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
-.site_img{
-    width : 150px;
-    height : 150px;
-    align-self: center;
+.site_box {
+  border: 1px solid #dfdfdf;
+  width: 320px;
+  height: 350px;
+  margin: 7px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
-.site_box button{
-    background-color: #B0D16E;
-    font-size: 14px;
-    color: white;
-    width : 140px;
-    height : 30px;
-    align-self: self-end;
-    border-color: white;
+.site_box_bold {
+  font-weight: bold;
+  font-size: 24px;
 }
 
-
-
-
-
-#saishintougo h1{
-    font-size: 16px;
+.site_box_intro {
+  font-size: 16px;
 }
 
-.saishintougonaiyou{
-    padding: 15px;
-    font-size: 14px;
-    width:349px;
-    height: 69px;
-    border-bottom: 1px solid #dfdfdf;
+.site_img {
+  width: 150px;
+  height: 150px;
+  align-self: center;
 }
 
-.saishintougonaiyou a{
-    font-size: 12px;
+.site_box button {
+  background-color: #b0d16e;
+  font-size: 14px;
+  color: white;
+  width: 140px;
+  height: 30px;
+  align-self: self-end;
+  border: none;
+  border-radius: 6px;
 }
 
-.saishinsitemap{
-    display: flex;
-    justify-content: center;
-    flex-wrap:wrap;
+#saishintougo h1 {
+  margin-left: 10px;
+  font-size: 16px;
 }
 
-.site_map li a{
-    color:black;
+.saishintougonaiyou {
+  padding: 14px;
+  font-size: 14px;
+  width: 349px;
+  height: 40px;
+  border-bottom: 1px solid #dfdfdf;
 }
 
-.site_map li a:hover{
-    color:rgb(72, 98, 184);
+.saishintougonaiyou a {
+  font-size: 12px;
+}
+
+.saishintougonaiyou button {
+  background-color: #7e7e7e;
+  font-size: 9px;
+  color: white;
+  width: 40px;
+  height: 20px;
+  align-self: self-end;
+  border: none;
+  border-radius: 6px;
+}
+
+.saishinsitemap {
+  padding-top: 100px;
+  border-top: 1px solid #dfdfdf;
+  display: flex;
+  justify-content: baseline;
+  flex-wrap: wrap;
+}
+
+.site_map li a {
+  color: black;
+}
+
+.site_map li a:hover {
+  color: rgb(72, 98, 184);
 }
 
 .site_map li {
-    padding-left:10px;
-    padding-top: 10px;
-    width:349px;
-    height:35px;
-    border-bottom: 1px solid #dfdfdf;
+  padding-left: 10px;
+  padding-top: 10px;
+  width: 349px;
+  height: 35px;
+  border-bottom: 1px solid #dfdfdf;
 }
 
-.site_map li:hover{
-    background:#cecece;
+.site_map li:hover {
+  background: #cecece;
 }
 
-
-
+footer {
+  margin-top: 100px;
+  margin-bottom: 40px;
+}
