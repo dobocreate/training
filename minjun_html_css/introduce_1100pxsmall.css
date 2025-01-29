@@ -9,8 +9,10 @@ a {
   text-decoration: none;
 }
 #page {
-  max-width: 1110px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 header {
@@ -18,7 +20,6 @@ header {
   top: 0;
   width: 100%;
   height: 100%;
-  position: relative;
   background-color: white;
   border-bottom: 1px solid #dfdfdf;
   display: flex;
@@ -48,7 +49,7 @@ nav li a {
 .introduce_container {
   align-items: center;
   margin-top: 80px;
-  width: 100%;
+  width: 70%;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -87,7 +88,7 @@ nav li a {
 
 .saishin_box {
   padding-top: 20px;
-  width: 100%;
+  width: 70%;
   height: 128px;
   border-top: 1px solid #dfdfdf;
   border-bottom: 1px solid #dfdfdf;
@@ -114,11 +115,13 @@ nav li a {
 
 #site_contatiner {
   padding: 10px;
-  width: 100%;
+  max-width: 100%;
+  width: auto;
   height: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .site_box {
@@ -192,16 +195,18 @@ nav li a {
 }
 
 .saishinsitemap {
+  width: 80%;
+  height: 100%;
   padding-top: 100px;
   border-top: 1px solid #dfdfdf;
   display: flex;
-  justify-content: baseline;
   flex-wrap: wrap;
 }
 
 #site_map_container {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .site_map li a {
