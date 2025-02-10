@@ -18,8 +18,8 @@ input {
 button {
   border-radius: 8px;
   border: none;
-  padding: 4px 16px;
-  margin: 0px 20px;
+  padding: 4px 10px;
+  margin: 0px 10px;
 }
 button:hover {
   background-color: #c6e5d9;
@@ -39,7 +39,7 @@ button:hover {
   margin-top: 0;
   font-weight: bold;
 }
-.list-raw {
+.list-row {
   display: flex;
   align-items: center;
 }
