@@ -42,16 +42,20 @@ const Todo = () => {
     setIncompleteTodos(newIncompleteTodos);
   };
 
+  const isMaxLimitincompleteTodos = incompleteTodos.length >= 5;
   return (
     <>
       <InputTodo
         todoText={todoText}
         onChange={onChangeTodoText}
         onClick={onClickAdd}
+        disabled={isMaxLimitincompleteTodos}
       ></InputTodo>
-      {/* {incompleteTodos.length>= 5 && ()}
-<p style={color: "red"}}>
-</p> */}
+
+      {isMaxLimitincompleteTodos && (
+        <p style={{ color: "red" }}>登録は５個までです</p>
+      )}
+
       <IncompleteTodos
         todos={incompleteTodos}
         onClickComplete={onClickComplete}

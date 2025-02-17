@@ -1,5 +1,5 @@
 const style = {
-  backgroundcolor: "#aacfd0",
+  backgroundColor: "#aacfd0",
   width: "400px",
   height: "30px",
   padding: "8px",
@@ -7,15 +7,18 @@ const style = {
   borderRadius: "8px",
 };
 export const InputTodo = (props) => {
-  const { todoText, onChange, onClick } = props;
+  const { todoText, onChange, onClick, disabled } = props;
   return (
     <div style={style} className="input-area">
       <input
+        disabled={disabled}
         placeholder="TODOを入力"
         value={todoText}
         onChange={onChange}
       ></input>
-      <button onClick={onClick}>追加</button>
+      <button disabled={disabled} onClick={onClick}>
+        追加
+      </button>
     </div>
   );
 };
