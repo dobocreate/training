@@ -1,0 +1,183 @@
+ul {
+  padding-left: 0;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-decoration-color: black;
+}
+
+.header-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 80px;
+  background-color: #ffffff;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.header-logo img {
+  height: 60px;
+}
+
+.header-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.header-nav a:hover {
+  color: #0ca637;
+}
+
+.greeting-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  padding: 20px;
+  margin: 40px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.greeting-main {
+  margin: 0 40px;
+  align-items: start;
+}
+
+.greeting-image img {
+  width: 300px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.greeting-signature {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.greeting-signature p {
+  margin: 0 0 10px;
+}
+
+.postlist-contaier li {
+  border-bottom: 2px solid #f5f5f5;
+  padding: 10px;
+  margin: 20px 80px;
+}
+
+.postlist-contaier div,
+.postlist-contaier p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.information-contaier {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px 80px;
+}
+
+.information-contaier div {
+  flex-basis: 40%;
+  background-color: #fff;
+  border-radius: 10px;
+  border: 2px solid #f5f5f5;
+  padding: 20px;
+}
+
+.information-contaier img {
+  width: 350px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.information-contaier h2 {
+  font-size: 25;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.information-contaier p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.information-contaier button {
+  margin-left: auto;
+  margin-right: 0;
+  background-color: #b3d588;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  margin-left: 200px;
+  font-size: 15px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.information-contaier button:hover {
+  background-color: #a3c577;
+}
+
+.footer-contaier {
+  display: grid;
+  padding: 20px;
+  border-top: 2px solid #f0f0f0;
+  margin: 20px 40px;
+}
+
+.recentposts,
+.contents1,
+.contents2 {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.recentposts h2 {
+  font-size: 17px;
+}
+
+.recentposts button {
+  background-color: #999;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.footer-contaier li {
+  border-bottom: 2px solid #f5f5f5;
+  padding: 10px;
+  font-size: 13px;
+  color: #333;
+}
+
+.footer-copyright {
+  grid-column: span 3;
+  text-align: center;
+  font-size: 12px;
+  margin-top: 10px;
+}
