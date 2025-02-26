@@ -141,6 +141,24 @@ a:hover {
   background-color: #a3c577;
 }
 
+.contents1 ul li a,
+.contents2 ul li a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+  padding: 10px;
+}
+
+.contents1 ul li:hover,
+.contents2 ul li:hover {
+  background-color: #f5f5f5;
+}
+
+.contents1 ul li a:hover,
+.contents2 ul li a:hover {
+  color: #007bff;
+}
+
 .footer-contaier {
   display: grid;
   padding: 20px;
