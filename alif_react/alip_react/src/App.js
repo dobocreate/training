@@ -1,5 +1,6 @@
 import React from "react";
 import Game from "./alif_react";
+import "./Game.css";
 
 function App() {
   return (
