@@ -1,5 +1,17 @@
 .App {
-  text-align: center;
+  display: flex;
+  justify-content: center; /* Align horizontally */
+  align-items: center; /* Align vertically */
+  height: 100vh; /* Take up the full viewport height */
+  margin: 0; /* Remove default margin */
+  background-color: #f0f0f0; /* Optional background color */
+}
+.game {
+  text-align: center; /* Center text and content inside the game container */
+  border: 1px solid #000; /* Optional border around the game */
+  padding: 20px; /* Optional padding */
+  background-color: #fff; /* Optional background color for the game */
+  border-radius: 10px; /* Optional rounded corners */
 }
 
 .App-logo {
