@@ -1,1 +1,17 @@
-a{}
+
+nav {
+    display: flex;
+    gap: 25px;
+    font-size:  1.3em;
+    color: #000;
+    font-weight: bold;
+    justify-content: space-evenly;
+    padding: 10px;
+    border-bottom: 1px solid #999
+}
+
+
+a:hover {
+    color: #646cff;
+    text-decoration: underline;
+}
