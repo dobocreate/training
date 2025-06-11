@@ -1,17 +1,55 @@
 
-nav {
+header {
     display: flex;
-    gap: 25px;
-    font-size:  1.3em;
-    color: #000;
-    font-weight: bold;
-    justify-content: space-evenly;
     padding: 10px;
-    border-bottom: 1px solid #999
+    border-bottom: 1px solid #999;
+    justify-content: space-evenly;
 }
 
+.logo {
+    display: flex;
+    width: 150px;
+    height: 100px;
+}
+
+.sitemap {
+    display: flex;
+    gap: 10px;
+    font-size:  1.2em;
+    color: #000;
+    font-weight: bold;
+    margin-left: 20px;
+    align-items: center;
+
+}
 
 a:hover {
     color: #646cff;
     text-decoration: underline;
+}
+
+
+main {
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+}
+
+.profile-image {
+    display: flex;
+    width: 500px;
+    max-width: 50%;
+    height: auto;
+    padding: 20px;
+}
+
+.greeting {
+    display: flex;
+}
+
+
+p {
+    line-height: 1.5em;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
