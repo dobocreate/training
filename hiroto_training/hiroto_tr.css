@@ -1,321 +1,313 @@
 body {
-    max-width: 1200px;
-    margin: 0 auto;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-    border-bottom: 1px solid #999;
-    padding-bottom: 10px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  border-bottom: 1px solid #999;
+  padding-bottom: 10px;
+  flex-wrap: wrap;
 }
 
-
 .logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 500px;
-    margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 500px;
+  margin-bottom: 10px;
 }
 
 .logo img {
-    max-width: 60%;
-    height: auto;
-    display:block;
+  max-width: 60%;
+  height: auto;
+  display: block;
 }
 
 .sitemap {
-    display: flex;
-    width: 100%;
-    justify-content: space-evenly;
-    font-weight: bold;
-    margin: 0;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  font-weight: bold;
+  margin: 0;
 }
 
 a:hover {
-     text-decoration: underline;
+  text-decoration: underline;
 }
 
-
 main {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 8%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8%;
 }
 
 h1 {
-    margin-bottom: 50px;
+  margin-bottom: 50px;
 }
 
 .greeting {
-    margin: 40px 0 30px 30px;
-    object-fit: contain;
-    max-width: 850px;
+  margin: 40px 0 40px 40px;
+  object-fit: contain;
 }
 
 p {
-    line-height: 1.5em;
+  line-height: 1.5em;
 }
 
-.right-text, .right-text-2 {
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 20px;
+.right-text {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 15px;
 }
 
 .morimoto-sign {
-    display: flex;
-    justify-content: flex-end;
-    margin-left: auto;
+  display: flex;
+  justify-content: flex-end;
 }
 .morimoto-sign img {
-    max-width: 20%;
-    height: auto;
+  width: 30%;
+  min-width: 150px;
+  height: auto;
 }
 
 .profile-image {
-    display: flex;
-    max-width: 350px;
-    margin-right: 20px;
-    margin-top: 80px;
-    height: auto;
-    object-fit: contain;
+  display: flex;
+  max-width: 350px;
+  margin-right: 20px;
+  margin-top: 80px;
+  height: auto;
+  object-fit: contain;
 }
-
 
 .news {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 100px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 100px 40px;
 }
 
-.news1, .news2 {
-    width: 100%;
-    padding: 10px;
-    border-top: 1px solid #999;
+.news-content-1 {
+  width: 100%;
+  padding: 10px;
+  border-top: 1px solid #999;
 }
 
-.news3 {
-    width: 100%;
-    padding: 10px;
-    border-top: 1px solid #999;
-    border-bottom: 1px solid #999;
+.news-content-2 {
+  width: 100%;
+  padding: 10px;
+  border-top: 1px solid #999;
+  border-bottom: 1px solid #999;
 }
 
 .news a {
-    font-size: 1.2em;
-    display: inline-block;
+  font-size: 1.2em;
+  display: inline-block;
 }
 
-.news-date{
-    font-size: 0.9em;
-    color: #666;
+.news-date {
+  font-size: 0.9em;
+  color: #666;
 }
 
 .access {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
 }
 
-.access1 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 350px;
-    padding: 20px;
-    border: 2px solid #999;
-    border-radius: 10px;
-    box-sizing: border-box;
-    text-align: center;
+.access-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 350px;
+  padding: 20px;
+  border: 2px solid #999;
+  border-radius: 10px;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 .access1 h3 {
-    font-size: 18px;
-    margin:  10px 0;
+  font-size: 18px;
+  margin: 10px 0;
 }
 
 .access1 p {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .access-image {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 10px;
-    object-fit: contain;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 10px;
+  object-fit: contain;
 }
 
 .link-button {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    margin-right: 15px;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-right: 15px;
 }
 
 .link-button a {
-    display: inline-block;
-    background-color: #76c43fc9;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    text-decoration: none;  /*下線を消す*/
+  display: inline-block;
+  background-color: #76c43fc9;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none; /*下線を消す*/
 }
 
 .footer-2 {
-    display:flex;
-    justify-content: space-around;
-    margin-right: 30px;
-    margin-left: 30px;
-    align-items: flex-start;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: space-around;
+  margin-right: 40px;
+  margin-left: 40px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .recent-posts {
-    display:flex;
-    flex-direction: column;
-    margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 100px;
 }
 
 .recent-posts a {
-    display: inline-block;   /*デフォルトの<a>はdisplay: inlineでmarginが効かないため*/
-    margin-top: 50px;
-    font-size: 0.9em;
-    margin-top: 10px;
+  display: inline-block; /*デフォルトの<a>はdisplay: inlineでmarginが効かないため*/
+  margin-top: 50px;
+  font-size: 0.9em;
+  margin-top: 10px;
 }
 
 .recent-post {
-    border-bottom: 1px solid #999;
-    width: 100%;
+  border-bottom: 1px solid #999;
+  width: 100%;
 }
 
 .category {
-    background-color: #7d7d7d;
-    color: white;
-    padding:  2px 7px;
-    border-radius: 5px;
-    font-size: 0.8em;
-    margin-left: 5px;
+  background-color: #7d7d7d;
+  color: white;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 0.8em;
+  margin-left: 5px;
 }
 
 .link-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 0;
-    margin-top: 100px;
-    max-width: 600px;
-    min-width: 300px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0;
+  margin-top: 100px;
+  max-width: 600px;
+  min-width: 300px;
 }
 
 .link-box {
-    display:flex;
-    justify-content: flex-start;
-    align-items: center;
-    height: 60px;
-    border-bottom: 1px solid #ccc;
-    color: #333;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 60px;
+  border-bottom: 1px solid #ccc;
+  color: #333;
 }
 
-.link-box:hover {    /*リンクにマウスを乗せたときのスタイル */
-    background-color: #e0e0e0;
-    text-decoration: none;
+.link-box:hover {
+  /*リンクにマウスを乗せたときのスタイル */
+  background-color: #e0e0e0;
+  text-decoration: none;
 }
 
 small {
-    color: #666;
-    text-align: center;
-    margin-top: 80px;
-    display: block;
-    width: 100%;
+  color: #666;
+  text-align: center;
+  margin-top: 80px;
+  display: block;
+  width: 100%;
 }
 
-
-
 @media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 30px;
+  }
 
-    header {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding-bottom: 30px;
-    }
+  .logo {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 30px;
+  }
 
-    .logo {
-        width: 100%;
-        text-align: center;
-        margin-bottom: 30px;
-    }
+  .sitemap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 15px;
+  }
 
-    .sitemap {
-        display:flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        width: 100%;
-        gap: 15px;
-    }
+  .sitemap div {
+    margin: 10px 15px;
+  }
 
-    .sitemap div {
-        margin: 10px 15px; 
-    }
+  main {
+    flex-direction: column-reverse;
+    align-items: center;
+    text-align: center;
+  }
 
-    main {
-        flex-direction: column-reverse;
-        align-items: center;
-        text-align: center;
-    }
+  .profile-image {
+    display: block;
+    margin: 30px 0 auto;
+    max-width: 350px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+  }
 
-    .profile-image {
-        display: block;
-        margin: 30px 0 auto;
-        max-width: 350px;
-        width: 100%;
-        height: auto;
-        margin-bottom: 10px;
+  .greeting {
+    width: 100%;
+    padding: 0 20px;
+    text-align: left;
+  }
 
-    }
+  .news {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
 
-    .greeting {
-        width: 100%;
-        padding: 0 20px;
-        text-align: left;
-    }
+  .recent-posts {
+    width: 100%;
+  }
 
-    .news {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-    }
-
-    .recent-posts {
-        width: 100%;
-    }
-
-    .link-grid {
-        margin-top: 50px;
-    }
+  .link-grid {
+    margin-top: 50px;
+  }
 }
 
 @media (max-width: 950px) {
-    .recent-posts {
-        width: 100%;
-        margin-right: 30px;
-        margin-left: 30px;
-    }
-    .link-grid {
-        width: 100%;
-        margin-right: 30px;
-        margin-left: 30px;
-        box-sizing: border-box;
-        max-width: none;
-    }
-    
+  .recent-posts {
+    width: 100%;
+    margin-right: 30px;
+    margin-left: 30px;
+  }
+  .link-grid {
+    width: 100%;
+    margin-right: 30px;
+    margin-left: 30px;
+    box-sizing: border-box;
+    max-width: none;
+  }
 }
