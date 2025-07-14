@@ -1,0 +1,75 @@
+.input-area {
+  display: flex;
+  align-items: center;
+  background-color: #c1ffff;
+  width: 400px;
+  height: 30px;
+  padding: 8px;
+  margin: 8px;
+  border-radius: 8px;
+}
+.input-area input[type] {
+  width: 250px;
+  height: 25px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+}
+.input-area input[placeholder] {
+  padding-left: 10px;
+  font-size: 14px;
+}
+button {
+  width: 60px;
+  min-height: 25px;
+  margin-left: 8px;
+  border-radius: 15px;
+  border: none;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #cdcdcd;
+  border-color: #cdcdcd;
+}
+.incomplete-area {
+  background-color: #c6ffe2;
+  width: 400px;
+  min-height: 200px;
+  padding: 8px;
+  margin: 8px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+}
+.complete-area {
+  background-color: #ffffe0;
+  width: 400px;
+  min-height: 200px;
+  padding: 8px;
+  margin: 8px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+}
+.title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 3px;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
+}
+.task-item {
+  display: flex;
+  padding: 2px;
+  align-items: center;
+}
+.task-item li {
+  flex-grow: 1;
+  font-weight: 500;
+  text-indent: -1em;
+  padding-left: 1em;
+}
+.task-item button {
+  flex-shrink: 0;
+}
