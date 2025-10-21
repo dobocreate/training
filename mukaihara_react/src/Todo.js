@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { InputTodo } from "./components/InputTodo";
+import { IncompleteTodos } from "./components/IncompleteTodos";
+import { CompleteTodos } from "./components/CompleteTodos";
 import './styles.css';
 
 function Todo() {
+  /* 各ステートの定義 */
   const [todoText, setTodoText] = useState("");
-  const [incompleteTodos, setIcompleteTodos] = useState([
+  const [incompleteTodos, setIncompleteTodos] = useState([
     "TODOです1",
     "TODOです2"
   ]);
@@ -12,43 +16,57 @@ function Todo() {
     "TODOでした2"
   ]);
 
-  const onChangeTodoText = (event) => setIcompleteTodos(event.target.value);
+  /* テキストボックスの値が変更されたとき */
+  const onChangeTodoText = (event) => setTodoText(event.target.value);
+  
+  /* 追加ボタンが押されたとき */
   const onClickAdd = () => {
-    const newTodos = [...incompleteTodos, todoText]
+    if (todoText === "") return; // テキストボックスがからの場合は追加しない
+    const newTodos = [...incompleteTodos, todoText]; // 配列に新しい要素を連結
+    setIncompleteTodos(newTodos);
+    setTodoText("");
   }
+
+  /* 削除ボタンが押されたとき */
+  const onClickDelete = (index) => {
+    const newTodos = [...incompleteTodos]; // 新しい配列を定義
+    newTodos.splice(index, 1); // indexから一要素を切り出す
+    setIncompleteTodos(newTodos);
+  }
+
+  /* 完了ボタンを押されたとき */
+  const onClickComplete = (index) => {
+    const newIncompleteTodos = [...incompleteTodos]; // 新しい配列を定義
+    newIncompleteTodos.splice(index, 1); // indexから一要素を切り出す
+
+    const newCompleteTodos = [...completeTodos, incompleteTodos[index]]; // 配列に要素を追加
+
+    setCompleteTodos(newCompleteTodos);
+    setIncompleteTodos(newIncompleteTodos);
+  }
+
+  /* 完了ボタンを押されたとき */
+  const onClickBack = (index) => {
+    const newCompleteTodos = [...completeTodos]; // 新しい配列を定義
+    newCompleteTodos.splice(index, 1); // indexから一要素を切り出す
+
+    const newIncompleteTodos = [...incompleteTodos, completeTodos[index]]; // 配列に要素を追加
+
+    setCompleteTodos(newCompleteTodos);
+    setIncompleteTodos(newIncompleteTodos);
+  }
+
+  /* 未完了TODOの数をチェックする（Max:5個） */
+  const isMaxLimitIncompletetodos = incompleteTodos.length >= 5;
+
   return (
     <>
-      <div className="input-area">
-        <input placeholder="TODOを入力" value={todoText} onChange={onChangeTodoText} />
-        <button onClick={onClickAdd}>追加</button>
-      </div>
-      <div className="incomplete-area">
-        <p className="title">未完了のTODO</p>
-        <ul>
-          {incompleteTodos.map((todo) => (
-            <li key={todo}>
-              <div className="list-row">
-                <p className="todo-item">{todo}</p>
-                <button>完了</button>
-                <button>削除</button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="complete-area">
-        <p className="title">完了のTODO</p>
-        <ul>
-          {completeTodos.map((todo) => (
-            <li key={todo}>
-              <div className="list-row">
-                <p className="todo-item">{todo}</p>
-              <button>戻す</button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <InputTodo todoText={todoText} onChange={onChangeTodoText} onClick={onClickAdd} disabled={isMaxLimitIncompletetodos} />
+      {isMaxLimitIncompletetodos && (
+        <p style={{color: "red"}}>これ以上登録できません。未完了TODOを完了してください。</p>
+      ) /* 未登録が多い場合は登録させない */ }
+      <IncompleteTodos todos={incompleteTodos} onClickComplete={onClickComplete} onClickDelete={onClickDelete} />
+      <CompleteTodos todos={completeTodos} onClickBack={onClickBack} />
     </>
   );
 }
