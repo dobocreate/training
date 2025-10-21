@@ -45,7 +45,7 @@ function Todo() {
     setIncompleteTodos(newIncompleteTodos);
   }
 
-  /* 完了ボタンを押されたとき */
+  /* 戻るボタンを押されたとき */
   const onClickBack = (index) => {
     const newCompleteTodos = [...completeTodos]; // 新しい配列を定義
     newCompleteTodos.splice(index, 1); // indexから一要素を切り出す
