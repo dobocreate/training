@@ -1,0 +1,198 @@
+
+body {
+  background-color: #fafafa;
+  padding: 20px;
+}
+
+*,:after,:before {
+    box-sizing: border-box;
+}
+
+.create-form {
+    display: flex;
+    margin: 0;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.create-form-text {
+  width: calc(100% - 80px);
+  border: 1px solid #ccc;
+  border-radius: 10px 0 0 10px;
+  overflow: hidden;
+}
+
+.create-form input {
+  width: 50%;
+  padding: 10px;
+  border: none;
+  outline: none;
+}
+
+.create-form input:first-child {
+  border-right: 1px solid #ccc;
+}
+
+.create-form button {
+  width: 80px;
+  border: none;
+  background-color: #8080dd;
+  border-radius: 0 10px 10px 0;
+  color: #fff;
+}
+
+ul.card-list {
+    display: block;
+    margin: 0;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+ul.card-list>li {
+    display: inline-flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+ul.card-list>li:last-child {
+  margin-bottom: 0;
+}
+
+.card-front, .card-back {
+    display: flex;
+    align-items: center;
+    width: calc(50% - 20px);
+    padding: 0 20px;
+    border-right: #dcdcdc solid 1px;
+}
+
+.card-check input{
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+}
+
+.card-front span, .card-back span {
+    font-size: 25px;
+    font-weight: 400;
+    word-wrap: break-word;
+    word-break: break-all;
+    color: #3d3d3d;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+.control-area {
+    display: block;
+    margin: 0;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+
+.control-area button {
+  display: block;
+  width: 100%;
+  background-color: #8080dd;
+  border: none;
+  border-radius: 20px;
+  padding: 10px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.control-area button:last-child {
+  margin-bottom: 0;
+}
+
+.learning-panel {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+
+.learning-panel .header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.learning-panel .header button {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  border: none;
+  outline: none;
+  background: none;
+  height: 100%;
+  padding: 0 10px;
+}
+
+.learning-panel .contents {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex: 1;
+}
+
+.learning-panel .contents .prev-btn {
+  position: absolute;
+  left: 0;
+  bottom: calc(50% - 40px);
+  height: 80px;
+  width: 40px;
+  background-color: #8080dd;
+  color: #fff;
+  border: none;
+  outline: none;
+  border-radius: 0 20px 20px 0;
+}
+
+.learning-panel .contents .next-btn {
+  position: absolute;
+  right: 0;
+  bottom: calc(50% - 40px);
+  height: 80px;
+  width: 40px;
+  background-color: #8080dd;
+  color: #fff;
+  border: none;
+  outline: none;
+  border-radius: 20px 0 0 20px;
+}
+
+.learning-panel .contents .check-btn {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  height: 80px;
+  width: 80px;
+  background-color: #8080dd;
+  color: #fff;
+  border: none;
+  outline: none;
+  font-size: 40px;
+  border-radius: 20px;
+}
