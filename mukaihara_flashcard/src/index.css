@@ -8,6 +8,15 @@ body {
     box-sizing: border-box;
 }
 
+button {
+  cursor: pointer;
+  transition: all ease .25s;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
 .create-form {
     display: flex;
     margin: 0;
@@ -55,6 +64,7 @@ ul.card-list {
 
 ul.card-list>li {
     display: inline-flex;
+    align-items: center;
     flex-wrap: wrap;
     width: 100%;
     padding: 10px;
@@ -67,11 +77,19 @@ ul.card-list>li:last-child {
   margin-bottom: 0;
 }
 
+.card-text {
+  display: flex;
+  width: calc(100% - 40px);
+}
+
 .card-front, .card-back {
     display: flex;
     align-items: center;
-    width: calc(50% - 20px);
+    width: 50%;
     padding: 0 20px;
+}
+
+.card-front {
     border-right: #dcdcdc solid 1px;
 }
 
@@ -109,7 +127,6 @@ ul.card-list>li:last-child {
     width: 100%;
 }
 
-
 .control-area button {
   display: block;
   width: 100%;
@@ -120,6 +137,11 @@ ul.card-list>li:last-child {
   color: #fff;
   margin-right: 10px;
 }
+
+.control-area button:hover {
+  transform: scale(1.025);
+}
+
 
 .control-area button:last-child {
   margin-right: 0;
@@ -144,9 +166,21 @@ ul.card-list>li:last-child {
   border-bottom: 1px solid #ccc;
 }
 
-.learning-panel .header button {
+.learning-panel .header button.stop-btn {
   position: absolute;
   left: 0;
+  bottom: 0;
+  border: none;
+  outline: none;
+  background: none;
+  height: 100%;
+  padding: 0 10px;
+  color: #aaa;
+}
+
+.learning-panel .header button.reset-btn {
+  position: absolute;
+  right: 0;
   bottom: 0;
   border: none;
   outline: none;
@@ -176,6 +210,7 @@ ul.card-list>li:last-child {
   border: none;
   outline: none;
   border-radius: 0 20px 20px 0;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
 }
 
 .learning-panel .contents .next-btn {
@@ -189,6 +224,7 @@ ul.card-list>li:last-child {
   border: none;
   outline: none;
   border-radius: 20px 0 0 20px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
 }
 
 .learning-panel .contents .check-btn {
@@ -203,4 +239,82 @@ ul.card-list>li:last-child {
   outline: none;
   font-size: 40px;
   border-radius: 20px;
+}
+
+.learning-panel .contents .read-btn {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  height: 80px;
+  width: 80px;
+  border: 2px solid #8080dd;
+  background-color: transparent;
+  color: #8080dd;
+  outline: none;
+  font-size: 40px;
+  border-radius: 20px;
+}
+
+.learning-panel .contents .active-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  font-size: 5vmax;
+  font-weight: 500;
+  padding: 0 20px;
+  word-wrap: break-word;
+}
+
+.learning-panel .footer {
+  padding: 10px;
+  background-color: #eee;
+}
+
+.learning-panel .footer .progress {
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.learning-panel .footer .progress-bar {
+  display: block;
+  background-color: #8080dd;
+  color: #fff;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px;
+  transition: all ease .25s;
+}
+
+@media screen and (max-width: 710px) {
+  .card-text {
+    display: block;
+    padding-right: 10px;
+  }
+
+  .card-front {
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    border-right: none;
+    padding: 5px 10px;
+  }
+
+  .card-back {
+    width: 100%;
+    padding: 5px 10px;
+  }
+  
+  .card-front span, .card-back span {
+      font-size: 16px;
+  }
+
+  .learning-panel .contents .read-btn,
+  .learning-panel .contents .check-btn {
+    height: 60px;
+    width: 60px;
+    border-radius: 10px;
+    font-size: 40px;
+  }
 }
