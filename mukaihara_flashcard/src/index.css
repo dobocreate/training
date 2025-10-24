@@ -2,6 +2,7 @@
 body {
   background-color: #fafafa;
   padding: 20px;
+  margin: 0;
 }
 
 *,:after,:before {
@@ -28,7 +29,7 @@ button:hover {
 }
 
 .create-form-text {
-  width: calc(100% - 80px);
+  width: calc(100% - 60px);
   border: 1px solid #ccc;
   border-radius: 10px 0 0 10px;
   overflow: hidden;
@@ -46,7 +47,7 @@ button:hover {
 }
 
 .create-form button {
-  width: 80px;
+  width: 60px;
   border: none;
   background-color: #8080dd;
   border-radius: 0 10px 10px 0;
@@ -289,6 +290,23 @@ ul.card-list>li:last-child {
 }
 
 @media screen and (max-width: 710px) {
+
+  .create-form input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #eee;
+  }
+
+  .create-form input:first-child {
+    border-right: none;
+  }
+
+  .create-form input:last-child {
+    border-bottom: none;
+  }
+
   .card-text {
     display: block;
     padding-right: 10px;
