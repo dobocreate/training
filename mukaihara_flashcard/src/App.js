@@ -5,7 +5,12 @@ function App() {
   const [cardFrontText, setCardFrontText] = useState("");
   const [cardBackText, setCardBackText] = useState("");
   const [cardList, setCardList] = useState([
-    { front: "表の文字" , back: "裏の文字", checked: false }
+    { front: "表の文字" , back: "裏の文字", checked: false },
+    { front: "0" , back: "1", checked: false },
+    { front: "2" , back: "3", checked: false },
+    { front: "4" , back: "5", checked: false },
+    { front: "6" , back: "7", checked: false },
+    { front: "8" , back: "9", checked: false }
   ])
 
   const [isRunned, setIsRunned] = useState(false);
@@ -39,7 +44,7 @@ function App() {
   const onClickCheck = (index) => {
     const newCardList = [...cardList];
 
-    newCardList[learningCardIndex/2].checked = !newCardList[learningCardIndex/2].checked; // チェックを反転
+    newCardList[parseInt(learningCardIndex/2)].checked = !newCardList[parseInt(learningCardIndex/2)].checked; // チェックを反転
 
     setCardList(newCardList);
   }
@@ -49,7 +54,7 @@ function App() {
   const onClickStop = () => setIsRunned(false);
 
   const onClickPrevCard = () =>  setLearningCardIndex(learningCardIndex > 0 ? learningCardIndex-1 : 0);
-  const onClickNextCard = () =>  setLearningCardIndex(learningCardIndex+1);
+  const onClickNextCard = () =>  setLearningCardIndex(learningCardIndex < cardList.length*2-1 ? learningCardIndex+1 : cardList.length*2-1);
 
   return (
     <>
@@ -70,14 +75,14 @@ function App() {
               <span>{card.back}</span>
             </div>
             <div className="card-check">
-              <input type="checkbox" defaultChecked={card.checked} onClick={() => onClickCardCheck(index)} />
+              <button onClick={() => onClickCardCheck(index)}>{card.checked ? "〇" : "×" }</button>
             </div>
           </li>
         ))}
       </ul>
       <div className="control-area">
-        <button onClick={onClickStart}>開始</button>
         <button onClick={onClickStop}>停止</button>
+        <button onClick={onClickStart}>開始</button>
       </div>
       { isRunned && /*学習パネルが起動中か否か */
       <div className="learning-panel">
@@ -88,8 +93,8 @@ function App() {
         <div className="contents">
           <button className="prev-btn" onClick={onClickPrevCard}>＜</button>
           <button className="next-btn" onClick={onClickNextCard}>＞</button>
-          <button className="check-btn" onClick={onClickCheck}>{cardList[learningCardIndex].checked ? "✓" : "" }</button>
-          <span>{learningCardIndex%2}</span>
+          <button className="check-btn" onClick={() => onClickCheck(parseInt(learningCardIndex/2))}>{cardList[parseInt(learningCardIndex/2)].checked ? "〇" : "×" }</button>
+          <span className="active-card">{learningCardIndex%2 ? cardList[parseInt(learningCardIndex/2)].back : cardList[parseInt(learningCardIndex/2)].front}</span>
         </div>
       </div>
       }

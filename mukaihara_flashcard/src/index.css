@@ -75,11 +75,18 @@ ul.card-list>li:last-child {
     border-right: #dcdcdc solid 1px;
 }
 
-.card-check input{
+.card-check button{
   display: block;
+  background-color: #8080dd;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  color: #fff;
+  margin-bottom: 10px;
   width: 40px;
   height: 40px;
   margin: 0;
+  font-size: 14px;
 }
 
 .card-front span, .card-back span {
@@ -93,7 +100,7 @@ ul.card-list>li:last-child {
 }
 
 .control-area {
-    display: block;
+    display: flex;
     margin: 0;
     padding: 20px;
     background-color: #fff;
@@ -111,11 +118,11 @@ ul.card-list>li:last-child {
   border-radius: 20px;
   padding: 10px;
   color: #fff;
-  margin-bottom: 10px;
+  margin-right: 10px;
 }
 
 .control-area button:last-child {
-  margin-bottom: 0;
+  margin-right: 0;
 }
 
 .learning-panel {
@@ -146,6 +153,7 @@ ul.card-list>li:last-child {
   background: none;
   height: 100%;
   padding: 0 10px;
+  color: #aaa;
 }
 
 .learning-panel .contents {
