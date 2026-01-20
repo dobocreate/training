@@ -211,7 +211,7 @@ export default function Home() {
           {/* Toggle Button for Calendar */}
           <button
             onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-            className="absolute top-24 left-8 z-30 p-3 rounded-full bg-white dark:bg-zinc-800 shadow-md hover:shadow-lg transition-all text-gray-500 hover:text-blue-600 dark:text-gray-400 group border border-gray-100 dark:border-zinc-700"
+            className="absolute top-24 left-8 z-30 p-3 rounded-full bg-blue-600 text-white shadow-md hover:shadow-lg hover:bg-blue-700 transition-all group border border-blue-500 dark:border-blue-800"
             title={isCalendarOpen ? "カレンダーを閉じる" : "カレンダーを開く"}
           >
             {isCalendarOpen ? (
