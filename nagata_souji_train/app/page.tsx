@@ -242,6 +242,27 @@ export default function Home() {
 
       {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
       <button
+        onClick={() => {
+          setIsCleaningMenuOpen(true);
+          setTimeout(() => {
+            document.getElementById("bulletin-board")?.scrollIntoView({ behavior: "smooth" });
+          }, 100);
+        }}
+        className="absolute bottom-60 right-10 flex flex-row-reverse items-center bg-white text-blue-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out z-40 h-20 w-20 group overflow-hidden"
+        aria-label="掃除連絡掲示板"
+      >
+        <div className="w-20 h-full flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-10 h-10">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3h9m-9 3h3m-6.75 4.125l-.033.033L4.875 18l.033-.033M12 21.75l-4.5-4.5H4.875c-.621 0-1.125-.504-1.125-1.125V4.125c0-.621.504-1.125 1.125-1.125h14.25c.621 0 1.125.504 1.125 1.125v12c0 .621-.504 1.125-1.125 1.125h-4.5l-4.5 4.5z" />
+          </svg>
+        </div>
+        <span className="whitespace-nowrap font-bold text-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-4">
+          掃除連絡掲示板
+        </span>
+      </button>
+
+      {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
+      <button
         onClick={() => setIsCleaningMenuOpen(true)}
         className="absolute bottom-36 right-10 flex flex-row-reverse items-center bg-white text-emerald-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out z-40 h-20 w-20 group overflow-hidden"
         aria-label="掃除メニュー"
@@ -378,7 +399,7 @@ export default function Home() {
           </div>
 
           {/* Bulletin Board Section */}
-          <div className="h-[450px] flex flex-col pt-6 border-t-2 border-gray-100 dark:border-zinc-800">
+          <div id="bulletin-board" className="h-[450px] flex flex-col pt-6 border-t-2 border-gray-100 dark:border-zinc-800">
             <h3 className="text-2xl font-black mb-4 flex items-center gap-3 text-blue-600 dark:text-blue-400">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-7 h-7">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3h9m-9 3h3m-6.75 4.125l-.033.033L4.875 18l.033-.033M12 21.75l-4.5-4.5H4.875c-.621 0-1.125-.504-1.125-1.125V4.125c0-.621.504-1.125 1.125-1.125h14.25c.621 0 1.125.504 1.125 1.125v12c0 .621-.504 1.125-1.125 1.125h-4.5l-4.5 4.5z" />
@@ -482,12 +503,17 @@ export default function Home() {
           {!isCalendarOpen && (
             <button
               onClick={() => setIsCalendarOpen(true)}
-              className="absolute top-40 left-8 z-50 p-5 rounded-full bg-blue-600 text-white shadow-md hover:shadow-lg hover:bg-blue-700 transition-all group border border-blue-500 dark:border-blue-800"
-              title="カレンダーを開く"
+              className="absolute top-40 left-8 z-50 flex items-center bg-blue-600 text-white rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out h-20 w-20 group overflow-hidden"
+              aria-label="当番カレンダー"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-10 h-10">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-              </svg>
+              <div className="w-20 h-full flex items-center justify-center flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-10 h-10">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                </svg>
+              </div>
+              <span className="whitespace-nowrap font-bold text-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-4">
+                当番カレンダー
+              </span>
             </button>
           )}
 
