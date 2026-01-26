@@ -66,13 +66,26 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
         }
     };
 
-    // Stats calculation for profile
+    // Stats calculation for profile - Updated to match Calendar visualization logic
     const getMemberStats = (name: string) => {
-        const memberHistory = history.filter(h => h.member === name);
-        const count = memberHistory.length;
-        // Sort descending by date
-        const sortedHistory = [...memberHistory].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        const recentDates = sortedHistory.slice(0, 5).map(h => new Date(h.date).toLocaleDateString());
+        // Step 1: Map the LATEST member assigned to each unique date string
+        const dateToLatestMember = new Map<string, string>();
+        history.forEach(h => {
+            const dateStr = new Date(h.date).toDateString();
+            dateToLatestMember.set(dateStr, h.member);
+        });
+
+        // Step 2: Extract dates where 'name' is the assigned member
+        const assignedDates = Array.from(dateToLatestMember.entries())
+            .filter(([_, member]) => member === name)
+            .map(([date, _]) => date);
+
+        const count = assignedDates.length;
+
+        // Step 3: Sort descending for "recent activity" list
+        const sortedDates = [...assignedDates].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+        const recentDates = sortedDates.slice(0, 5).map(dateStr => new Date(dateStr).toLocaleDateString());
+
         return { count, recentDates };
     };
 
@@ -97,7 +110,7 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
             {/* Toggle Button (Always Visible) */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className={`absolute bottom-10 right-10 flex flex-row-reverse items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-2xl text-white z-50 group border-4 border-white dark:border-zinc-800 transition-all duration-300 ease-out overflow-hidden ${isExpanded ? "w-20 h-20 rotate-90 from-gray-500 to-gray-600" : "h-20 w-20 hover:w-72"
+                className={`absolute bottom-10 right-10 flex flex-row-reverse items-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-2xl text-white z-50 group border-4 border-white dark:border-zinc-800 transition-all duration-300 ease-out overflow-hidden ${isExpanded ? "w-20 h-20 rotate-90 from-gray-500 to-gray-600" : "h-20 w-20 hover:w-72"
                     } `}
                 aria-label={isExpanded ? "閉じる" : "メンバー管理"}
             >

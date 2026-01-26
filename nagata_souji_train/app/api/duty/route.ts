@@ -12,6 +12,7 @@ interface DutyData {
     lastUpdated: string;
     history?: { member: string; date: string }[];
     profiles?: Record<string, { color: string; affiliation: string }>;
+    messages?: { id: string; sender: string; content: string; date: string }[];
 }
 
 const DATA_FILE = path.join(process.cwd(), "data", "duty.json");
@@ -23,12 +24,14 @@ function readData(): DutyData {
             currentIndex: 0,
             lastUpdated: new Date().toISOString(),
             history: [],
-            profiles: {}
+            profiles: {},
+            messages: []
         };
     }
     const data = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
     if (!data.profiles) data.profiles = {};
     if (!data.history) data.history = [];
+    if (!data.messages) data.messages = [];
     return data;
 }
 
@@ -120,6 +123,23 @@ export async function POST(req: Request) {
         if (member) {
             if (!data.profiles) data.profiles = {};
             data.profiles[member] = { color, affiliation };
+            writeData(data);
+        }
+        return NextResponse.json(data);
+    } else if (action === "addMessage") {
+        const { sender, content } = body;
+        if (sender && content) {
+            if (!data.messages) data.messages = [];
+            data.messages.push({
+                id: Math.random().toString(36).substring(2, 11),
+                sender,
+                content,
+                date: new Date().toISOString()
+            });
+            // Keep only last 50 messages to prevent JSON bloat
+            if (data.messages.length > 50) {
+                data.messages = data.messages.slice(-50);
+            }
             writeData(data);
         }
         return NextResponse.json(data);

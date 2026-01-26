@@ -16,9 +16,22 @@ interface DutyCalendarProps {
     lastUpdated?: string;
     members: string[];
     onAddHistory: (date: Date, member: string) => void;
+    loading: boolean;
+    nextPerson: string;
+    dutyCount: number;
+    onNext: () => Promise<void>;
 }
 
-export default function DutyCalendar({ history, members, onAddHistory }: DutyCalendarProps) {
+export default function DutyCalendar({
+    history,
+    members,
+    onAddHistory,
+    loading,
+    nextPerson,
+    dutyCount,
+    onNext,
+    currentMember
+}: DutyCalendarProps) {
     const [historyMap, setHistoryMap] = useState<Record<string, string>>({});
 
     // Modal State
@@ -59,7 +72,7 @@ export default function DutyCalendar({ history, members, onAddHistory }: DutyCal
                 const color = getMemberColor(member);
                 return (
                     <div className="flex-1 flex items-center justify-center w-full">
-                        <span className={`inline-block px-2 py-1 rounded-md text-xs font-bold truncate max-w-full ${color.bg} ${color.text} ${color.darkBg} ${color.darkText}`}>
+                        <span className={`inline-block px-3 py-1.5 rounded-md text-lg font-bold truncate max-w-full ${color.bg} ${color.text} ${color.darkBg} ${color.darkText}`}>
                             {member}
                         </span>
                     </div>
@@ -74,13 +87,54 @@ export default function DutyCalendar({ history, members, onAddHistory }: DutyCal
             <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex justify-center items-center bg-white dark:bg-zinc-900">
                 <h3 className="font-bold text-4xl dark:text-zinc-200">当番カレンダー</h3>
             </div>
-            <div className="flex-1 overflow-auto bg-white dark:bg-zinc-900">
+            <div className="flex-1 overflow-auto bg-white dark:bg-zinc-900 scrollbar-hide">
                 <Calendar
                     tileContent={tileContent}
                     onClickDay={handleDayClick}
-                    className="!w-full !border-none !font-sans dark:!bg-zinc-900 dark:!text-zinc-200 text-lg h-full"
-                    tileClassName="dark:hover:!bg-zinc-800 flex flex-col pt-2 items-center min-h-[100px] flex-1 hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="!w-full !border-none !font-sans dark:!bg-zinc-900 dark:!text-zinc-200 text-lg"
+                    tileClassName="dark:hover:!bg-zinc-800 flex flex-col pt-2 items-center min-h-[140px] flex-1 hover:bg-gray-50 transition-colors cursor-pointer"
                 />
+            </div>
+
+            {/* Integrated Action Panel - Moved from Roulette side */}
+            <div className="p-6 bg-gray-50 dark:bg-zinc-800/50 border-t border-gray-100 dark:border-zinc-800 flex flex-col items-center gap-6">
+                <div className="flex items-center gap-12">
+                    <div className="flex flex-col items-center">
+                        <span className="text-xs uppercase tracking-widest text-gray-400 font-bold mb-2">当番回数</span>
+                        <div className="px-8 py-3 bg-white dark:bg-zinc-900 rounded-2xl text-blue-600 dark:text-blue-400 font-black text-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
+                            {dutyCount} <span className="text-sm ml-1 opacity-60">回</span>
+                        </div>
+                    </div>
+
+                    {!loading && (
+                        <div className="flex flex-col items-center">
+                            <span className="text-xs uppercase tracking-widest text-gray-400 font-bold mb-2">次回の担当</span>
+                            <div className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white font-black">
+                                <span className="bg-white dark:bg-zinc-900 px-6 py-3 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 min-w-[120px] text-center">{nextPerson}</span>
+                                <span className="text-base text-gray-400">さん</span>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <button
+                    onClick={onNext}
+                    disabled={loading || !currentMember}
+                    className={`w-full max-w-lg py-6 px-12 rounded-3xl text-3xl font-black text-white shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-4 ${loading
+                        ? "bg-gray-400 cursor-not-allowed grayscale"
+                        : "bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/20"
+                        }`}
+                >
+                    {loading ? (
+                        <span className="flex items-center gap-3">
+                            <svg className="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            送信中...
+                        </span>
+                    ) : "完了して次へ"}
+                </button>
             </div>
 
             {/* Modal */}
@@ -194,11 +248,15 @@ export default function DutyCalendar({ history, members, onAddHistory }: DutyCal
 
                 /* Date Number Positioning (Top Left) */
                 .calendar-wrapper .react-calendar__tile abbr {
-                    font-weight: bold;
-                    font-size: 1rem;
+                    font-weight: 900;
+                    font-size: 7rem;
+                    line-height: 1;
                     align-self: flex-start;
                     margin-bottom: auto; /* Push content down */
-                    padding-left: 4px;
+                    padding-left: 12px;
+                    padding-top: 8px;
+                    color: #1e293b;
+                    letter-spacing: -2px;
                 }
 
                 /* Weekend Colors for Dates */
@@ -245,14 +303,15 @@ export default function DutyCalendar({ history, members, onAddHistory }: DutyCal
 
                 /* Navigation Buttons */
                 .calendar-wrapper .react-calendar__navigation {
-                    height: 60px;
+                    height: 120px;
                     margin-bottom: 0;
                     background: #f9fafb;
                     border-bottom: 1px solid #e5e7eb;
                 }
                 .calendar-wrapper .react-calendar__navigation button {
-                    font-size: 1.5rem;
-                    font-weight: bold;
+                    font-size: 16rem;
+                    font-weight: 900;
+                    color: #2563eb;
                 }
                 @media (prefers-color-scheme: dark) {
                     .calendar-wrapper .react-calendar__navigation {
