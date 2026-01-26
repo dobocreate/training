@@ -105,6 +105,23 @@ export default function DutyCalendar({
                     onClickDay={handleDayClick}
                     className="!w-full !border-none !font-sans dark:!bg-zinc-900 dark:!text-zinc-200 text-lg"
                     tileClassName="dark:hover:!bg-zinc-800 flex flex-col pt-2 items-center min-h-[140px] flex-1 hover:bg-gray-50 transition-colors cursor-pointer"
+                    prevLabel={
+                        <div className="flex items-center justify-center p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-12 h-12 text-blue-600 dark:text-blue-400">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                            </svg>
+                        </div>
+                    }
+                    nextLabel={
+                        <div className="flex items-center justify-center p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-12 h-12 text-blue-600 dark:text-blue-400">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                            </svg>
+                        </div>
+                    }
+                    next2Label={null}
+                    prev2Label={null}
+                    formatShortWeekday={(locale, date) => ['日', '月', '火', '水', '木', '金', '土'][date.getDay()]}
                 />
             </div>
 
@@ -321,9 +338,12 @@ export default function DutyCalendar({
                     border-bottom: 1px solid #e5e7eb;
                 }
                 .calendar-wrapper .react-calendar__navigation button {
-                    font-size: 16rem;
-                    font-weight: 900;
+                    font-size: 2rem;
+                    font-weight: 700;
                     color: #2563eb;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
                 @media (prefers-color-scheme: dark) {
                     .calendar-wrapper .react-calendar__navigation {

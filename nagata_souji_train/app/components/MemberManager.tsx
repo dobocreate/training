@@ -98,7 +98,7 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
 
         // Step 3: Sort descending for "recent activity" list
         const sortedDates = [...assignedDates].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-        const recentDates = sortedDates.slice(0, 5).map(dateStr => new Date(dateStr).toLocaleDateString());
+        const recentDates = sortedDates.map(dateStr => new Date(dateStr).toLocaleDateString());
 
         return { count, recentDates };
     };
@@ -126,7 +126,7 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
             {/* Toggle Button (Always Visible) */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className={`absolute bottom-10 right-10 flex flex-row-reverse items-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-2xl text-white z-50 group border-4 border-white dark:border-zinc-800 transition-all duration-300 ease-out overflow-hidden ${isExpanded ? "w-20 h-20 rotate-90 from-gray-500 to-gray-600" : "h-20 w-20 hover:w-72"
+                className={`absolute bottom-10 right-10 flex flex-row-reverse items-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-2xl text-white z-50 group border-4 border-white dark:border-zinc-800 transition-all duration-300 ease-out overflow-hidden ${isExpanded ? "w-20 h-20 from-gray-500 to-gray-600" : "h-20 w-20 hover:w-72"
                     } `}
                 aria-label={isExpanded ? "閉じる" : "メンバー管理"}
             >
@@ -387,18 +387,21 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
 
                                     <div className="text-left">
                                         <h3 className="text-sm font-bold text-gray-900 dark:text-gray-300 mb-3 ml-1">最近の活動</h3>
-                                        <div className="bg-gray-50 dark:bg-zinc-800 rounded-2xl p-4">
+                                        <div className="bg-gray-50 dark:bg-zinc-800 rounded-2xl p-4 max-h-48 overflow-y-auto custom-scrollbar border border-gray-100 dark:border-zinc-700/50">
                                             {getMemberStats(selectedMember).recentDates.length > 0 ? (
-                                                <ul className="space-y-2">
-                                                    {getMemberStats(selectedMember).recentDates.map((date, i) => (
-                                                        <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 py-1 border-b last:border-0 border-gray-100 dark:border-zinc-700">
-                                                            <div className={`w-2 h-2 rounded-full ${getColor(selectedMember).bg}`}></div>
-                                                            {date}
-                                                        </li>
-                                                    ))}
+                                                <ul className="space-y-1">
+                                                    {getMemberStats(selectedMember).recentDates.map((date, i) => {
+                                                        const mColor = getColor(selectedMember);
+                                                        return (
+                                                            <li key={i} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 py-2 border-b last:border-0 border-gray-100/50 dark:border-zinc-700/50">
+                                                                <div className={`w-2 h-2 rounded-full ${isHex(mColor.bg) ? "" : mColor.bg}`} style={isHex(mColor.bg) ? { backgroundColor: mColor.bg } : {}}></div>
+                                                                <span className="font-medium tracking-tight">{date}</span>
+                                                            </li>
+                                                        );
+                                                    })}
                                                 </ul>
                                             ) : (
-                                                <p className="text-sm text-gray-400 text-center py-2">履歴がありません</p>
+                                                <p className="text-sm text-gray-400 text-center py-4">履歴がありません</p>
                                             )}
                                         </div>
                                     </div>

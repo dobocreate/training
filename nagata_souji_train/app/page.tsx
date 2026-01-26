@@ -35,6 +35,8 @@ export default function Home() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(true);
   const [isEditingManual, setIsEditingManual] = useState(false);
   const [editManualContent, setEditManualContent] = useState("");
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editMessageContent, setEditMessageContent] = useState("");
 
   const fetchData = async () => {
     try {
@@ -168,6 +170,37 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Failed to add message", error);
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (!confirm("メッセージを削除しますか？")) return;
+    try {
+      const res = await fetch("/api/duty", {
+        method: "POST",
+        body: JSON.stringify({ action: "deleteMessage", id }),
+      });
+      if (res.ok) {
+        await fetchData();
+      }
+    } catch (error) {
+      console.error("Failed to delete message", error);
+    }
+  };
+
+  const handleEditMessage = async () => {
+    if (!editingMessageId || !editMessageContent.trim()) return;
+    try {
+      const res = await fetch("/api/duty", {
+        method: "POST",
+        body: JSON.stringify({ action: "editMessage", id: editingMessageId, content: editMessageContent.trim() }),
+      });
+      if (res.ok) {
+        await fetchData();
+        setEditingMessageId(null);
+      }
+    } catch (error) {
+      console.error("Failed to edit message", error);
     }
   };
 
@@ -352,8 +385,8 @@ export default function Home() {
             onClick={() => setIsManualOpen(false)}
             className="absolute top-6 left-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition group/close"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8 text-gray-400 group-hover/close:-translate-x-1 transition-transform">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8 text-gray-400 group-hover/close:translate-x-1 transition-transform">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
           </button>
 
@@ -540,14 +573,67 @@ export default function Home() {
           <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2 custom-scrollbar flex flex-col-reverse">
             {data.messages && data.messages.length > 0 ? (
               [...data.messages].reverse().map((msg) => (
-                <div key={msg.id} className="flex flex-col gap-1 items-start">
+                <div key={msg.id} className="flex flex-col gap-1 items-start group/msg">
                   <div className="flex items-center gap-2 px-1">
                     <span className={`text-xs font-bold ${getColor(msg.sender).text} ${getColor(msg.sender).darkText}`}>{msg.sender}</span>
                     <span className="text-[10px] text-gray-400">{new Date(msg.date).toLocaleString()}</span>
                   </div>
-                  <div className="bg-white dark:bg-zinc-800 px-4 py-2.5 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-zinc-700 text-gray-800 dark:text-zinc-200 text-sm max-w-[90%] break-words">
-                    {msg.content}
-                  </div>
+
+                  {editingMessageId === msg.id ? (
+                    <div className="w-full space-y-2 bg-white dark:bg-zinc-800 p-3 rounded-2xl border-2 border-blue-500 shadow-lg animate-in zoom-in-95 duration-150">
+                      <textarea
+                        value={editMessageContent}
+                        onChange={(e) => setEditMessageContent(e.target.value)}
+                        className="w-full p-2 text-sm bg-gray-50 dark:bg-zinc-900 border rounded-xl outline-none focus:ring-1 focus:ring-blue-500"
+                        autoFocus
+                      />
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => setEditingMessageId(null)}
+                          className="px-3 py-1 text-xs font-bold text-gray-500 hover:bg-gray-100 rounded-lg transition"
+                        >
+                          キャンセル
+                        </button>
+                        <button
+                          onClick={handleEditMessage}
+                          className="px-3 py-1 text-xs font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm"
+                        >
+                          保存
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-2 w-full">
+                      <div className="bg-white dark:bg-zinc-800 px-4 py-2.5 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-zinc-700 text-gray-800 dark:text-zinc-200 text-sm max-w-[85%] break-words flex-shrink-0">
+                        {msg.content}
+                      </div>
+
+                      {/* Action Buttons: Positioned beside the bubble */}
+                      <div className="flex items-center gap-0.5 opacity-0 group-hover/msg:opacity-100 transition-opacity pt-1 flex-shrink-0">
+                        <button
+                          onClick={() => {
+                            setEditingMessageId(msg.id);
+                            setEditMessageContent(msg.content);
+                          }}
+                          className="p-1.5 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full text-gray-400 hover:text-blue-500 transition"
+                          title="編集"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor" className="w-4 h-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteMessage(msg.id)}
+                          className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full text-gray-400 hover:text-red-500 transition"
+                          title="削除"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.2} stroke="currentColor" className="w-4 h-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (

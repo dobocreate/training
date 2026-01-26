@@ -151,6 +151,23 @@ export async function POST(req: Request) {
             writeData(data);
         }
         return NextResponse.json(data);
+    } else if (action === "deleteMessage") {
+        const { id } = body;
+        if (id && data.messages) {
+            data.messages = data.messages.filter(m => m.id !== id);
+            writeData(data);
+        }
+        return NextResponse.json(data);
+    } else if (action === "editMessage") {
+        const { id, content } = body;
+        if (id && content && data.messages) {
+            const index = data.messages.findIndex(m => m.id === id);
+            if (index !== -1) {
+                data.messages[index].content = content;
+                writeData(data);
+            }
+        }
+        return NextResponse.json(data);
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
