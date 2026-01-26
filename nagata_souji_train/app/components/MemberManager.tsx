@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { getMemberColor, memberColors } from "@/lib/colors";
+import { useState, useEffect, useRef } from "react";
+import { getMemberColor, memberColors, isHex, getCustomColor, getContrastColor } from "@/lib/colors";
 
 interface MemberManagerProps {
     members: string[];
@@ -13,6 +13,10 @@ interface MemberManagerProps {
 }
 
 export default function MemberManager({ members, history, profiles = {}, onUpdate, onUpdateProfile }: MemberManagerProps) {
+    // Get all colors currently in use by profiles
+    const usedColors = Object.values(profiles).map(p => p.color);
+
+    const colorInputRef = useRef<HTMLInputElement>(null);
     const [newMember, setNewMember] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedMember, setSelectedMember] = useState<string | null>(null);
@@ -34,8 +38,18 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
 
     const handleAdd = () => {
         if (!newMember.trim()) return;
-        const updated = [...members, newMember.trim()];
+        const name = newMember.trim();
+        const updated = [...members, name];
         onUpdate(updated);
+
+        // Auto-assign an unused color if profiles sync is available
+        if (onUpdateProfile) {
+            const unusedColor = memberColors.find(c => !usedColors.includes(c.bg));
+            if (unusedColor) {
+                onUpdateProfile(name, unusedColor.bg, "");
+            }
+        }
+
         setNewMember("");
     };
 
@@ -91,12 +105,14 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
 
     // Helper to get color style: prefer profile color, fallback to hash
     const getColor = (member: string) => {
-        if (profiles[member] && profiles[member].color) {
-            // Find the full color object that matches this bg class
-            const found = memberColors.find(c => c.bg === profiles[member].color);
+        const profile = profiles[member];
+        if (profile && profile.color) {
+            if (isHex(profile.color)) {
+                return getCustomColor(profile.color);
+            }
+            const found = memberColors.find(c => c.bg === profile.color);
             if (found) return found;
-            // fallback if stored color is just a string (should match bg)
-            return { ...getMemberColor(member), bg: profiles[member].color };
+            return { ...getMemberColor(member), bg: profile.color };
         }
         return getMemberColor(member);
     }
@@ -183,8 +199,8 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
                                         <span className="w-6 h-6 flex items-center justify-center bg-white dark:bg-zinc-800 rounded-full text-xs font-bold text-gray-400 border border-gray-100 dark:border-zinc-700">
                                             {index + 1}
                                         </span>
-                                        <span className={`w-3 h-3 rounded-full ${color.bg} ${color.ring} ring-1`}></span>
-                                        <span className={`font-medium dark:text-zinc-300 ${color.text} ${color.darkText}`}>{member}</span>
+                                        <span className={`w-3 h-3 rounded-full ${isHex(color.bg) ? "" : color.bg} ${color.ring} ring-1`} style={isHex(color.bg) ? { backgroundColor: color.bg } : {}}></span>
+                                        <span className={`font-medium dark:text-zinc-300 ${color.text} ${color.darkText}`} style={isHex(color.bg) ? { color: color.text === "text-white" ? "#fff" : "#111" } : {}}>{member}</span>
                                     </div>
 
                                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
@@ -231,7 +247,10 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header with Color */}
-                        <div className={`h-32 ${isEditing ? editColor : getColor(selectedMember).bg} relative flex items-center justify-center transition-colors duration-300`}>
+                        <div
+                            className={`h-32 ${isEditing ? (isHex(editColor) ? "" : editColor) : (isHex(getColor(selectedMember).bg) ? "" : getColor(selectedMember).bg)} relative flex items-center justify-center transition-colors duration-300`}
+                            style={isEditing && isHex(editColor) ? { backgroundColor: editColor } : (!isEditing && isHex(getColor(selectedMember).bg) ? { backgroundColor: getColor(selectedMember).bg } : {})}
+                        >
                             <button
                                 onClick={() => setSelectedMember(null)}
                                 className="absolute top-4 right-4 p-2 bg-white/50 hover:bg-white rounded-full transition shadow-sm z-10"
@@ -278,13 +297,56 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
                                     <div className="text-left">
                                         <label className="text-xs font-bold text-gray-500 block mb-2">テーマカラー</label>
                                         <div className="flex flex-wrap gap-2">
-                                            {memberColors.map((c) => (
-                                                <button
-                                                    key={c.bg}
-                                                    onClick={() => setEditColor(c.bg)}
-                                                    className={`w-8 h-8 rounded-full ${c.bg} border-2 ${editColor === c.bg ? "border-black dark:border-white scale-110" : "border-transparent"}`}
+                                            {memberColors.map((c) => {
+                                                const isUsedByOthers = usedColors.includes(c.bg) && c.bg !== profiles[selectedMember]?.color;
+                                                return (
+                                                    <button
+                                                        key={c.bg}
+                                                        onClick={() => setEditColor(c.bg)}
+                                                        className={`w-10 h-10 rounded-full ${c.bg} border-2 ${editColor === c.bg ? "border-black dark:border-white scale-110" : "border-transparent"} relative flex items-center justify-center transition-all hover:scale-110`}
+                                                        title={isUsedByOthers ? "他のメンバーが使用中" : ""}
+                                                    >
+                                                        {isUsedByOthers && (
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-full">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5 text-gray-500 opacity-60">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                                                </svg>
+                                                            </div>
+                                                        )}
+                                                        {editColor === c.bg && (
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-6 h-6 text-gray-800 dark:text-gray-200 drop-shadow-sm">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                            </svg>
+                                                        )}
+                                                    </button>
+                                                );
+                                            })}
+
+                                            {/* Custom Color Selector */}
+                                            <div className="relative">
+                                                <input
+                                                    type="color"
+                                                    ref={colorInputRef}
+                                                    onChange={(e) => setEditColor(e.target.value)}
+                                                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                                                 />
-                                            ))}
+                                                <button
+                                                    onClick={() => colorInputRef.current?.click()}
+                                                    className={`w-10 h-10 rounded-full border-2 border-dashed ${isHex(editColor) ? "border-solid" : "border-gray-300 dark:border-zinc-700"} flex items-center justify-center transition-all hover:scale-110 active:scale-95`}
+                                                    style={isHex(editColor) ? { backgroundColor: editColor, borderColor: "#000" } : {}}
+                                                    title="カスタムカラーを作成"
+                                                >
+                                                    {isHex(editColor) ? (
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className={`w-6 h-6 ${getContrastColor(editColor) === "text-white" ? "text-white" : "text-gray-800"}`}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                        </svg>
+                                                    ) : (
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6 text-gray-400">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                        </svg>
+                                                    )}
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="flex gap-2 justify-center mt-4">

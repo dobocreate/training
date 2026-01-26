@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import MemberManager from "./components/MemberManager";
 import DutyCalendar from "./components/DutyCalendar";
 import RouletteDisplay from "./components/RouletteDisplay";
-import { getMemberColor, memberColors } from "@/lib/colors";
+import { getMemberColor, memberColors, isHex, getCustomColor } from "@/lib/colors";
 
 interface DutyData {
   members: string[];
@@ -29,7 +29,8 @@ interface MemberManagerProps {
 export default function Home() {
   const [data, setData] = useState<DutyData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isCleaningMenuOpen, setIsCleaningMenuOpen] = useState(false);
+  const [isManualOpen, setIsManualOpen] = useState(false);
+  const [isBulletinOpen, setIsBulletinOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(true);
 
   const fetchData = async () => {
@@ -222,10 +223,14 @@ export default function Home() {
   }
 
   const getColor = (member: string) => {
-    if (data.profiles && data.profiles[member] && data.profiles[member].color) {
-      const found = memberColors.find(c => c.bg === data.profiles[member].color);
+    const profile = data.profiles?.[member];
+    if (profile && profile.color) {
+      if (isHex(profile.color)) {
+        return getCustomColor(profile.color);
+      }
+      const found = memberColors.find(c => c.bg === profile.color);
       if (found) return found;
-      return { ...getMemberColor(member), bg: data.profiles[member].color };
+      return { ...getMemberColor(member), bg: profile.color };
     }
     return getMemberColor(member);
   };
@@ -243,10 +248,8 @@ export default function Home() {
       {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
       <button
         onClick={() => {
-          setIsCleaningMenuOpen(true);
-          setTimeout(() => {
-            document.getElementById("bulletin-board")?.scrollIntoView({ behavior: "smooth" });
-          }, 100);
+          setIsBulletinOpen(true);
+          setIsManualOpen(false);
         }}
         className="absolute bottom-60 right-10 flex flex-row-reverse items-center bg-white text-blue-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out z-40 h-20 w-20 group overflow-hidden"
         aria-label="掃除連絡掲示板"
@@ -263,7 +266,10 @@ export default function Home() {
 
       {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
       <button
-        onClick={() => setIsCleaningMenuOpen(true)}
+        onClick={() => {
+          setIsManualOpen(true);
+          setIsBulletinOpen(false);
+        }}
         className="absolute bottom-36 right-10 flex flex-row-reverse items-center bg-white text-emerald-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out z-40 h-20 w-20 group overflow-hidden"
         aria-label="掃除メニュー"
       >
@@ -277,13 +283,13 @@ export default function Home() {
         </span>
       </button>
 
-      {/* Cleaning Menu Overlay */}
+      {/* Cleaning Manual Overlay */}
       <div
-        className={`fixed inset-y-0 right-0 w-1/2 z-[100] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out dark:bg-zinc-900/95 border-l border-gray-100 dark:border-zinc-800 ${isCleaningMenuOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 w-1/2 z-[100] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out dark:bg-zinc-900/95 border-l border-gray-100 dark:border-zinc-800 ${isManualOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="p-8 h-full flex flex-col relative">
           <button
-            onClick={() => setIsCleaningMenuOpen(false)}
+            onClick={() => setIsManualOpen(false)}
             className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-gray-400">
@@ -301,7 +307,7 @@ export default function Home() {
             </div>
           </h2>
 
-          <div className="flex-1 overflow-y-auto mb-6 pr-2 custom-scrollbar space-y-10">
+          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-10">
             {/* Sector 1: Rules */}
             <div className="bg-emerald-50/50 dark:bg-emerald-900/10 p-6 rounded-3xl border border-emerald-100 dark:border-emerald-900/30">
               <h3 className="font-bold text-xl mb-4 text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
@@ -397,68 +403,81 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Bulletin Board Section */}
-          <div id="bulletin-board" className="h-[450px] flex flex-col pt-6 border-t-2 border-gray-100 dark:border-zinc-800">
-            <h3 className="text-2xl font-black mb-4 flex items-center gap-3 text-blue-600 dark:text-blue-400">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-7 h-7">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3h9m-9 3h3m-6.75 4.125l-.033.033L4.875 18l.033-.033M12 21.75l-4.5-4.5H4.875c-.621 0-1.125-.504-1.125-1.125V4.125c0-.621.504-1.125 1.125-1.125h14.25c.621 0 1.125.504 1.125 1.125v12c0 .621-.504 1.125-1.125 1.125h-4.5l-4.5 4.5z" />
-              </svg>
-              掃除連絡掲示板
-            </h3>
+      {/* Cleaning Bulletin Board Overlay */}
+      <div
+        className={`fixed inset-y-0 right-0 w-1/2 z-[100] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out dark:bg-zinc-900/95 border-l border-gray-100 dark:border-zinc-800 ${isBulletinOpen ? "translate-x-0" : "translate-x-full"}`}
+      >
+        <div className="p-8 h-full flex flex-col relative">
+          <button
+            onClick={() => setIsBulletinOpen(false)}
+            className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-gray-400">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
 
-            {/* Message List */}
-            <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2 custom-scrollbar flex flex-col-reverse">
-              {data.messages && data.messages.length > 0 ? (
-                [...data.messages].reverse().map((msg) => (
-                  <div key={msg.id} className="flex flex-col gap-1 items-start">
-                    <div className="flex items-center gap-2 px-1">
-                      <span className={`text-xs font-bold ${getColor(msg.sender).text} ${getColor(msg.sender).darkText}`}>{msg.sender}</span>
-                      <span className="text-[10px] text-gray-400">{new Date(msg.date).toLocaleString()}</span>
-                    </div>
-                    <div className="bg-white dark:bg-zinc-800 px-4 py-2.5 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-zinc-700 text-gray-800 dark:text-zinc-200 text-sm max-w-[90%] break-words">
-                      {msg.content}
-                    </div>
+          <h3 className="text-3xl font-black mb-8 flex items-center gap-3 text-blue-600 dark:text-blue-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3h9m-9 3h3m-6.75 4.125l-.033.033L4.875 18l.033-.033M12 21.75l-4.5-4.5H4.875c-.621 0-1.125-.504-1.125-1.125V4.125c0-.621.504-1.125 1.125-1.125h14.25c.621 0 1.125.504 1.125 1.125v12c0 .621-.504 1.125-1.125 1.125h-4.5l-4.5 4.5z" />
+            </svg>
+            掃除連絡掲示板
+          </h3>
+
+          {/* Message List */}
+          <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2 custom-scrollbar flex flex-col-reverse">
+            {data.messages && data.messages.length > 0 ? (
+              [...data.messages].reverse().map((msg) => (
+                <div key={msg.id} className="flex flex-col gap-1 items-start">
+                  <div className="flex items-center gap-2 px-1">
+                    <span className={`text-xs font-bold ${getColor(msg.sender).text} ${getColor(msg.sender).darkText}`}>{msg.sender}</span>
+                    <span className="text-[10px] text-gray-400">{new Date(msg.date).toLocaleString()}</span>
                   </div>
-                ))
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-2 italic">
-                  <p>まだメッセージはありません</p>
+                  <div className="bg-white dark:bg-zinc-800 px-4 py-2.5 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-zinc-700 text-gray-800 dark:text-zinc-200 text-sm max-w-[90%] break-words">
+                    {msg.content}
+                  </div>
                 </div>
-              )}
-            </div>
+              ))
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-2 italic">
+                <p>まだメッセージはありません</p>
+              </div>
+            )}
+          </div>
 
-            {/* Post Form */}
-            <div className="bg-gray-50 dark:bg-zinc-950/50 p-4 rounded-3xl border border-gray-100 dark:border-zinc-800">
-              <div className="flex gap-2 mb-2">
-                <select
-                  value={messageSender}
-                  onChange={(e) => setMessageSender(e.target.value)}
-                  className="flex-1 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none"
-                >
-                  <option value="">投稿者を選択...</option>
-                  {data.members.map(m => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="メッセージを入力..."
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAddMessage()}
-                  className="flex-[3] bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-                <button
-                  onClick={handleAddMessage}
-                  disabled={!newMessage.trim() || !messageSender}
-                  className="flex-1 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  投稿
-                </button>
-              </div>
+          {/* Post Form */}
+          <div className="bg-gray-50 dark:bg-zinc-950/50 p-4 rounded-3xl border border-gray-100 dark:border-zinc-800">
+            <div className="flex gap-2 mb-2">
+              <select
+                value={messageSender}
+                onChange={(e) => setMessageSender(e.target.value)}
+                className="flex-1 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+              >
+                <option value="">投稿者を選択...</option>
+                {data.members.map(m => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="メッセージを入力..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddMessage()}
+                className="flex-[3] bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+              <button
+                onClick={handleAddMessage}
+                disabled={!newMessage.trim() || !messageSender}
+                className="flex-1 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                投稿
+              </button>
             </div>
           </div>
         </div>
@@ -491,6 +510,7 @@ export default function Home() {
               loading={loading}
               nextPerson={nextPerson}
               dutyCount={dutyCount}
+              profiles={data.profiles || {}}
               onNext={handleNextWrapper}
             />
           )}
@@ -532,6 +552,7 @@ export default function Home() {
             <RouletteDisplay
               members={data.members}
               currentMember={currentPerson}
+              profiles={data.profiles || {}}
               onComplete={handleNextWrapper}
             />
           </div>

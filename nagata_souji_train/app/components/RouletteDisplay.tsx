@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { getMemberColor } from "@/lib/colors";
+import { getMemberColor, isHex, getCustomColor } from "@/lib/colors";
 
 interface RouletteDisplayProps {
     members: string[];
     currentMember: string;
+    profiles: Record<string, { color: string; affiliation: string }>;
     onComplete: () => Promise<void>;
 }
 
-export default function RouletteDisplay({ members, currentMember, onComplete }: RouletteDisplayProps) {
+export default function RouletteDisplay({ members, currentMember, profiles, onComplete }: RouletteDisplayProps) {
     const [rotation, setRotation] = useState(0);
     const angleStep = 360 / Math.max(members.length, 1);
 
@@ -57,7 +58,13 @@ export default function RouletteDisplay({ members, currentMember, onComplete }: 
                 {members.map((member, i) => {
                     const isCurrent = member === currentMember;
                     const itemRotation = i * angleStep;
-                    const mColor = getMemberColor(member);
+                    const profile = profiles[member];
+                    let color;
+                    if (profile && profile.color && isHex(profile.color)) {
+                        color = getCustomColor(profile.color);
+                    } else {
+                        color = getMemberColor(member);
+                    }
 
                     // Calculation for perfect fit:
                     // Each piece needs to cover angleStep degrees.
@@ -89,7 +96,7 @@ export default function RouletteDisplay({ members, currentMember, onComplete }: 
                                         75% 99%, 
                                         90% 95%
                                     )`,
-                                    borderBottom: isCurrent ? `20px solid ${mColor.text.replace("text-", "")}` : `4px solid ${mColor.text.replace("text-", "")}`,
+                                    borderBottom: isCurrent ? `20px solid ${isHex(color.bg) ? color.bg : color.text.replace("text-", "")}` : `4px solid ${isHex(color.bg) ? color.bg : color.text.replace("text-", "")}`,
                                     // Simulated Thick Black Border using drop-shadows
                                     filter: `drop-shadow(2px 0 0 black) drop-shadow(-2px 0 0 black) drop-shadow(0 2px 0 black) drop-shadow(0 -2px 0 black)`,
                                     boxShadow: isCurrent ? "0 60px 120px -30px rgba(0, 0, 0, 0.7)" : "none"
@@ -97,11 +104,12 @@ export default function RouletteDisplay({ members, currentMember, onComplete }: 
                             >
                                 {/* Name inside Fan - Rotated back for horizontal readability - Synchronized transition */}
                                 <div
-                                    className={`font-black tracking-tighter transition-all duration-[1500ms] ease-out ${isCurrent ? "text-7xl" : "text-4xl"} ${mColor.text} ${mColor.darkText}`}
+                                    className={`font-black tracking-tighter transition-all duration-[1500ms] ease-out ${isCurrent ? "text-7xl" : "text-4xl"} ${color.text} ${color.darkText}`}
                                     style={{
                                         transform: `rotate(${-itemRotation - rotation}deg)`,
                                         marginTop: "240px", // Adjusted to be slightly higher to avoid button collision
-                                        whiteSpace: "nowrap"
+                                        whiteSpace: "nowrap",
+                                        color: isHex(color.bg) ? (color.text === "text-white" ? "#fff" : "#111") : undefined
                                     }}
                                 >
                                     {member}

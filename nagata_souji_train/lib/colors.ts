@@ -26,3 +26,30 @@ export function getMemberColor(name: string) {
     const index = Math.abs(hash) % memberColors.length;
     return memberColors[index];
 }
+
+export function isHex(color: string) {
+    return /^#([0-9A-F]{3}){1,2}$/i.test(color);
+}
+
+// Simple YIQ contrast ratio for selecting black or white text
+export function getContrastColor(hex: string) {
+    if (!isHex(hex)) return "text-gray-700";
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return yiq >= 128 ? "text-gray-900" : "text-white";
+}
+
+export function getCustomColor(hex: string) {
+    const textColor = getContrastColor(hex);
+    return {
+        bg: hex, // Used in style={{ backgroundColor: bg }}
+        text: textColor,
+        border: "border-gray-200",
+        ring: "ring-gray-200",
+        darkBg: hex,
+        darkText: textColor,
+        isCustom: true
+    };
+}

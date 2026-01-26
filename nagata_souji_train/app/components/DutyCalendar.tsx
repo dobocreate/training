@@ -3,7 +3,7 @@
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useEffect, useState } from "react";
-import { getMemberColor } from "@/lib/colors";
+import { getMemberColor, isHex, getCustomColor } from "@/lib/colors";
 
 interface HistoryItem {
     member: string;
@@ -19,6 +19,7 @@ interface DutyCalendarProps {
     loading: boolean;
     nextPerson: string;
     dutyCount: number;
+    profiles: Record<string, { color: string; affiliation: string }>;
     onNext: () => Promise<void>;
 }
 
@@ -30,7 +31,8 @@ export default function DutyCalendar({
     nextPerson,
     dutyCount,
     onNext,
-    currentMember
+    currentMember,
+    profiles
 }: DutyCalendarProps) {
     const [historyMap, setHistoryMap] = useState<Record<string, string>>({});
 
@@ -69,10 +71,20 @@ export default function DutyCalendar({
             const member = historyMap[dateString];
 
             if (member) {
-                const color = getMemberColor(member);
+                const profile = profiles[member];
+                let color;
+                if (profile && profile.color && isHex(profile.color)) {
+                    color = getCustomColor(profile.color);
+                } else {
+                    color = getMemberColor(member);
+                }
+
                 return (
                     <div className="flex-1 flex items-center justify-center w-full">
-                        <span className={`inline-block px-3 py-1.5 rounded-md text-lg font-bold truncate max-w-full ${color.bg} ${color.text} ${color.darkBg} ${color.darkText}`}>
+                        <span
+                            className={`inline-block px-3 py-1.5 rounded-md text-lg font-bold truncate max-w-full ${isHex(color.bg) ? "" : color.bg} ${color.text} ${isHex(color.bg) ? "" : color.darkBg} ${color.darkText}`}
+                            style={isHex(color.bg) ? { backgroundColor: color.bg } : {}}
+                        >
                             {member}
                         </span>
                     </div>

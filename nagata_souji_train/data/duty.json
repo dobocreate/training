@@ -5272,6 +5272,11 @@
       "date": "2026-01-26T11:37:03.830Z"
     }
   ],
-  "profiles": {},
+  "profiles": {
+    "石飛": {
+      "color": "bg-purple-100",
+      "affiliation": ""
+    }
+  },
   "messages": []
 }
