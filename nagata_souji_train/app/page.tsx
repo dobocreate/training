@@ -14,6 +14,7 @@ interface DutyData {
   history: { member: string; date: string }[];
   profiles?: Record<string, { color: string; affiliation: string }>;
   messages?: { id: string; sender: string; content: string; date: string }[];
+  manual?: string;
 }
 
 interface MemberManagerProps {
@@ -32,6 +33,8 @@ export default function Home() {
   const [isManualOpen, setIsManualOpen] = useState(false);
   const [isBulletinOpen, setIsBulletinOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(true);
+  const [isEditingManual, setIsEditingManual] = useState(false);
+  const [editManualContent, setEditManualContent] = useState("");
 
   const fetchData = async () => {
     try {
@@ -126,6 +129,22 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Failed to update profile", error);
+    }
+  };
+
+  const handleUpdateManual = async () => {
+    if (!data) return;
+    try {
+      const res = await fetch("/api/duty", {
+        method: "POST",
+        body: JSON.stringify({ action: "updateManual", manual: editManualContent }),
+      });
+      if (res.ok) {
+        await fetchData();
+        setIsEditingManual(false);
+      }
+    } catch (error) {
+      console.error("Failed to update manual", error);
     }
   };
 
@@ -245,6 +264,47 @@ export default function Home() {
         onUpdateProfile={handleUpdateProfile}
       />
 
+      {/* Mini Bulletin Board (Top Right) */}
+      <div
+        onClick={() => setIsBulletinOpen(true)}
+        className="fixed top-6 right-6 z-40 w-72 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-gray-100 dark:border-zinc-800 rounded-3xl shadow-xl p-4 cursor-pointer hover:bg-white dark:hover:bg-zinc-900 transition-all hover:scale-[1.02] group"
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg group-hover:scale-110 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 text-blue-600 dark:text-blue-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3h9m-9 3h3m-6.75 4.125l-.033.033L4.875 18l.033-.033M12 21.75l-4.5-4.5H4.875c-.621 0-1.125-.504-1.125-1.125V4.125c0-.621.504-1.125 1.125-1.125h14.25c.621 0 1.125.504 1.125 1.125v12c0 .621-.504 1.125-1.125 1.125h-4.5l-4.5 4.5z" />
+              </svg>
+            </div>
+            <h4 className="text-xs font-black text-gray-500 uppercase tracking-widest">掃除連絡掲示板</h4>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-gray-300 group-hover:translate-x-1 transition-transform">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+        </div>
+
+        <div className="space-y-3">
+          {data.messages && data.messages.length > 0 ? (
+            [...data.messages].slice(-3).reverse().map((msg) => {
+              const senderColor = getColor(msg.sender);
+              return (
+                <div key={msg.id} className="flex flex-col gap-0.5" title={`${msg.sender}: ${msg.content}`}>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`w-1.5 h-1.5 rounded-full ${isHex(senderColor.bg) ? "" : senderColor.bg}`} style={isHex(senderColor.bg) ? { backgroundColor: senderColor.bg } : {}}></span>
+                    <span className={`text-[10px] font-bold ${senderColor.text} ${senderColor.darkText}`} style={isHex(senderColor.bg) ? { color: senderColor.text === "text-white" ? "#fff" : "#111" } : {}}>{msg.sender}</span>
+                  </div>
+                  <p className="text-[11px] text-gray-600 dark:text-zinc-400 line-clamp-1 pl-3 leading-relaxed">
+                    {msg.content}
+                  </p>
+                </div>
+              );
+            })
+          ) : (
+            <p className="text-[10px] text-gray-400 italic text-center py-2">新着メッセージはありません</p>
+          )}
+        </div>
+      </div>
+
       {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
       <button
         onClick={() => {
@@ -290,15 +350,31 @@ export default function Home() {
         <div className="p-8 h-full flex flex-col relative">
           <button
             onClick={() => setIsManualOpen(false)}
-            className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
+            className="absolute top-6 left-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition group/close"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-gray-400">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8 text-gray-400 group-hover/close:-translate-x-1 transition-transform">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
           </button>
 
-          <h2 className="text-3xl font-black mb-8 flex flex-col gap-1 text-emerald-600 dark:text-emerald-400">
-            <span className="text-xs font-bold text-gray-400 tracking-[0.2em]">Ver1.00 / 22.06.14</span>
+          <h2 className="text-3xl font-black mb-8 flex flex-col gap-1 text-emerald-600 dark:text-emerald-400 pl-14">
+            <div className="flex justify-between items-start">
+              <span className="text-xs font-bold text-gray-400 tracking-[0.2em]">Ver1.01 / 26.01.26</span>
+              {!isEditingManual && (
+                <button
+                  onClick={() => {
+                    setEditManualContent(data?.manual || "");
+                    setIsEditingManual(true);
+                  }}
+                  className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-bold border border-emerald-100 dark:border-emerald-800 flex items-center gap-1.5 hover:bg-emerald-100 transition"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                  </svg>
+                  編集する
+                </button>
+              )}
+            </div>
             <div className="flex items-center gap-3">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
@@ -308,100 +384,133 @@ export default function Home() {
           </h2>
 
           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-10">
-            {/* Sector 1: Rules */}
-            <div className="bg-emerald-50/50 dark:bg-emerald-900/10 p-6 rounded-3xl border border-emerald-100 dark:border-emerald-900/30">
-              <h3 className="font-bold text-xl mb-4 text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
-                <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
-                担当場所
-              </h3>
-              <ul className="space-y-4 text-gray-700 dark:text-zinc-300 text-sm">
-                <li className="flex gap-2">
-                  <span className="text-emerald-500 font-bold">・</span>
-                  <span>シンク、メインルーム、サブルームに当たった人は、その週のシフト中に掃除を行ってください。</span>
-                </li>
-                <li className="flex gap-2">
-                  <span className="text-emerald-500 font-bold">・</span>
-                  <span>週に1回だけでOKです。</span>
-                </li>
-                <li className="flex gap-2 bg-white/50 dark:bg-zinc-800/30 p-3 rounded-xl border border-emerald-100/50 italic text-[13px]">
-                  <span>（もしその週にシフトが入っていない場合は、LINE等で代理の人を立てて掃除をお願いしてください。）</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Sector 2: Sink */}
-            <div className="bg-white dark:bg-zinc-800/50 p-6 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/10 rounded-bl-full flex items-center justify-end pr-4 pb-4 -mr-4 -mt-4">
-                <span className="text-blue-200 dark:text-blue-800 text-6xl font-black">S</span>
-              </div>
-
-              <h3 className="font-bold text-xl mb-3 text-blue-700 dark:text-blue-300 flex items-center gap-2">
-                <span className="w-2 h-6 bg-blue-500 rounded-full"></span>
-                掃除方法 ― シンク ―
-              </h3>
-
-              <div className="mb-6">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">使う物</span>
-                <div className="flex flex-wrap gap-2">
-                  {["バスタブクレンジング", "掃除用スポンジ(ボロボロの方)", "ビニール手袋", "水切りネット(週に一度交換)"].map(item => (
-                    <span key={item} className="px-3 py-1.5 bg-gray-50 dark:bg-zinc-800 rounded-xl text-[11px] font-bold text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-700">{item}</span>
-                  ))}
+            {isEditingManual ? (
+              <div className="space-y-4">
+                <textarea
+                  value={editManualContent}
+                  onChange={(e) => setEditManualContent(e.target.value)}
+                  className="w-full h-[600px] p-4 border rounded-2xl dark:bg-zinc-800 dark:border-zinc-700 font-mono text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
+                  placeholder="マニュアルの内容をHTML等で記入してください..."
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIsEditingManual(false)}
+                    className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 rounded-xl font-bold transition"
+                  >
+                    キャンセル
+                  </button>
+                  <button
+                    onClick={handleUpdateManual}
+                    className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-lg transition"
+                  >
+                    変更を保存
+                  </button>
                 </div>
               </div>
+            ) : data.manual ? (
+              <div
+                className="manual-content prose dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: data.manual }}
+              />
+            ) : (
+              /* Original static manual as initial default */
+              <>
+                {/* Sector 1: Rules */}
+                <div className="bg-emerald-50/50 dark:bg-emerald-900/10 p-6 rounded-3xl border border-emerald-100 dark:border-emerald-900/30">
+                  <h3 className="font-bold text-xl mb-4 text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
+                    <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
+                    担当場所
+                  </h3>
+                  <ul className="space-y-4 text-gray-700 dark:text-zinc-300 text-sm">
+                    <li className="flex gap-2">
+                      <span className="text-emerald-500 font-bold">・</span>
+                      <span>シンク、メインルーム、サブルームに当たった人は、その週のシフト中に掃除を行ってください。</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-emerald-500 font-bold">・</span>
+                      <span>週に1回だけでOKです。</span>
+                    </li>
+                    <li className="flex gap-2 bg-white/50 dark:bg-zinc-800/30 p-3 rounded-xl border border-emerald-100/50 italic text-[13px]">
+                      <span>（もしその週にシフトが入っていない場合は、LINE等で代理の人を立てて掃除をお願いしてください。）</span>
+                    </li>
+                  </ul>
+                </div>
 
-              <div className="space-y-5">
-                {[
-                  "水切りネットを交換する",
-                  "シンクにバスタブクレンジングをばらまく",
-                  "電子レンジ、冷蔵庫を除菌シート（レンジ専用シートがあればそれでもOK）で拭く",
-                  "シンクにばらまいておいたクレンジングを洗い流す",
-                  "気になる所（水垢等）を掃除用スポンジで綺麗にする"
-                ].map((step, i) => (
-                  <div key={i} className="flex gap-4 group">
-                    <div className="flex flex-col items-center gap-1">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-black group-hover:scale-110 transition-transform">
-                        {i + 1}
-                      </span>
-                      {i < 4 && <div className="w-0.5 h-full bg-blue-50 dark:bg-blue-900/20"></div>}
-                    </div>
-                    <div className="pt-1">
-                      <span className="text-[14px] font-bold text-gray-700 dark:text-zinc-200 block mb-0.5">Step {i + 1}</span>
-                      <span className="text-sm text-gray-600 dark:text-zinc-400 leading-6">{step}</span>
+                {/* Sector 2: Sink */}
+                <div className="bg-white dark:bg-zinc-800/50 p-6 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 dark:bg-blue-900/10 rounded-bl-full flex items-center justify-end pr-4 pb-4 -mr-4 -mt-4">
+                    <span className="text-blue-200 dark:text-blue-800 text-6xl font-black">S</span>
+                  </div>
+
+                  <h3 className="font-bold text-xl mb-3 text-blue-700 dark:text-blue-300 flex items-center gap-2">
+                    <span className="w-2 h-6 bg-blue-500 rounded-full"></span>
+                    掃除方法 ― シンク ―
+                  </h3>
+
+                  <div className="mb-6">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">使う物</span>
+                    <div className="flex flex-wrap gap-2">
+                      {["バスタブクレンジング", "掃除用スポンジ(ボロボロの方)", "ビニール手袋", "水切りネット(週に一度交換)"].map(item => (
+                        <span key={item} className="px-3 py-1.5 bg-gray-50 dark:bg-zinc-800 rounded-xl text-[11px] font-bold text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-700">{item}</span>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Sector 3: Main/Sub Room */}
-            <div className="bg-white dark:bg-zinc-800/50 p-6 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/10 rounded-bl-full flex items-center justify-end pr-4 pb-4 -mr-4 -mt-4">
-                <span className="text-emerald-200 dark:text-emerald-800 text-6xl font-black">R</span>
-              </div>
-
-              <h3 className="font-bold text-xl mb-3 text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
-                <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
-                メインルーム・サブルーム
-              </h3>
-
-              <div className="mb-6">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">使う物</span>
-                <span className="px-3 py-1.5 bg-gray-50 dark:bg-zinc-800 rounded-xl text-[11px] font-bold text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-700 inline-block">掃除機（スティックタイプ）</span>
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex gap-4 group">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black">1</span>
-                  <div className="pt-1">
-                    <span className="text-[14px] font-bold text-emerald-700 dark:text-emerald-300 block mb-0.5">手順</span>
-                    <span className="text-sm text-gray-600 dark:text-zinc-400 leading-6">
-                      四角い部屋を四角く掃除機をかける。<br />
-                      掃除機・irobotのゴミが溜まったら捨てる。
-                    </span>
+                  <div className="space-y-5">
+                    {[
+                      "水切りネットを交換する",
+                      "シンクにバスタブクレンジングをばらまく",
+                      "電子レンジ、冷蔵庫を除菌シート（レンジ専用シートがあればそれでもOK）で拭く",
+                      "シンクにばらまいておいたクレンジングを洗い流す",
+                      "気になる所（水垢等）を掃除用スポンジで綺麗にする"
+                    ].map((step, i) => (
+                      <div key={i} className="flex gap-4 group">
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="flex-shrink-0 w-8 h-8 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-black group-hover:scale-110 transition-transform">
+                            {i + 1}
+                          </span>
+                          {i < 4 && <div className="w-0.5 h-full bg-blue-50 dark:bg-blue-900/20"></div>}
+                        </div>
+                        <div className="pt-1">
+                          <span className="text-[14px] font-bold text-gray-700 dark:text-zinc-200 block mb-0.5">Step {i + 1}</span>
+                          <span className="text-sm text-gray-600 dark:text-zinc-400 leading-6">{step}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
-            </div>
+
+                {/* Sector 3: Main/Sub Room */}
+                <div className="bg-white dark:bg-zinc-800/50 p-6 rounded-3xl border border-gray-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 dark:bg-emerald-900/10 rounded-bl-full flex items-center justify-end pr-4 pb-4 -mr-4 -mt-4">
+                    <span className="text-emerald-200 dark:text-emerald-800 text-6xl font-black">R</span>
+                  </div>
+
+                  <h3 className="font-bold text-xl mb-3 text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
+                    <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
+                    メインルーム・サブルーム
+                  </h3>
+
+                  <div className="mb-6">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">使う物</span>
+                    <span className="px-3 py-1.5 bg-gray-50 dark:bg-zinc-800 rounded-xl text-[11px] font-bold text-gray-600 dark:text-zinc-400 border border-gray-100 dark:border-zinc-700 inline-block">掃除機（スティックタイプ）</span>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="flex gap-4 group">
+                      <span className="flex-shrink-0 w-8 h-8 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black">1</span>
+                      <div className="pt-1">
+                        <span className="text-[14px] font-bold text-emerald-700 dark:text-emerald-300 block mb-0.5">手順</span>
+                        <span className="text-sm text-gray-600 dark:text-zinc-400 leading-6">
+                          四角い部屋を四角く掃除機をかける。<br />
+                          掃除機・irobotのゴミが溜まったら捨てる。
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

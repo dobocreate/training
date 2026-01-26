@@ -13,6 +13,7 @@ interface DutyData {
     history?: { member: string; date: string }[];
     profiles?: Record<string, { color: string; affiliation: string }>;
     messages?: { id: string; sender: string; content: string; date: string }[];
+    manual?: string;
 }
 
 const DATA_FILE = path.join(process.cwd(), "data", "duty.json");
@@ -140,6 +141,13 @@ export async function POST(req: Request) {
             if (data.messages.length > 50) {
                 data.messages = data.messages.slice(-50);
             }
+            writeData(data);
+        }
+        return NextResponse.json(data);
+    } else if (action === "updateManual") {
+        const { manual } = body;
+        if (typeof manual === "string") {
+            data.manual = manual;
             writeData(data);
         }
         return NextResponse.json(data);
