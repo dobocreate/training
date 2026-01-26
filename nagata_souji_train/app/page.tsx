@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import MemberManager from "./components/MemberManager";
 import DutyCalendar from "./components/DutyCalendar";
 import RouletteDisplay from "./components/RouletteDisplay";
+import { CleaningBackground } from "./components/CleaningBackground";
 import { getMemberColor, memberColors, isHex, getCustomColor } from "@/lib/colors";
 
 interface DutyData {
@@ -206,18 +207,25 @@ export default function Home() {
 
   // Standby/Splash screen state tracking
   const [showSplash, setShowSplash] = useState(true);
+  const [splashClosing, setSplashClosing] = useState(false);
 
   useEffect(() => {
     if (!loading && data) {
-      // Transition out after a short minimum display time for the feel
-      const timer = setTimeout(() => setShowSplash(false), 800);
+      // Keep visible for 5 seconds as requested
+      const timer = setTimeout(() => {
+        setSplashClosing(true);
+        // After transition-duration (1000ms in className), unmount
+        setTimeout(() => setShowSplash(false), 1000);
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [loading, data]);
 
   if (showSplash) {
     return (
-      <div className={`fixed inset-0 z-[200] flex items-center justify-center bg-emerald-50 dark:bg-zinc-950 transition-all duration-1000 ease-in-out ${!loading && data ? "opacity-0 scale-105 pointer-events-none" : "opacity-100 scale-100"}`}>
+      <div className={`fixed inset-0 z-[200] flex items-center justify-center bg-emerald-50 dark:bg-zinc-950 transition-all duration-1000 ease-in-out ${splashClosing ? "opacity-0 scale-105 pointer-events-none" : "opacity-100 scale-100"}`}>
+        <CleaningBackground opacity={splashClosing ? 0 : (isHex("#000") ? 0.18 : 0.12)} className="z-0" />
+
         {/* Animated Background Orbs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-300/30 dark:bg-emerald-600/10 rounded-full blur-[120px] animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-300/30 dark:bg-blue-600/10 rounded-full blur-[120px] animate-pulse delay-700"></div>
@@ -289,6 +297,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-emerald-50 dark:bg-black font-sans relative overflow-hidden">
+      <CleaningBackground opacity={0.03} />
       <MemberManager
         members={data.members}
         history={data.history || []}
@@ -380,7 +389,8 @@ export default function Home() {
       <div
         className={`fixed inset-y-0 right-0 w-1/2 z-[100] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out dark:bg-zinc-900/95 border-l border-gray-100 dark:border-zinc-800 ${isManualOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="p-8 h-full flex flex-col relative">
+        <CleaningBackground opacity={0.06} />
+        <div className="p-8 h-full flex flex-col relative overflow-hidden">
           <button
             onClick={() => setIsManualOpen(false)}
             className="absolute top-6 left-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition group/close"
@@ -552,6 +562,7 @@ export default function Home() {
       <div
         className={`fixed inset-y-0 right-0 w-1/2 z-[100] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out dark:bg-zinc-900/95 border-l border-gray-100 dark:border-zinc-800 ${isBulletinOpen ? "translate-x-0" : "translate-x-full"}`}
       >
+        <CleaningBackground opacity={0.06} />
         <div className="p-8 h-full flex flex-col relative">
           <button
             onClick={() => setIsBulletinOpen(false)}

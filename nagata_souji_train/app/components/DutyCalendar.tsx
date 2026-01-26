@@ -4,6 +4,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useEffect, useState } from "react";
 import { getMemberColor, isHex, getCustomColor } from "@/lib/colors";
+import { CleaningBackground } from "./CleaningBackground";
 
 interface HistoryItem {
     member: string;
@@ -95,15 +96,16 @@ export default function DutyCalendar({
     };
 
     return (
-        <div className="w-full h-full flex flex-col relative">
-            <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex justify-center items-center bg-white dark:bg-zinc-900">
+        <div className="w-full h-full flex flex-col relative overflow-hidden">
+            <CleaningBackground opacity={0.06} />
+            <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex justify-center items-center bg-transparent">
                 <h3 className="font-bold text-4xl dark:text-zinc-200">当番カレンダー</h3>
             </div>
-            <div className="flex-1 overflow-auto bg-white dark:bg-zinc-900 scrollbar-hide">
+            <div className="flex-1 overflow-auto bg-transparent scrollbar-hide">
                 <Calendar
                     tileContent={tileContent}
                     onClickDay={handleDayClick}
-                    className="!w-full !border-none !font-sans dark:!bg-zinc-900 dark:!text-zinc-200 text-lg"
+                    className="!w-full !border-none !font-sans !bg-transparent dark:!text-zinc-200 text-lg"
                     tileClassName="dark:hover:!bg-zinc-800 flex flex-col pt-2 items-center min-h-[140px] flex-1 hover:bg-gray-50 transition-colors cursor-pointer"
                     prevLabel={
                         <div className="flex items-center justify-center p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition">
@@ -298,7 +300,19 @@ export default function DutyCalendar({
                     color: #3b82f6;
                 }
 
-                /* Dark Mode overrides */
+                /* Global overrides to make calendar elements transparent */
+                .calendar-wrapper .react-calendar {
+                    background: transparent !important;
+                }
+                .calendar-wrapper .react-calendar__viewContainer {
+                    background: transparent !important;
+                }
+                .calendar-wrapper .react-calendar__month-view__days {
+                     background: transparent !important;
+                }
+                .calendar-wrapper .react-calendar__tile {
+                    background: transparent !important;
+                }
                 @media (prefers-color-scheme: dark) {
                     .calendar-wrapper .react-calendar__month-view__weekdays {
                         background: #1f2937;
