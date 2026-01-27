@@ -17,6 +17,7 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
     const usedColors = Object.values(profiles).map(p => p.color);
 
     const colorInputRef = useRef<HTMLInputElement>(null);
+    const listRef = useRef<HTMLUListElement>(null);
     const [newMember, setNewMember] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedMember, setSelectedMember] = useState<string | null>(null);
@@ -35,6 +36,13 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
             setEditAffiliation(currentProfile?.affiliation || "");
         }
     }, [selectedMember, profiles]);
+
+    // Scroll to top when expanded
+    useEffect(() => {
+        if (isExpanded && listRef.current) {
+            listRef.current.scrollTop = 0;
+        }
+    }, [isExpanded]);
 
     const handleAdd = () => {
         if (!newMember.trim()) return;
@@ -146,7 +154,7 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
 
             {/* Expanded Menu */}
             {isExpanded && (
-                <div className="absolute bottom-36 right-10 z-40 p-6 border border-gray-100 dark:border-zinc-800 rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl dark:bg-zinc-900/95 w-[500px] transform transition-all animate-in fade-in slide-in-from-bottom-5 duration-200 origin-bottom-right">
+                <div className="absolute bottom-36 right-10 z-[110] p-6 border border-gray-100 dark:border-zinc-800 rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl dark:bg-zinc-900/95 w-[500px] transform transition-all animate-in fade-in slide-in-from-bottom-5 duration-200 origin-bottom-right">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-2">
                             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
@@ -186,7 +194,7 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
                         </button>
                     </div>
 
-                    <ul className="space-y-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                    <ul ref={listRef} className="space-y-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
                         {members.map((member, index) => {
                             const color = getColor(member);
                             return (
