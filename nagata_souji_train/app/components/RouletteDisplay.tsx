@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { getMemberColor, isHex, getCustomColor } from "@/lib/colors";
 
 interface RouletteDisplayProps {
@@ -14,7 +14,7 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
     const [rotation, setRotation] = useState(0);
     const angleStep = 360 / Math.max(members.length, 1);
 
-    // Initial rotation adjustment to bring current member to center (bottom position: 0deg)
+    // 担当者を下に回転させる
     useEffect(() => {
         const index = members.indexOf(currentMember);
         if (index !== -1) {
@@ -22,13 +22,12 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
         }
     }, [currentMember, members, angleStep]);
 
-
-
     return (
         <div className="w-full h-full flex flex-col items-center justify-start relative pt-0 gap-0">
-            {/* Center Hub with Label & Indicator Needle */}
+
+            {/* 中心ハブと矢印 */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 z-[80] pointer-events-none flex flex-col items-center">
-                {/* Large Center Hub with "今週の掃除当番" Label */}
+                {/* 中心ハブ */}
                 <div className="relative w-64 h-64 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-3xl rounded-full z-[90] border-[6px] border-blue-600 dark:border-blue-500 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] flex items-center justify-center -mt-64">
                     <div className="flex flex-col items-center">
                         <span className="text-3xl font-black text-gray-900 dark:text-white tracking-wider">今週の</span>
@@ -36,7 +35,7 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                     </div>
                 </div>
 
-                {/* The Indicator Needle (Growing from the hub) */}
+                {/* 矢印 */}
                 <div
                     className="w-16 h-32 bg-gradient-to-b from-red-600 via-red-500 to-red-700 shadow-[0_20px_50px_rgba(239,68,68,0.8)] z-[85]"
                     style={{
@@ -46,30 +45,21 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                 />
             </div>
 
-            {/* The "Circle of Fans" Container - Pivot at the VERY TOP of screen (framing out top half) */}
+            {/* ルーレット本体 */}
             <div
-                className="relative w-[800px] h-[800px] flex items-center justify-center transition-transform duration-[1500ms] ease-out z-10"
+                className="relative w-[800px] h-[800px] flex items-center justify-center transition-transform duration-[1500ms] ease-out z-10 overflow-hidden rounded-full"
                 style={{
                     transform: `scale(1.4) rotate(${rotation}deg)`,
-                    marginTop: "-560px" // Exact pivot at top-edge (800 * 1.4 / 2)
+                    marginTop: "-560px"
                 }}
             >
-
                 {members.map((member, i) => {
                     const isCurrent = member === currentMember;
                     const itemRotation = i * angleStep;
                     const profile = profiles[member];
-                    let color;
-                    if (profile && profile.color && isHex(profile.color)) {
-                        color = getCustomColor(profile.color);
-                    } else {
-                        color = getMemberColor(member);
-                    }
+                    const color = profile && profile.color && isHex(profile.color) ? getCustomColor(profile.color) : getMemberColor(member);
+                    const borderColor = isCurrent ? (isHex(color.bg) ? color.bg : "#000") : "rgba(0,0,0,0.3)"; // 担当者以外は半透明黒
 
-                    // Calculation for perfect fit:
-                    // Each piece needs to cover angleStep degrees.
-                    // A simple triangle would be polygon(50% 0%, 0% 100%, 100% 100%)
-                    // To make it look like a circle, we add points along the bottom arc.
                     return (
                         <div
                             key={`${member}-${i}`}
@@ -77,42 +67,58 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                             style={{
                                 transform: `translate(-50%, 0) rotate(${itemRotation}deg)`,
                                 zIndex: isCurrent ? 40 : 10,
-                                width: "500px", // Increased width for better name containment
-                                height: "620px",
+                                width: "500px",
+                                height: "620px"
                             }}
                         >
-                            {/* Individual Fan Piece - Wider sector with BLACK BORDER */}
-                            <div
-                                className={`w-full h-full flex flex-col items-center text-center transition-all duration-500 ${isCurrent ? "scale-105 saturate-150 opacity-100" : "scale-100 opacity-40"
-                                    }`}
-                                style={{
-                                    backgroundColor: isCurrent ? "white" : "rgba(255,255,255,0.75)",
-                                    // A sector approximation
-                                    clipPath: `polygon(
-                                        50% 0%, 
-                                        10% 95%, 
-                                        25% 99%, 
-                                        50% 100%, 
-                                        75% 99%, 
-                                        90% 95%
-                                    )`,
-                                    borderBottom: isCurrent ? `20px solid ${isHex(color.bg) ? color.bg : color.text.replace("text-", "")}` : `4px solid ${isHex(color.bg) ? color.bg : color.text.replace("text-", "")}`,
-                                    // Simulated Thick Black Border using drop-shadows
-                                    filter: `drop-shadow(2px 0 0 black) drop-shadow(-2px 0 0 black) drop-shadow(0 2px 0 black) drop-shadow(0 -2px 0 black)`,
-                                    boxShadow: isCurrent ? "0 60px 120px -30px rgba(0, 0, 0, 0.7)" : "none"
-                                }}
-                            >
-                                {/* Name inside Fan - Rotated back for horizontal readability - Synchronized transition */}
+                            {/* 扇形 */}
+                            <div className="relative w-full h-full flex items-center justify-center">
+                                {/* 縁取り */}
                                 <div
-                                    className={`font-black tracking-tighter transition-all duration-[1500ms] ease-out ${isCurrent ? "text-7xl" : "text-4xl"} ${color.text} ${color.darkText}`}
+                                    className="absolute inset-0"
                                     style={{
-                                        transform: `rotate(${-itemRotation - rotation}deg)`,
-                                        marginTop: "240px", // Adjusted to be slightly higher to avoid button collision
-                                        whiteSpace: "nowrap",
-                                        color: isHex(color.bg) ? (color.text === "text-white" ? "#fff" : "#111") : undefined
+                                        backgroundColor: borderColor,
+                                        clipPath: `polygon(
+                      50% 0%,
+                      10% 95%,
+                      25% 99%,
+                      50% 100%,
+                      75% 99%,
+                      90% 95%
+                    )`,
+                                        transform: "scale(1.05)",
+                                        transition: "transform 0.5s ease"
+                                    }}
+                                />
+
+                                {/* 本体 */}
+                                <div
+                                    className={`relative w-full h-full flex flex-col items-center text-center transition-all duration-500`}
+                                    style={{
+                                        backgroundColor: isCurrent ? "white" : "rgba(0,0,0,0.05)", // 担当者以外は薄い黒
+                                        clipPath: `polygon(
+                      50% 0%,
+                      10% 95%,
+                      25% 99%,
+                      50% 100%,
+                      75% 99%,
+                      90% 95%
+                    )`,
+                                        boxShadow: isCurrent ? "0 60px 120px -30px rgba(0,0,0,0.7)" : "none"
                                     }}
                                 >
-                                    {member}
+                                    {/* 名前 */}
+                                    <div
+                                        className={`font-black tracking-tighter transition-all duration-[1500ms] ease-out ${isCurrent ? "text-7xl" : "text-4xl"} ${color.text} ${color.darkText}`}
+                                        style={{
+                                            transform: `rotate(${-itemRotation - rotation}deg)`,
+                                            marginTop: "240px",
+                                            whiteSpace: "nowrap",
+                                            color: isHex(color.bg) ? (color.text === "text-white" ? "#fff" : "#111") : undefined
+                                        }}
+                                    >
+                                        {member}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -121,14 +127,14 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
             </div>
 
             <style jsx>{`
-                @keyframes pulse-slow {
-                    0%, 100% { opacity: 1; transform: scale(1); }
-                    50% { opacity: 0.8; transform: scale(0.98); }
-                }
-                .animate-pulse-slow {
-                    animation: pulse-slow 3s infinite ease-in-out;
-                }
-            `}</style>
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(0.98); }
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 3s infinite ease-in-out;
+        }
+      `}</style>
         </div>
     );
 }
