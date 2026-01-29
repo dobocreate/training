@@ -9,9 +9,9 @@ import { MemberProfileModal } from "./member-manager/MemberProfileModal";
 interface MemberManagerProps {
     members: string[];
     history: { member: string; date: string }[];
-    profiles?: Record<string, { color: string; affiliation: string }>;
+    profiles?: Record<string, { color: string; affiliation: string; icon?: string }>;
     onUpdate: (newMembers: string[]) => void;
-    onUpdateProfile?: (member: string, color: string, affiliation: string) => void;
+    onUpdateProfile?: (member: string, color: string, affiliation: string, icon?: string) => void;
 }
 
 export default function MemberManager({ members, history, profiles = {}, onUpdate, onUpdateProfile }: MemberManagerProps) {

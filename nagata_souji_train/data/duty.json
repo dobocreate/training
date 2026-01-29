@@ -5367,7 +5367,66 @@
   "profiles": {
     "石飛": {
       "color": "bg-purple-100",
-      "affiliation": ""
+      "affiliation": "",
+      "icon": "cat"
+    },
+    "野村": {
+      "color": "bg-pink-100",
+      "affiliation": "",
+      "icon": "bear"
+    },
+    "中土": {
+      "color": "bg-lime-100",
+      "affiliation": "",
+      "icon": "dog"
+    },
+    "西川": {
+      "icon": "owl"
+    },
+    "道田": {
+      "icon": "rabbit"
+    },
+    "CHOI": {
+      "icon": "owl"
+    },
+    "岡田": {
+      "icon": "dog"
+    },
+    "江藤": {
+      "icon": "rabbit"
+    },
+    "KIM": {
+      "icon": "bear"
+    },
+    "ALIF": {
+      "icon": "cat"
+    },
+    "中村": {
+      "icon": "owl"
+    },
+    "市山": {
+      "icon": "dog"
+    },
+    "中川": {
+      "icon": "rabbit"
+    },
+    "小田": {
+      "icon": "bear"
+    },
+    "向原": {
+      "icon": "cat"
+    },
+    "一瀬": {
+      "icon": "owl"
+    },
+    "稲澤": {
+      "icon": "dog"
+    },
+    "長田": {
+      "icon": "rabbit"
+    },
+    "千々松": {
+      "icon": "bear"
     }
   },
   "messages": [

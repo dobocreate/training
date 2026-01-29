@@ -4,7 +4,7 @@ import { getMemberDisplayColor } from "./utils";
 
 interface MemberQueuePanelProps {
     members: string[];
-    profiles: Record<string, { color: string; affiliation: string }>;
+    profiles: Record<string, { color: string; affiliation: string; icon?: string }>;
     onClose: () => void;
     onAdd: (name: string) => void;
     onDelete: (index: number) => void;

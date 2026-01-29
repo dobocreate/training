@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { memberColors, isHex, getContrastColor } from "@/lib/colors";
 
+import Image from "next/image";
+
 interface ProfileEditFormProps {
     member: string;
     initialColor: string;
     initialAffiliation: string;
+    initialIcon?: string;
     usedColors: string[];
     onCancel: () => void;
-    onSave: (color: string, affiliation: string) => void;
+    onSave: (color: string, affiliation: string, icon?: string) => void;
     onColorChange?: (color: string) => void;
 }
 
@@ -15,6 +18,7 @@ export const ProfileEditFormWithPreview: React.FC<ProfileEditFormProps> = ({
     member,
     initialColor,
     initialAffiliation,
+    initialIcon,
     usedColors,
     onCancel,
     onSave,
@@ -22,7 +26,16 @@ export const ProfileEditFormWithPreview: React.FC<ProfileEditFormProps> = ({
 }) => {
     const [editColor, setEditColor] = useState(initialColor);
     const [editAffiliation, setEditAffiliation] = useState(initialAffiliation);
+    const [editIcon, setEditIcon] = useState<string | undefined>(initialIcon);
     const colorInputRef = useRef<HTMLInputElement>(null);
+
+    const icons = [
+        { id: "bear", src: "/icons/bear.png", alt: "Bear" },
+        { id: "cat", src: "/icons/cat.png", alt: "Cat" },
+        { id: "dog", src: "/icons/dog.png", alt: "Dog" },
+        { id: "rabbit", src: "/icons/rabbit.png", alt: "Rabbit" },
+        { id: "owl", src: "/icons/owl.png", alt: "Owl" },
+    ];
 
     useEffect(() => {
         if (onColorChange) {
@@ -33,12 +46,45 @@ export const ProfileEditFormWithPreview: React.FC<ProfileEditFormProps> = ({
     return (
         <div className="mb-6 space-y-4">
             <div className="text-left">
+                <label className="text-xs font-bold text-gray-500 block mb-2">アイコン</label>
+                <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
+                    {icons.map((icon) => (
+                        <button
+                            key={icon.id}
+                            onClick={() => setEditIcon(icon.id)}
+                            className={`flex-shrink-0 w-16 h-16 rounded-2xl border-4 transition-all overflow-hidden relative ${editIcon === icon.id ? "border-blue-500 scale-110 shadow-md" : "border-gray-100 dark:border-zinc-800 opacity-60 hover:opacity-100"}`}
+                        >
+                            <Image
+                                src={icon.src}
+                                alt={icon.alt}
+                                fill
+                                className="object-cover"
+                            />
+                            {editIcon === icon.id && (
+                                <div className="absolute inset-0 bg-blue-500/20 backdrop-blur-[1px] flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-6 h-6 text-white drop-shadow-sm">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                    </svg>
+                                </div>
+                            )}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() => setEditIcon(undefined)}
+                        className={`flex-shrink-0 w-16 h-16 rounded-2xl border-4 transition-all flex items-center justify-center bg-gray-50 dark:bg-zinc-800 text-gray-400 font-bold text-xs ${editIcon === undefined ? "border-blue-500 scale-110 shadow-md text-blue-500" : "border-gray-100 dark:border-zinc-800"}`}
+                    >
+                        なし
+                    </button>
+                </div>
+            </div>
+
+            <div className="text-left">
                 <label className="text-xs font-bold text-gray-500 block mb-2">所属</label>
                 <input
                     type="text"
                     value={editAffiliation}
                     onChange={(e) => setEditAffiliation(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700"
+                    className="w-full px-4 py-2 border rounded-lg dark:bg-zinc-800 dark:border-zinc-700 outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="所属部署など"
                 />
             </div>
@@ -105,7 +151,7 @@ export const ProfileEditFormWithPreview: React.FC<ProfileEditFormProps> = ({
                     キャンセル
                 </button>
                 <button
-                    onClick={() => onSave(editColor, editAffiliation)}
+                    onClick={() => onSave(editColor, editAffiliation, editIcon)}
                     className="px-6 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-md"
                 >
                     保存

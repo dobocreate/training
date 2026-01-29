@@ -14,7 +14,7 @@ interface DutyData {
   currentIndex: number;
   lastUpdated: string;
   history: { member: string; date: string }[];
-  profiles?: Record<string, { color: string; affiliation: string }>;
+  profiles?: Record<string, { color: string; affiliation: string; icon?: string }>;
   messages?: { id: string; sender: string; content: string; date: string }[];
   manual?: string;
 }
@@ -22,8 +22,8 @@ interface DutyData {
 interface MemberManagerProps {
   members: string[];
   history: { member: string; date: string }[];
-  profiles?: Record<string, { color: string; affiliation: string }>;
-  onUpdateProfile?: (member: string, color: string, affiliation: string) => void;
+  profiles?: Record<string, { color: string; affiliation: string; icon?: string }>;
+  onUpdateProfile?: (member: string, color: string, affiliation: string, icon?: string) => void;
   onAddMember: (member: string) => void;
   onDeleteMember: (member: string) => void;
   onReorderMembers: (newMembers: string[]) => void;
@@ -44,6 +44,67 @@ export default function Home() {
     try {
       const res = await fetch("/api/duty");
       const json = await res.json();
+
+      // Randomly assign icons to members who don't have one
+      if (json.members && json.profiles) {
+        const availableIcons = ["bear", "cat", "dog", "rabbit", "owl"];
+        let needsUpdate = false;
+
+        // Map to keep track of assigned icons to try and keep them unique as much as possible
+        const assignedIcons = new Set(Object.values(json.profiles as Record<string, { icon?: string }>).map(p => p.icon).filter(Boolean));
+
+        // Shuffle available icons for randomness
+        const shuffledIcons = [...availableIcons].sort(() => Math.random() - 0.5);
+        let iconindex = 0;
+
+        for (const member of json.members) {
+          const profile = json.profiles[member] || {};
+          if (!profile.icon) {
+            // Assign a random icon
+            // If we have unused icons, use them first
+            let iconToAssign = shuffledIcons[iconindex % shuffledIcons.length];
+
+            // Check if we can find an unused one
+            const unused = shuffledIcons.find(icon => !assignedIcons.has(icon));
+            if (unused) {
+              iconToAssign = unused;
+            }
+
+            // Update profile locally first
+            json.profiles[member] = { ...profile, icon: iconToAssign };
+            assignedIcons.add(iconToAssign);
+            iconindex++;
+
+            // Trigger updateProfile API
+            // We'll do this "silently" via the loop, but since we need to persist it, we should call the API.
+            // However, doing it inside this loop might cause race conditions or too many requests.
+            // Better to just set it in local state and maybe fire one update per member? 
+            // Or better yet, just do it client side for display if missing? 
+            // No, user wants them "created/assigned".
+            // Let's call the API for each one.
+            await fetch("/api/duty", {
+              method: "POST",
+              body: JSON.stringify({
+                action: "updateProfile",
+                member,
+                color: profile.color,
+                affiliation: profile.affiliation,
+                icon: iconToAssign
+              }),
+            });
+            needsUpdate = true;
+          }
+        }
+
+        if (needsUpdate) {
+          // Re-fetch to confirm sync
+          const res2 = await fetch("/api/duty");
+          const json2 = await res2.json();
+          setData(json2);
+          return;
+        }
+      }
+
       setData(json);
     } catch (e) {
       console.error(e);
@@ -117,7 +178,7 @@ export default function Home() {
     }
   };
 
-  const handleUpdateProfile = async (member: string, color: string, affiliation: string) => {
+  const handleUpdateProfile = async (member: string, color: string, affiliation: string, icon?: string) => {
     try {
       const res = await fetch("/api/duty", {
         method: "POST",
@@ -125,7 +186,8 @@ export default function Home() {
           action: "updateProfile",
           member,
           color,
-          affiliation
+          affiliation,
+          icon
         }),
       });
       if (res.ok) {
@@ -349,20 +411,21 @@ export default function Home() {
       </div>
 
       {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
+      {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
       <button
         onClick={() => {
           setIsBulletinOpen(true);
           setIsManualOpen(false);
         }}
-        className="absolute bottom-60 right-10 flex flex-row-reverse items-center bg-white text-blue-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out z-40 h-20 w-20 group overflow-hidden"
+        className="absolute bottom-60 right-10 flex flex-row-reverse items-center bg-white text-blue-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-52 duration-300 ease-out z-40 h-16 w-16 group overflow-hidden"
         aria-label="掃除連絡掲示板"
       >
-        <div className="w-20 h-full flex items-center justify-center flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-10 h-10">
+        <div className="w-16 h-full flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
             <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3h9m-9 3h3m-6.75 4.125l-.033.033L4.875 18l.033-.033M12 21.75l-4.5-4.5H4.875c-.621 0-1.125-.504-1.125-1.125V4.125c0-.621.504-1.125 1.125-1.125h14.25c.621 0 1.125.504 1.125 1.125v12c0 .621-.504 1.125-1.125 1.125h-4.5l-4.5 4.5z" />
           </svg>
         </div>
-        <span className="whitespace-nowrap font-bold text-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-4">
+        <span className="whitespace-nowrap font-bold text-base opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-3">
           掃除連絡掲示板
         </span>
       </button>
@@ -373,11 +436,11 @@ export default function Home() {
           setIsManualOpen(true);
           setIsBulletinOpen(false);
         }}
-        className="absolute bottom-36 right-10 flex flex-row-reverse items-center bg-white text-emerald-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out z-40 h-20 w-20 group overflow-hidden"
+        className="absolute bottom-36 right-10 flex flex-row-reverse items-center bg-white text-emerald-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-52 duration-300 ease-out z-40 h-16 w-16 group overflow-hidden"
         aria-label="掃除メニュー"
       >
-        <div className="w-20 h-full flex items-center justify-center flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-10 h-10">
+        <div className="w-16 h-full flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
           </svg>
         </div>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { isHex, getMemberColor } from "@/lib/colors";
 import { getMemberDisplayColor, getMemberAffiliation } from "./utils";
@@ -6,10 +7,10 @@ import { ProfileStatsView } from "./ProfileStatsView";
 
 interface MemberProfileModalProps {
     member: string;
-    profiles: Record<string, { color: string; affiliation: string }>;
+    profiles: Record<string, { color: string; affiliation: string; icon?: string }>;
     history: { member: string; date: string }[];
     onClose: () => void;
-    onUpdateProfile?: (member: string, color: string, affiliation: string) => void;
+    onUpdateProfile?: (member: string, color: string, affiliation: string, icon?: string) => void;
 }
 
 export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
@@ -25,15 +26,8 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
     const currentProfile = profiles[member];
     const initialColor = currentProfile?.color || getMemberColor(member).bg;
     const initialAffiliation = currentProfile?.affiliation || "";
+    const initialIcon = currentProfile?.icon;
     const memberColor = getMemberDisplayColor(member, profiles);
-
-    // This state is slightly redundant if we only use ProfileEditForm's internal state,
-    // but we use it for the header background color preview in real-time?
-    // Actually, in the original code, the header background color updated live as `editColor` changed.
-    // To support live preview in header, we might need to lift state up from ProfileEditForm or just let ProfileEditForm control the header too?
-    // Simplified approach: Pass a callback to ProfileEditForm to notify color change if we want live preview.
-    // OR: Just keep logic simple and don't do live preview in header until save, OR move state here.
-    // Moving state here is better to match original functionality (header changes color).
 
     const [previewColor, setPreviewColor] = useState(initialColor);
 
@@ -41,9 +35,9 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
         setPreviewColor(initialColor);
     }, [initialColor]);
 
-    const handleSave = (color: string, affiliation: string) => {
+    const handleSave = (color: string, affiliation: string, icon?: string) => {
         if (onUpdateProfile) {
-            onUpdateProfile(member, color, affiliation);
+            onUpdateProfile(member, color, affiliation, icon);
         }
         setIsEditing(false);
     };
@@ -83,23 +77,32 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
                         </button>
                     )}
 
-                    <div className={`w-24 h-24 rounded-full border-4 border-white dark:border-zinc-900 shadow-xl flex items-center justify-center text-4xl font-bold bg-white text-gray-700 absolute -bottom-12`}>
-                        {member.charAt(0)}
+                    <div className={`w-28 h-28 rounded-full border-4 border-white dark:border-zinc-900 shadow-xl flex items-center justify-center bg-white absolute -bottom-14 overflow-hidden`}>
+                        {initialIcon ? (
+                            <Image
+                                src={`/icons/${initialIcon}.png`}
+                                alt={initialIcon}
+                                width={112}
+                                height={112}
+                                className="object-cover w-full h-full"
+                            />
+                        ) : (
+                            <span className="text-4xl font-bold text-gray-700">{member.charAt(0)}</span>
+                        )}
                     </div>
                 </div>
 
-                <div className="pt-16 pb-8 px-8 text-center">
+                <div className="pt-20 pb-8 px-8 text-center">
                     <h2 className={`text-2xl font-bold mb-2 ${memberColor.text} ${memberColor.darkText}`}>
                         {member}
                     </h2>
 
                     {isEditing ? (
-                        /* We need to pass a modified ProfileEditForm that reports back color changes for preview */
-                        /* Actually, better to just lift state completely or create a wrapper inside Modal */
                         <ProfileEditFormWithPreview
                             member={member}
                             initialColor={initialColor}
                             initialAffiliation={initialAffiliation}
+                            initialIcon={initialIcon}
                             usedColors={usedColors}
                             onCancel={() => setIsEditing(false)}
                             onSave={handleSave}

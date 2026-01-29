@@ -11,7 +11,7 @@ interface DutyData {
     currentIndex: number;
     lastUpdated: string;
     history?: { member: string; date: string }[];
-    profiles?: Record<string, { color: string; affiliation: string }>;
+    profiles?: Record<string, { color: string; affiliation: string; icon?: string }>;
     messages?: { id: string; sender: string; content: string; date: string }[];
     manual?: string;
 }
@@ -120,10 +120,16 @@ export async function POST(req: Request) {
         }
         return NextResponse.json(data);
     } else if (action === "updateProfile") {
-        const { member, color, affiliation } = body;
+        const { member, color, affiliation, icon } = body;
         if (member) {
             if (!data.profiles) data.profiles = {};
-            data.profiles[member] = { color, affiliation };
+            // Merge existing profile data with updates, or create new
+            const existing = data.profiles[member] || {};
+            data.profiles[member] = {
+                color: color !== undefined ? color : existing.color,
+                affiliation: affiliation !== undefined ? affiliation : existing.affiliation,
+                icon: icon !== undefined ? icon : existing.icon
+            };
             writeData(data);
         }
         return NextResponse.json(data);
