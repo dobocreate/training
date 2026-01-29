@@ -40,7 +40,7 @@ export const MemberQueuePanel: React.FC<MemberQueuePanelProps> = ({
     };
 
     return (
-        <div className="absolute bottom-36 right-10 z-40 p-6 border border-gray-100 dark:border-zinc-800 rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl dark:bg-zinc-900/95 w-[500px] transform transition-all animate-in fade-in slide-in-from-bottom-5 duration-200 origin-bottom-right">
+        <div className="absolute bottom-36 right-10 z-[200] p-6 border border-gray-100 dark:border-zinc-800 rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl dark:bg-zinc-900/95 w-[500px] transform transition-all animate-in fade-in slide-in-from-bottom-5 duration-200 origin-bottom-right">
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-2">
                     <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
@@ -50,9 +50,7 @@ export const MemberQueuePanel: React.FC<MemberQueuePanelProps> = ({
                     </div>
                     <h3 className="font-bold text-lg dark:text-zinc-200">メンバー管理</h3>
                 </div>
-                <div className="text-gray-400 text-xs">
-                    クリックして詳細を表示
-                </div>
+
                 <button
                     onClick={onClose}
                     className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition dark:hover:bg-zinc-800"
@@ -99,6 +97,7 @@ export const MemberQueuePanel: React.FC<MemberQueuePanelProps> = ({
                             </div>
 
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                                <span className="text-[10px] text-gray-400 mr-2 hidden sm:inline">クリックして詳細を表示</span>
                                 <button
                                     onClick={() => onMoveUp(index)}
                                     disabled={index === 0}

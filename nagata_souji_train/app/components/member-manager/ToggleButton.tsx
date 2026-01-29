@@ -9,7 +9,7 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({ isExpanded, onToggle
     return (
         <button
             onClick={onToggle}
-            className={`absolute bottom-10 right-10 flex flex-row-reverse items-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-2xl text-white z-50 group border-4 border-white dark:border-zinc-800 transition-all duration-300 ease-out overflow-hidden ${isExpanded ? "w-20 h-20 from-gray-500 to-gray-600" : "h-20 w-20 hover:w-72"}`}
+            className={`absolute bottom-10 right-10 flex flex-row-reverse items-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-2xl text-white z-[201] group border-4 border-white dark:border-zinc-800 transition-all duration-300 ease-out overflow-hidden ${isExpanded ? "w-20 h-20 from-gray-500 to-gray-600" : "h-20 w-20 hover:w-72"}`}
             aria-label={isExpanded ? "閉じる" : "メンバー管理"}
         >
             <div className="flex-shrink-0 w-20 h-full flex items-center justify-center">

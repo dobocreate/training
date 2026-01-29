@@ -52,7 +52,7 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
     const usedColors = Object.values(profiles).map(p => p.color);
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={onClose}>
+        <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200" onClick={onClose}>
             <div
                 className={`bg-white dark:bg-zinc-900 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-zinc-800 transform transition-all scale-100`}
                 onClick={(e) => e.stopPropagation()}
