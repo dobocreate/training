@@ -6,6 +6,7 @@ import MemberManager from "./components/MemberManager";
 import DutyCalendar from "./components/DutyCalendar";
 import RouletteDisplay from "./components/RouletteDisplay";
 import { CleaningBackground } from "./components/CleaningBackground";
+import SearchableSelect from "./components/SearchableSelect";
 import { getMemberColor, memberColors, isHex, getCustomColor } from "@/lib/colors";
 
 interface DutyData {
@@ -657,16 +658,13 @@ export default function Home() {
           {/* Post Form */}
           <div className="bg-gray-50 dark:bg-zinc-950/50 p-4 rounded-3xl border border-gray-100 dark:border-zinc-800">
             <div className="flex gap-2 mb-2">
-              <select
+              <SearchableSelect
+                options={data.members}
                 value={messageSender}
-                onChange={(e) => setMessageSender(e.target.value)}
-                className="flex-1 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none"
-              >
-                <option value="">投稿者を選択...</option>
-                {data.members.map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+                onChange={setMessageSender}
+                placeholder="投稿者・検索"
+                className="flex-[2] z-[60]"
+              />
             </div>
             <div className="flex gap-2">
               <input
