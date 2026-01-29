@@ -303,13 +303,29 @@ export default function Home() {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-300/30 dark:bg-blue-600/10 rounded-full blur-[120px] animate-pulse delay-700"></div>
 
         <div className="relative flex flex-col items-center">
+          {/* Cleaning Animal Mascots */}
+          <div className="mb-8 flex items-end gap-3 justify-center">
+            {["bear", "cat", "dog", "rabbit", "owl", "monkey"].map((animal, idx) => (
+              <div
+                key={animal}
+                className="relative animate-in fade-in slide-in-from-bottom-4 duration-700"
+                style={{ animationDelay: `${idx * 100}ms` }}
+              >
+                <Image
+                  src={`/mascots/${animal}.png`}
+                  alt={animal}
+                  width={100}
+                  height={100}
+                  className=""
+                  unoptimized
+                />
+              </div>
+            ))}
+          </div>
+
           {/* Logo Frame */}
           <div className="relative mb-12 transform-gpu hover:scale-110 transition-transform duration-700">
-            <div className="absolute inset-0 bg-white/40 dark:bg-white/5 rounded-[4rem] blur-2xl animate-pulse scale-150"></div>
-            <div className="relative bg-white/90 dark:bg-zinc-900 shadow-2xl rounded-[3rem] px-12 py-8 flex items-center justify-center gap-6 border border-white/50 backdrop-blur-3xl overflow-hidden">
-              {/* Inner glow */}
-              <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-emerald-400/20 to-transparent rounded-full blur-3xl"></div>
-
+            <div className="relative flex items-center justify-center gap-6 overflow-hidden">
               <div className="flex items-center gap-5">
                 <div className="w-1.5 h-12 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
                 <h1 className="text-6xl font-black text-gray-800 dark:text-white tracking-tighter drop-shadow-sm">
