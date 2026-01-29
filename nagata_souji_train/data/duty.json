@@ -5368,65 +5368,65 @@
     "石飛": {
       "color": "bg-purple-100",
       "affiliation": "",
-      "icon": "cat"
+      "icon": "lion"
     },
     "野村": {
       "color": "bg-pink-100",
       "affiliation": "",
-      "icon": "bear"
+      "icon": "elephant"
     },
     "中土": {
       "color": "bg-lime-100",
       "affiliation": "",
-      "icon": "dog"
+      "icon": "koala"
     },
     "西川": {
-      "icon": "owl"
+      "icon": "pig"
     },
     "道田": {
-      "icon": "rabbit"
+      "icon": "hippo"
     },
     "CHOI": {
-      "icon": "owl"
+      "icon": "giraffe"
     },
     "岡田": {
-      "icon": "dog"
+      "icon": "frog"
     },
     "江藤": {
-      "icon": "rabbit"
+      "icon": "panda"
     },
     "KIM": {
-      "icon": "bear"
+      "icon": "rabbit"
     },
     "ALIF": {
-      "icon": "cat"
+      "icon": "monkey"
     },
     "中村": {
-      "icon": "owl"
-    },
-    "市山": {
-      "icon": "dog"
-    },
-    "中川": {
-      "icon": "rabbit"
-    },
-    "小田": {
-      "icon": "bear"
-    },
-    "向原": {
       "icon": "cat"
     },
-    "一瀬": {
-      "icon": "owl"
+    "市山": {
+      "icon": "tiger"
     },
-    "稲澤": {
+    "中川": {
       "icon": "dog"
     },
+    "小田": {
+      "icon": "owl"
+    },
+    "向原": {
+      "icon": "penguin"
+    },
+    "一瀬": {
+      "icon": "zebra"
+    },
+    "稲澤": {
+      "icon": "bear"
+    },
     "長田": {
-      "icon": "rabbit"
+      "icon": "mouse"
     },
     "千々松": {
-      "icon": "bear"
+      "icon": "fox"
     }
   },
   "messages": [

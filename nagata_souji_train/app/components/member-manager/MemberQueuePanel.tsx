@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import Image from "next/image";
 import { isHex } from "@/lib/colors";
 import { getMemberDisplayColor } from "./utils";
 
@@ -92,7 +93,18 @@ export const MemberQueuePanel: React.FC<MemberQueuePanelProps> = ({
                                 <span className="w-6 h-6 flex items-center justify-center bg-white dark:bg-zinc-800 rounded-full text-xs font-bold text-gray-400 border border-gray-100 dark:border-zinc-700">
                                     {index + 1}
                                 </span>
-                                <span className={`w-3 h-3 rounded-full ${isHex(color.bg) ? "" : color.bg} ${color.ring} ring-1`} style={isHex(color.bg) ? { backgroundColor: color.bg } : {}}></span>
+                                {profiles[member]?.icon ? (
+                                    <Image
+                                        src={`/icons/${profiles[member].icon}.svg`}
+                                        alt={member}
+                                        width={24}
+                                        height={24}
+                                        className="rounded-full object-cover border border-gray-100 dark:border-zinc-700 shadow-sm"
+                                        unoptimized
+                                    />
+                                ) : (
+                                    <span className={`w-3 h-3 rounded-full ${isHex(color.bg) ? "" : color.bg} ${color.ring} ring-1`} style={isHex(color.bg) ? { backgroundColor: color.bg } : {}}></span>
+                                )}
                                 <span className={`font-medium dark:text-zinc-300 ${color.text} ${color.darkText}`} style={isHex(color.bg) ? { color: color.text === "text-white" ? "#fff" : "#111" } : {}}>{member}</span>
                             </div>
 

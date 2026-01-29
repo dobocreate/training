@@ -47,7 +47,12 @@ export default function Home() {
 
       // Randomly assign icons to members who don't have one
       if (json.members && json.profiles) {
-        const availableIcons = ["bear", "cat", "dog", "rabbit", "owl"];
+        const availableIcons = [
+          "bear", "cat", "dog", "rabbit", "owl",
+          "fox", "panda", "koala", "lion", "tiger",
+          "pig", "frog", "monkey", "mouse", "elephant",
+          "penguin", "giraffe", "hippo", "zebra"
+        ];
         let needsUpdate = false;
 
         // Map to keep track of assigned icons to try and keep them unique as much as possible
@@ -392,10 +397,24 @@ export default function Home() {
           {data.messages && data.messages.length > 0 ? (
             [...data.messages].slice(-3).reverse().map((msg) => {
               const senderColor = getColor(msg.sender);
+              const profile = data.profiles?.[msg.sender];
+              const icon = profile?.icon;
+
               return (
                 <div key={msg.id} className="flex flex-col gap-0.5" title={`${msg.sender}: ${msg.content}`}>
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-1.5 h-1.5 rounded-full ${isHex(senderColor.bg) ? "" : senderColor.bg}`} style={isHex(senderColor.bg) ? { backgroundColor: senderColor.bg } : {}}></span>
+                    {icon ? (
+                      <Image
+                        src={`/icons/${icon}.svg`}
+                        alt={msg.sender}
+                        width={20}
+                        height={20}
+                        className="rounded-full object-cover border border-gray-100 dark:border-zinc-700 flex-shrink-0 shadow-sm"
+                        unoptimized
+                      />
+                    ) : (
+                      <span className={`w-1.5 h-1.5 rounded-full ${isHex(senderColor.bg) ? "" : senderColor.bg}`} style={isHex(senderColor.bg) ? { backgroundColor: senderColor.bg } : {}}></span>
+                    )}
                     <span className={`text-[10px] font-bold ${senderColor.text} ${senderColor.darkText}`} style={isHex(senderColor.bg) ? { color: senderColor.text === "text-white" ? "#fff" : "#111" } : {}}>{msg.sender}</span>
                   </div>
                   <p className="text-[11px] text-gray-600 dark:text-zinc-400 line-clamp-1 pl-3 leading-relaxed">
@@ -444,14 +463,14 @@ export default function Home() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
           </svg>
         </div>
-        <span className="whitespace-nowrap font-bold text-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-4">
+        <span className="whitespace-nowrap font-bold text-base opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-3">
           掃除マニュアル
         </span>
       </button>
 
       {/* Cleaning Manual Overlay */}
       <div
-        className={`fixed inset-y-0 right-0 w-1/2 z-[100] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out dark:bg-zinc-900/95 border-l border-gray-100 dark:border-zinc-800 ${isManualOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 w-1/2 z-[300] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out dark:bg-zinc-900/95 border-l border-gray-100 dark:border-zinc-800 ${isManualOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <CleaningBackground opacity={0.06} />
         <div className="p-8 h-full flex flex-col relative overflow-hidden">
@@ -624,7 +643,7 @@ export default function Home() {
 
       {/* Cleaning Bulletin Board Overlay */}
       <div
-        className={`fixed inset-y-0 right-0 w-1/2 z-[100] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out dark:bg-zinc-900/95 border-l border-gray-100 dark:border-zinc-800 ${isBulletinOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={`fixed inset-y-0 right-0 w-1/2 z-[300] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 ease-in-out dark:bg-zinc-900/95 border-l border-gray-100 dark:border-zinc-800 ${isBulletinOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <CleaningBackground opacity={0.06} />
         <div className="p-8 h-full flex flex-col relative">

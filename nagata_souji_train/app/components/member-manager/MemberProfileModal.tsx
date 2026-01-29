@@ -80,7 +80,7 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
                     <div className={`w-28 h-28 rounded-full border-4 border-white dark:border-zinc-900 shadow-xl flex items-center justify-center bg-white absolute -bottom-14 overflow-hidden`}>
                         {initialIcon ? (
                             <Image
-                                src={`/icons/${initialIcon}.png`}
+                                src={`/icons/${initialIcon}.svg`}
                                 alt={initialIcon}
                                 width={112}
                                 height={112}

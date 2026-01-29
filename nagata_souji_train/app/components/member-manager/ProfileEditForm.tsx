@@ -30,12 +30,11 @@ export const ProfileEditFormWithPreview: React.FC<ProfileEditFormProps> = ({
     const colorInputRef = useRef<HTMLInputElement>(null);
 
     const icons = [
-        { id: "bear", src: "/icons/bear.png", alt: "Bear" },
-        { id: "cat", src: "/icons/cat.png", alt: "Cat" },
-        { id: "dog", src: "/icons/dog.png", alt: "Dog" },
-        { id: "rabbit", src: "/icons/rabbit.png", alt: "Rabbit" },
-        { id: "owl", src: "/icons/owl.png", alt: "Owl" },
-    ];
+        "bear", "cat", "dog", "rabbit", "owl",
+        "fox", "panda", "koala", "lion", "tiger",
+        "pig", "frog", "monkey", "mouse", "elephant",
+        "penguin", "giraffe", "hippo", "zebra"
+    ].map(id => ({ id, src: `/icons/${id}.svg`, alt: id }));
 
     useEffect(() => {
         if (onColorChange) {
