@@ -3,6 +3,7 @@
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { getMemberColor, isHex, getCustomColor } from "@/lib/colors";
 import { CleaningBackground } from "./CleaningBackground";
 
@@ -20,7 +21,7 @@ interface DutyCalendarProps {
     loading: boolean;
     nextPerson: string;
     dutyCount: number;
-    profiles: Record<string, { color: string; affiliation: string }>;
+    profiles: Record<string, { color: string; affiliation: string; icon?: string }>;
     onNext: () => Promise<void>;
 }
 
@@ -82,12 +83,24 @@ export default function DutyCalendar({
 
                 return (
                     <div className="flex-1 flex items-center justify-center w-full">
-                        <span
-                            className={`inline-block px-3 py-1.5 rounded-md text-lg font-bold truncate max-w-full ${isHex(color.bg) ? "" : color.bg} ${color.text} ${isHex(color.bg) ? "" : color.darkBg} ${color.darkText}`}
+                        <div
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md shadow-sm border border-black/5 dark:border-white/5 ${isHex(color.bg) ? "" : color.bg} ${color.text} ${isHex(color.bg) ? "" : color.darkBg} ${color.darkText}`}
                             style={isHex(color.bg) ? { backgroundColor: color.bg } : {}}
                         >
-                            {member}
-                        </span>
+                            {profile?.icon && (
+                                <Image
+                                    src={`/icons/${profile.icon}.svg`}
+                                    alt={member}
+                                    width={24}
+                                    height={24}
+                                    className="rounded-full flex-shrink-0"
+                                    unoptimized
+                                />
+                            )}
+                            <span className="text-lg font-bold truncate max-w-[80px]">
+                                {member}
+                            </span>
+                        </div>
                     </div>
                 );
             }

@@ -51,7 +51,11 @@ export default function Home() {
           "bear", "cat", "dog", "rabbit", "owl",
           "fox", "panda", "koala", "lion", "tiger",
           "pig", "frog", "monkey", "mouse", "elephant",
-          "penguin", "giraffe", "hippo", "zebra"
+          "penguin", "giraffe", "hippo", "zebra",
+          "squirrel", "deer", "wolf", "raccoon", "sheep",
+          "cow", "chicken", "duck", "eagle", "bat",
+          "shark", "whale", "dolphin", "octopus", "turtle",
+          "snake", "dragon", "dinosaur", "bee"
         ];
         let needsUpdate = false;
 
@@ -669,6 +673,18 @@ export default function Home() {
               [...data.messages].reverse().map((msg) => (
                 <div key={msg.id} className="flex flex-col gap-1 items-start group/msg">
                   <div className="flex items-center gap-2 px-1">
+                    {data.profiles?.[msg.sender]?.icon ? (
+                      <Image
+                        src={`/icons/${data.profiles[msg.sender].icon}.svg`}
+                        alt={msg.sender}
+                        width={20}
+                        height={20}
+                        className="rounded-full shadow-sm border border-gray-100 dark:border-zinc-700 flex-shrink-0"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-5 h-5 rounded-full bg-gray-100 dark:bg-zinc-800"></div>
+                    )}
                     <span className={`text-xs font-bold ${getColor(msg.sender).text} ${getColor(msg.sender).darkText}`}>{msg.sender}</span>
                     <span className="text-[10px] text-gray-400">{new Date(msg.date).toLocaleString()}</span>
                   </div>
@@ -746,6 +762,7 @@ export default function Home() {
                 onChange={setMessageSender}
                 placeholder="投稿者・検索"
                 className="flex-[2] z-[60]"
+                profiles={data.profiles || {}}
               />
             </div>
             <div className="flex gap-2">

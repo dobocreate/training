@@ -33,7 +33,11 @@ export const ProfileEditFormWithPreview: React.FC<ProfileEditFormProps> = ({
         "bear", "cat", "dog", "rabbit", "owl",
         "fox", "panda", "koala", "lion", "tiger",
         "pig", "frog", "monkey", "mouse", "elephant",
-        "penguin", "giraffe", "hippo", "zebra"
+        "penguin", "giraffe", "hippo", "zebra",
+        "squirrel", "deer", "wolf", "raccoon", "sheep",
+        "cow", "chicken", "duck", "eagle", "bat",
+        "shark", "whale", "dolphin", "octopus", "turtle",
+        "snake", "dragon", "dinosaur", "bee"
     ].map(id => ({ id, src: `/icons/${id}.svg`, alt: id }));
 
     useEffect(() => {

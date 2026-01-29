@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 interface SearchableSelectProps {
     options: string[];
@@ -8,6 +9,7 @@ interface SearchableSelectProps {
     onChange: (value: string) => void;
     placeholder?: string;
     className?: string;
+    profiles?: Record<string, { color: string; affiliation: string; icon?: string }>;
 }
 
 export default function SearchableSelect({
@@ -16,6 +18,7 @@ export default function SearchableSelect({
     onChange,
     placeholder = "選択してください",
     className = "",
+    profiles = {},
 }: SearchableSelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -56,9 +59,23 @@ export default function SearchableSelect({
                 onClick={() => setIsOpen(true)}
                 className="w-full"
             >
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    {profiles[value]?.icon ? (
+                        <Image
+                            src={`/icons/${profiles[value].icon}.svg`}
+                            alt={value}
+                            width={20}
+                            height={20}
+                            className="rounded-full overflow-hidden"
+                            unoptimized
+                        />
+                    ) : (
+                        <div className="w-5 h-5 rounded-full bg-gray-100 dark:bg-zinc-700 flex items-center justify-center text-[8px] text-gray-400">?</div>
+                    )}
+                </div>
                 <input
                     type="text"
-                    className="w-full bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none cursor-text"
+                    className="w-full bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl pl-10 pr-10 py-2 text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none cursor-text"
                     placeholder={placeholder}
                     value={searchTerm}
                     onChange={(e) => {
@@ -87,7 +104,21 @@ export default function SearchableSelect({
                                     setIsOpen(false);
                                 }}
                             >
-                                {option}
+                                <div className="flex items-center gap-2">
+                                    {profiles[option]?.icon ? (
+                                        <Image
+                                            src={`/icons/${profiles[option].icon}.svg`}
+                                            alt={option}
+                                            width={18}
+                                            height={18}
+                                            className="rounded-full"
+                                            unoptimized
+                                        />
+                                    ) : (
+                                        <div className="w-[18px] h-[18px] rounded-full bg-gray-100 dark:bg-zinc-700"></div>
+                                    )}
+                                    <span>{option}</span>
+                                </div>
                             </div>
                         ))
                     ) : (
