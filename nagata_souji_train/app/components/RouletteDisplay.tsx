@@ -104,8 +104,8 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                                         whiteSpace: "nowrap",
                                         color: isHex(color.bg) ? (color.text === "text-white" ? "#fff" : "#111") : undefined,
                                         fontSize: isCurrent
-                                            ? `${Math.min(72, 300 / Math.max(member.length, 1))}px`
-                                            : `${Math.min(40, 200 / Math.max(member.length, 1))}px`,
+                                            ? `${Math.min(58, 240 / Math.max(member.length, 1))}px`
+                                            : `${Math.min(32, 160 / Math.max(member.length, 1))}px`,
                                         lineHeight: "1.1"
                                     }}
                                 >
