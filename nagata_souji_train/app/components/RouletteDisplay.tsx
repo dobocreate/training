@@ -12,13 +12,24 @@ interface RouletteDisplayProps {
 
 export default function RouletteDisplay({ members, currentMember, profiles, onComplete }: RouletteDisplayProps) {
     const [rotation, setRotation] = useState(0);
+    const prevIndexRef = useRef(0);
     const angleStep = 360 / Math.max(members.length, 1);
 
-    // Initial rotation adjustment to bring current member to center (bottom position: 0deg)
+    // Shortest-path rotation adjustment to avoid full-circle spin on reset
     useEffect(() => {
         const index = members.indexOf(currentMember);
         if (index !== -1) {
-            setRotation(-(index * angleStep));
+            let delta = index - prevIndexRef.current;
+
+            // Adjust delta to take the shortest path (shortest angular distance)
+            if (delta > members.length / 2) {
+                delta -= members.length;
+            } else if (delta < -members.length / 2) {
+                delta += members.length;
+            }
+
+            setRotation(prev => prev - (delta * angleStep));
+            prevIndexRef.current = index;
         }
     }, [currentMember, members, angleStep]);
 
