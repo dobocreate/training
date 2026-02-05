@@ -85,12 +85,6 @@ export default function Home() {
             iconindex++;
 
             // Trigger updateProfile API
-            // We'll do this "silently" via the loop, but since we need to persist it, we should call the API.
-            // However, doing it inside this loop might cause race conditions or too many requests.
-            // Better to just set it in local state and maybe fire one update per member? 
-            // Or better yet, just do it client side for display if missing? 
-            // No, user wants them "created/assigned".
-            // Let's call the API for each one.
             await fetch("/api/duty", {
               method: "POST",
               body: JSON.stringify({
