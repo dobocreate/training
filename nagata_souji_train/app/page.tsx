@@ -860,8 +860,8 @@ export default function Home() {
             </button>
           )}
 
-          {/* Fixed Title Box at Top Left */}
-          <div className="absolute top-10 left-12 z-[60] pointer-events-none">
+          {/* Title Box - Positioned next to the calendar */}
+          <div className="absolute top-10 left-8 z-[100] pointer-events-none w-full flex justify-start">
             <div className="bg-white/95 backdrop-blur-2xl px-10 py-5 rounded-[2rem] shadow-2xl border border-white/50 dark:bg-zinc-900/95 dark:border-zinc-800 text-left inline-block pointer-events-auto min-w-[400px]">
               <h1 className="text-4xl font-black text-blue-600 dark:text-blue-400 tracking-wider flex items-center justify-start gap-4 whitespace-nowrap">
                 <span className="w-3 h-3 rounded-full bg-blue-600 dark:bg-blue-400"></span>
@@ -871,8 +871,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex-1 flex items-center justify-center w-full">
-            <div className="w-full max-w-2xl px-4">
+          <div className="flex-1 w-full flex items-center justify-center p-4">
+            <div className="w-full max-w-2xl">
               <RouletteDisplay
                 members={data.members}
                 currentMember={currentPerson}

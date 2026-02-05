@@ -27,7 +27,7 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
     return (
         <div className="w-full h-full flex flex-col items-center justify-start relative pt-0 gap-0">
             {/* Center Hub with Label & Indicator Needle */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 z-[80] pointer-events-none flex flex-col items-center">
+            <div className="absolute top-40 left-1/2 -translate-x-1/2 z-[80] pointer-events-none flex flex-col items-center">
                 {/* Large Center Hub with "今週の掃除当番" Label */}
                 <div className="relative w-64 h-64 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-3xl rounded-full z-[90] border-[6px] border-blue-600 dark:border-blue-500 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] flex items-center justify-center -mt-64">
                     <div className="flex flex-col items-center">
@@ -51,7 +51,7 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                 className="relative w-[800px] h-[800px] flex items-center justify-center transition-transform duration-[1500ms] ease-out z-10"
                 style={{
                     transform: `scale(1.4) rotate(${rotation}deg)`,
-                    marginTop: "-560px" // Exact pivot at top-edge (800 * 1.4 / 2)
+                    marginTop: "-400px" // Shifted down by 160px (from -560px)
                 }}
             >
 
@@ -66,10 +66,6 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                         color = getMemberColor(member);
                     }
 
-                    // Calculation for perfect fit:
-                    // Each piece needs to cover angleStep degrees.
-                    // A simple triangle would be polygon(50% 0%, 0% 100%, 100% 100%)
-                    // To make it look like a circle, we add points along the bottom arc.
                     return (
                         <div
                             key={`${member}-${i}`}
@@ -77,7 +73,7 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                             style={{
                                 transform: `translate(-50%, 0) rotate(${itemRotation}deg)`,
                                 zIndex: isCurrent ? 40 : 10,
-                                width: "500px", // Increased width for better name containment
+                                width: "500px",
                                 height: "620px",
                             }}
                         >
@@ -87,7 +83,6 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                                     }`}
                                 style={{
                                     backgroundColor: isCurrent ? "white" : "rgba(255,255,255,0.75)",
-                                    // A sector approximation
                                     clipPath: `polygon(
                                         50% 0%, 
                                         10% 95%, 
@@ -97,17 +92,15 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                                         90% 95%
                                     )`,
                                     borderBottom: isCurrent ? `20px solid ${isHex(color.bg) ? color.bg : color.text.replace("text-", "")}` : `4px solid ${isHex(color.bg) ? color.bg : color.text.replace("text-", "")}`,
-                                    // Simulated Thick Black Border using drop-shadows
                                     filter: `drop-shadow(2px 0 0 black) drop-shadow(-2px 0 0 black) drop-shadow(0 2px 0 black) drop-shadow(0 -2px 0 black)`,
                                     boxShadow: isCurrent ? "0 60px 120px -30px rgba(0, 0, 0, 0.7)" : "none"
                                 }}
                             >
-                                {/* Name inside Fan - Rotated back for horizontal readability - Synchronized transition */}
                                 <div
                                     className={`font-black tracking-tighter transition-all duration-[1500ms] ease-out ${color.text} ${color.darkText}`}
                                     style={{
                                         transform: `rotate(${-itemRotation - rotation}deg)`,
-                                        marginTop: "240px", // Adjusted to be slightly higher to avoid button collision
+                                        marginTop: "240px",
                                         whiteSpace: "nowrap",
                                         color: isHex(color.bg) ? (color.text === "text-white" ? "#fff" : "#111") : undefined,
                                         fontSize: isCurrent
