@@ -80,7 +80,7 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                     return (
                         <div
                             key={`${member}-${i}`}
-                            className="absolute top-1/2 left-1/2 origin-top transition-all duration-700 ease-out"
+                            className="absolute top-1/2 left-1/2 origin-top transition-transform duration-[1500ms] ease-out will-change-transform"
                             style={{
                                 transform: `translate(-50%, 0) rotate(${itemRotation}deg)`,
                                 zIndex: isCurrent ? 40 : 10,
@@ -90,7 +90,7 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                         >
                             {/* Individual Fan Piece - Wider sector with BLACK BORDER */}
                             <div
-                                className={`w-full h-full flex flex-col items-center text-center transition-all duration-500 ${isCurrent ? "scale-105 saturate-150 opacity-100" : "scale-100 opacity-40"
+                                className={`w-full h-full flex flex-col items-center text-center transition-all duration-[1500ms] ease-out will-change-transform ${isCurrent ? "saturate-150 opacity-100" : "opacity-40"
                                     }`}
                                 style={{
                                     backgroundColor: isCurrent ? "white" : "rgba(255,255,255,0.75)",
@@ -104,20 +104,21 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                                     )`,
                                     borderBottom: isCurrent ? `20px solid ${isHex(color.bg) ? color.bg : color.text.replace("text-", "")}` : `4px solid ${isHex(color.bg) ? color.bg : color.text.replace("text-", "")}`,
                                     filter: `drop-shadow(2px 0 0 black) drop-shadow(-2px 0 0 black) drop-shadow(0 2px 0 black) drop-shadow(0 -2px 0 black)`,
-                                    boxShadow: isCurrent ? "0 60px 120px -30px rgba(0, 0, 0, 0.7)" : "none"
+                                    boxShadow: isCurrent ? "0 60px 120px -30px rgba(0, 0, 0, 0.7)" : "none",
+                                    transform: isCurrent ? "scale(1.05)" : "scale(1.0)"
                                 }}
                             >
                                 <div
-                                    className={`font-black tracking-tighter transition-all duration-[1500ms] ease-out ${color.text} ${color.darkText}`}
+                                    className={`font-black tracking-tighter transition-transform duration-[1500ms] ease-out will-change-transform ${color.text} ${color.darkText}`}
                                     style={{
-                                        transform: `rotate(${-itemRotation - rotation}deg)`,
+                                        transform: `rotate(${-itemRotation - rotation}deg) scale(${isCurrent ? 1.0 : 0.6})`,
+                                        transformOrigin: "center center",
                                         marginTop: "240px",
                                         whiteSpace: "nowrap",
                                         color: isHex(color.bg) ? (color.text === "text-white" ? "#fff" : "#111") : undefined,
-                                        fontSize: isCurrent
-                                            ? `${Math.min(58, 240 / Math.max(member.length, 1))}px`
-                                            : `${Math.min(32, 160 / Math.max(member.length, 1))}px`,
-                                        lineHeight: "1.1"
+                                        fontSize: `${Math.min(58, 240 / Math.max(member.length, 1))}px`,
+                                        lineHeight: "1.1",
+                                        backfaceVisibility: "hidden"
                                     }}
                                 >
                                     {member}

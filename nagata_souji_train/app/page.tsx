@@ -886,7 +886,7 @@ export default function Home() {
           <div className="w-full max-w-lg px-8 pb-12 flex flex-col items-center gap-8 z-50">
             <div className="flex items-center gap-12">
               <div className="flex flex-col items-center">
-                <span className="text-sm uppercase tracking-widest text-gray-400 font-bold mb-2">当番回数</span>
+                <span className="text-sm uppercase tracking-widest text-gray-600 dark:text-gray-400 font-bold mb-2">当番回数</span>
                 <div className="px-8 py-3 bg-white dark:bg-zinc-900 rounded-2xl text-blue-600 dark:text-blue-400 font-black text-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
                   {dutyCount} <span className="text-sm ml-1 opacity-60">回</span>
                 </div>
@@ -894,10 +894,10 @@ export default function Home() {
 
               {!loading && (
                 <div className="flex flex-col items-center">
-                  <span className="text-sm uppercase tracking-widest text-gray-400 font-bold mb-2">次回の担当</span>
+                  <span className="text-sm uppercase tracking-widest text-gray-600 dark:text-gray-400 font-bold mb-2">次回の担当</span>
                   <div className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white font-black">
                     <span className="bg-white dark:bg-zinc-900 px-6 py-3 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 min-w-[120px] text-center">{nextPerson}</span>
-                    <span className="text-base text-gray-400">さん</span>
+                    <span className="text-base text-gray-600 dark:text-gray-400">さん</span>
                   </div>
                 </div>
               )}
