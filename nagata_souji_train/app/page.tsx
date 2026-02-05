@@ -806,7 +806,7 @@ export default function Home() {
 
         {/* Left Column: Calendar */}
         <div className={`h-full bg-white dark:bg-zinc-900 border-r border-gray-200 dark:border-zinc-800 transition-all duration-500 ease-in-out relative overflow-hidden z-[40] ${isCalendarOpen ? "w-full opacity-100" : "w-0 opacity-0 border-none"}`}>
-          {/* Toggle Button for Calendar (Moved to top-right, simplified) */}
+          {/* Toggle Button for Calendar (appears when calendar is open) */}
           {isCalendarOpen && (
             <button
               onClick={() => setIsCalendarOpen(false)}
@@ -836,7 +836,7 @@ export default function Home() {
         </div>
 
         {/* Right Column: Duty Display */}
-        <div className="w-full h-full flex flex-col items-center justify-center relative bg-emerald-50 dark:bg-black overflow-hidden">
+        <div className="w-full h-full flex flex-col items-center justify-between relative bg-emerald-50 dark:bg-black overflow-hidden py-8">
           <CleaningBackground opacity={isHex("#000") ? 0.12 : 0.08} />
           {/* Animated Background Orbs */}
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-300/20 dark:bg-emerald-600/10 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
@@ -871,13 +871,56 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-20 w-full max-w-2xl px-4">
-            <RouletteDisplay
-              members={data.members}
-              currentMember={currentPerson}
-              profiles={data.profiles || {}}
-              onComplete={handleNextWrapper}
-            />
+          <div className="flex-1 flex items-center justify-center w-full">
+            <div className="w-full max-w-2xl px-4">
+              <RouletteDisplay
+                members={data.members}
+                currentMember={currentPerson}
+                profiles={data.profiles || {}}
+                onComplete={handleNextWrapper}
+              />
+            </div>
+          </div>
+
+          {/* Duplicated Action Panel at bottom of Roulette side */}
+          <div className="w-full max-w-lg px-8 pb-12 flex flex-col items-center gap-8 z-50">
+            <div className="flex items-center gap-12">
+              <div className="flex flex-col items-center">
+                <span className="text-sm uppercase tracking-widest text-gray-400 font-bold mb-2">当番回数</span>
+                <div className="px-8 py-3 bg-white dark:bg-zinc-900 rounded-2xl text-blue-600 dark:text-blue-400 font-black text-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
+                  {dutyCount} <span className="text-sm ml-1 opacity-60">回</span>
+                </div>
+              </div>
+
+              {!loading && (
+                <div className="flex flex-col items-center">
+                  <span className="text-sm uppercase tracking-widest text-gray-400 font-bold mb-2">次回の担当</span>
+                  <div className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white font-black">
+                    <span className="bg-white dark:bg-zinc-900 px-6 py-3 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 min-w-[120px] text-center">{nextPerson}</span>
+                    <span className="text-base text-gray-400">さん</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={handleNextWrapper}
+              disabled={loading || !currentPerson}
+              className={`w-full py-6 px-12 rounded-3xl text-3xl font-black text-white shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-4 ${loading
+                ? "bg-gray-400 cursor-not-allowed grayscale"
+                : "bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/20"
+                }`}
+            >
+              {loading ? (
+                <span className="flex items-center gap-3">
+                  <svg className="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  送信中...
+                </span>
+              ) : "完了して次へ"}
+            </button>
           </div>
         </div>
       </main>

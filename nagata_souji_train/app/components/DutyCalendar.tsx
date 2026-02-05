@@ -140,88 +140,49 @@ export default function DutyCalendar({
                 />
             </div>
 
-            {/* Integrated Action Panel - Moved from Roulette side */}
-            <div className="p-6 bg-gray-50 dark:bg-zinc-800/50 border-t border-gray-100 dark:border-zinc-800 flex flex-col items-center gap-6">
-                <div className="flex items-center gap-12">
-                    <div className="flex flex-col items-center">
-                        <span className="text-xs uppercase tracking-widest text-gray-400 font-bold mb-2">当番回数</span>
-                        <div className="px-8 py-3 bg-white dark:bg-zinc-900 rounded-2xl text-blue-600 dark:text-blue-400 font-black text-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
-                            {dutyCount} <span className="text-sm ml-1 opacity-60">回</span>
-                        </div>
-                    </div>
+            {/* Modal */}
+            {
+                isModalOpen && selectedDate && (
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                        <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-2xl w-full max-w-sm border border-gray-100 dark:border-zinc-800 animate-in fade-in zoom-in-95 duration-200">
+                            <h4 className="font-bold text-lg mb-4 text-center dark:text-zinc-200">
+                                {selectedDate.toLocaleDateString()} の担当者
+                            </h4>
 
-                    {!loading && (
-                        <div className="flex flex-col items-center">
-                            <span className="text-xs uppercase tracking-widest text-gray-400 font-bold mb-2">次回の担当</span>
-                            <div className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white font-black">
-                                <span className="bg-white dark:bg-zinc-900 px-6 py-3 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 min-w-[120px] text-center">{nextPerson}</span>
-                                <span className="text-base text-gray-400">さん</span>
+                            <div className="grid grid-cols-2 gap-2 mb-6 max-h-60 overflow-y-auto">
+                                {members.map((m) => (
+                                    <button
+                                        key={m}
+                                        onClick={() => setSelectedMember(m)}
+                                        className={`p-3 rounded-xl border text-sm font-bold transition-all ${selectedMember === m
+                                            ? "bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-200 dark:ring-blue-900"
+                                            : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-700"
+                                            }`}
+                                    >
+                                        {m}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition dark:hover:bg-zinc-800"
+                                >
+                                    キャンセル
+                                </button>
+                                <button
+                                    onClick={handleSave}
+                                    disabled={!selectedMember}
+                                    className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
+                                >
+                                    保存
+                                </button>
                             </div>
                         </div>
-                    )}
-                </div>
-
-                <button
-                    onClick={onNext}
-                    disabled={loading || !currentMember}
-                    className={`w-full max-w-lg py-6 px-12 rounded-3xl text-3xl font-black text-white shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-4 ${loading
-                        ? "bg-gray-400 cursor-not-allowed grayscale"
-                        : "bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/20"
-                        }`}
-                >
-                    {loading ? (
-                        <span className="flex items-center gap-3">
-                            <svg className="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            送信中...
-                        </span>
-                    ) : "完了して次へ"}
-                </button>
-            </div>
-
-            {/* Modal */}
-            {isModalOpen && selectedDate && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-2xl w-full max-w-sm border border-gray-100 dark:border-zinc-800 animate-in fade-in zoom-in-95 duration-200">
-                        <h4 className="font-bold text-lg mb-4 text-center dark:text-zinc-200">
-                            {selectedDate.toLocaleDateString()} の担当者
-                        </h4>
-
-                        <div className="grid grid-cols-2 gap-2 mb-6 max-h-60 overflow-y-auto">
-                            {members.map((m) => (
-                                <button
-                                    key={m}
-                                    onClick={() => setSelectedMember(m)}
-                                    className={`p-3 rounded-xl border text-sm font-bold transition-all ${selectedMember === m
-                                        ? "bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-200 dark:ring-blue-900"
-                                        : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-700"
-                                        }`}
-                                >
-                                    {m}
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition dark:hover:bg-zinc-800"
-                            >
-                                キャンセル
-                            </button>
-                            <button
-                                onClick={handleSave}
-                                disabled={!selectedMember}
-                                className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
-                            >
-                                保存
-                            </button>
-                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             <style jsx global>{`
                 .calendar-wrapper .react-calendar {
@@ -379,6 +340,6 @@ export default function DutyCalendar({
                     }
                 }
             `}</style>
-        </div>
+        </div >
     );
 }

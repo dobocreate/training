@@ -104,12 +104,16 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
                             >
                                 {/* Name inside Fan - Rotated back for horizontal readability - Synchronized transition */}
                                 <div
-                                    className={`font-black tracking-tighter transition-all duration-[1500ms] ease-out ${isCurrent ? "text-7xl" : "text-4xl"} ${color.text} ${color.darkText}`}
+                                    className={`font-black tracking-tighter transition-all duration-[1500ms] ease-out ${color.text} ${color.darkText}`}
                                     style={{
                                         transform: `rotate(${-itemRotation - rotation}deg)`,
                                         marginTop: "240px", // Adjusted to be slightly higher to avoid button collision
                                         whiteSpace: "nowrap",
-                                        color: isHex(color.bg) ? (color.text === "text-white" ? "#fff" : "#111") : undefined
+                                        color: isHex(color.bg) ? (color.text === "text-white" ? "#fff" : "#111") : undefined,
+                                        fontSize: isCurrent
+                                            ? `${Math.min(72, 300 / Math.max(member.length, 1))}px`
+                                            : `${Math.min(40, 200 / Math.max(member.length, 1))}px`,
+                                        lineHeight: "1.1"
                                     }}
                                 >
                                     {member}
