@@ -869,93 +869,77 @@ export default function Home() {
         </div>
 
         {/* Right Column: Duty Display */}
-        <div className="w-full h-full flex flex-col relative bg-emerald-50 dark:bg-black overflow-hidden py-8">
+        <div className="w-full h-full flex flex-col relative bg-emerald-50 dark:bg-black overflow-hidden">
           <CleaningBackground opacity={isHex("#000") ? 0.12 : 0.08} />
           {/* Animated Background Orbs */}
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-300/20 dark:bg-emerald-600/10 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-300/20 dark:bg-blue-600/10 rounded-full blur-[120px] animate-pulse delay-700 pointer-events-none"></div>
 
-          {/* Toggle Button for Calendar (appears when calendar is closed) */}
-          {!isCalendarOpen && (
-            <button
-              onClick={() => setIsCalendarOpen(true)}
-              className="absolute top-40 left-8 z-50 flex items-center bg-blue-600 text-white rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out h-20 w-20 group overflow-hidden"
-              aria-label="当番カレンダー"
-            >
-              <div className="w-20 h-full flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-10 h-10">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                </svg>
+          <div className="w-full h-full flex flex-col items-center justify-between py-12 animate-in fade-in duration-500 relative">
+            {/* Title Box - Positioned next to the calendar */}
+            <div className="absolute top-10 left-8 z-[100] pointer-events-none w-full flex justify-start">
+              <div className="bg-white/95 backdrop-blur-2xl px-10 py-5 rounded-[2rem] shadow-2xl border border-white/50 dark:bg-zinc-900/95 dark:border-zinc-800 text-left inline-block pointer-events-auto min-w-[400px]">
+                <h1 className="text-4xl font-black text-blue-600 dark:text-blue-400 tracking-wider flex items-center justify-start gap-4 whitespace-nowrap">
+                  <span className="w-3 h-3 rounded-full bg-blue-600 dark:bg-blue-400"></span>
+                  掃除当番システム
+                  <span className="w-3 h-3 rounded-full bg-blue-600 dark:bg-blue-400"></span>
+                </h1>
               </div>
-              <span className="whitespace-nowrap font-bold text-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-4">
-                当番カレンダー
-              </span>
-            </button>
-          )}
-
-          {/* Title Box - Positioned next to the calendar */}
-          <div className="absolute top-10 left-8 z-[100] pointer-events-none w-full flex justify-start">
-            <div className="bg-white/95 backdrop-blur-2xl px-10 py-5 rounded-[2rem] shadow-2xl border border-white/50 dark:bg-zinc-900/95 dark:border-zinc-800 text-left inline-block pointer-events-auto min-w-[400px]">
-              <h1 className="text-4xl font-black text-blue-600 dark:text-blue-400 tracking-wider flex items-center justify-start gap-4 whitespace-nowrap">
-                <span className="w-3 h-3 rounded-full bg-blue-600 dark:bg-blue-400"></span>
-                掃除当番システム
-                <span className="w-3 h-3 rounded-full bg-blue-600 dark:bg-blue-400"></span>
-              </h1>
             </div>
-          </div>
 
-          <div className="flex-1 w-full flex items-center justify-center p-4">
-            <div className="w-full max-w-2xl animate-in fade-in duration-500">
-              <RouletteDisplay
-                members={data.members}
-                currentMember={currentPerson}
-                profiles={data.profiles || {}}
-                onComplete={handleNextWrapper}
-              />
-            </div>
-          </div>
-
-          {/* Duplicated Action Panel at bottom of Roulette side */}
-          <div className="w-full max-w-lg px-8 pb-12 flex flex-col items-center gap-8 z-50">
-            <div className="flex items-center gap-12">
-              <div className="flex flex-col items-center">
-                <span className="text-sm uppercase tracking-widest text-gray-600 dark:text-gray-400 font-bold mb-2">当番回数</span>
-                <div className="px-8 py-3 bg-white dark:bg-zinc-900 rounded-2xl text-blue-600 dark:text-blue-400 font-black text-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
-                  {dutyCount} <span className="text-sm ml-1 opacity-60">回</span>
-                </div>
+            <div className="flex-1 w-full flex items-center justify-center p-4">
+              <div className="w-full max-w-2xl">
+                <RouletteDisplay
+                  members={data.members}
+                  currentMember={currentPerson}
+                  profiles={data.profiles || {}}
+                  onComplete={handleNextWrapper}
+                />
               </div>
+            </div>
 
-              {!loading && (
+            {/* Action Panel at bottom */}
+            <div className="w-full max-w-lg px-8 flex flex-col items-center gap-8 z-50">
+              <div className="flex items-center gap-12">
                 <div className="flex flex-col items-center">
-                  <span className="text-sm uppercase tracking-widest text-gray-600 dark:text-gray-400 font-bold mb-2">次回の担当</span>
-                  <div className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white font-black">
-                    <span className="bg-white dark:bg-zinc-900 px-6 py-3 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 min-w-[120px] text-center">{nextPerson}</span>
-                    <span className="text-base text-gray-600 dark:text-gray-400">さん</span>
+                  <span className="text-sm uppercase tracking-widest text-gray-600 dark:text-gray-400 font-bold mb-2">当番回数</span>
+                  <div className="px-8 py-3 bg-white dark:bg-zinc-900 rounded-2xl text-blue-600 dark:text-blue-400 font-black text-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
+                    {dutyCount} <span className="text-sm ml-1 opacity-60">回</span>
                   </div>
                 </div>
-              )}
-            </div>
 
-            <button
-              onClick={handleNextWrapper}
-              disabled={loading || !currentPerson}
-              className={`w-full py-6 px-12 rounded-3xl text-3xl font-black text-white shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-4 ${loading
-                ? "bg-gray-400 cursor-not-allowed grayscale"
-                : "bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/20"
-                }`}
-            >
-              {loading ? (
-                <span className="flex items-center gap-3">
-                  <svg className="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  送信中...
-                </span>
-              ) : (
-                "完了して次へ"
-              )}
-            </button>
+                {!loading && (
+                  <div className="flex flex-col items-center">
+                    <span className="text-sm uppercase tracking-widest text-gray-600 dark:text-gray-400 font-bold mb-2">次回の担当</span>
+                    <div className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white font-black">
+                      <span className="bg-white dark:bg-zinc-900 px-6 py-3 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 min-w-[120px] text-center">{nextPerson}</span>
+                      <span className="text-base text-gray-600 dark:text-gray-400">さん</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={handleNextWrapper}
+                disabled={loading || !currentPerson}
+                className={`w-full py-6 px-12 rounded-3xl text-3xl font-black text-white shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-4 ${loading
+                  ? "bg-gray-400 cursor-not-allowed grayscale"
+                  : "bg-blue-600 hover:bg-blue-700 hover:shadow-blue-500/20"
+                  }`}
+              >
+                {loading ? (
+                  <span className="flex items-center gap-3">
+                    <svg className="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    送信中...
+                  </span>
+                ) : (
+                  "完了して次へ"
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </main>
