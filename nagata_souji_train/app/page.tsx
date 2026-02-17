@@ -9,6 +9,7 @@ import { CleaningBackground } from "./components/CleaningBackground";
 import SearchableSelect from "./components/SearchableSelect";
 import Link from "next/link";
 import { getMemberColor, memberColors, isHex, getCustomColor } from "@/lib/colors";
+import { ShiftCalendar } from "./components/ShiftCalendar";
 
 interface CalendarEvent {
   id: string;
@@ -44,9 +45,6 @@ interface MemberManagerProps {
   onReorderMembers: (newMembers: string[]) => void;
 }
 
-// Persistent flag to track if the splash screen has been shown in the current session
-let hasShownSplashInitial = false;
-
 export default function Home() {
   const [data, setData] = useState<DutyData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,9 +55,12 @@ export default function Home() {
   const [editManualContent, setEditManualContent] = useState("");
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editMessageContent, setEditMessageContent] = useState("");
+  const [isShiftShowing, setIsShiftShowing] = useState(false);
+  const [selectedShift, setSelectedShift] = useState<CalendarEvent | null>(null);
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
   // Standby/Splash screen state tracking
-  const [showSplash, setShowSplash] = useState(!hasShownSplashInitial);
+  const [showSplash, setShowSplash] = useState(true);
   const [splashClosing, setSplashClosing] = useState(false);
 
   const fetchData = async () => {
@@ -295,19 +296,16 @@ export default function Home() {
 
 
   useEffect(() => {
-    if (!loading && data && showSplash) {
+    if (!loading && data) {
       // Keep visible for 5 seconds as requested
       const timer = setTimeout(() => {
         setSplashClosing(true);
         // After transition-duration (1000ms in className), unmount
-        setTimeout(() => {
-          setShowSplash(false);
-          hasShownSplashInitial = true;
-        }, 1000);
+        setTimeout(() => setShowSplash(false), 1000);
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [loading, data, showSplash]);
+  }, [loading, data]);
 
   if (showSplash) {
     return (
@@ -466,8 +464,12 @@ export default function Home() {
       </div>
 
       {/* Shift Calendar Button (Fixed: Icon on Right, Expands Left) */}
-      <Link
-        href="/calendar"
+      <button
+        onClick={() => {
+          setIsShiftShowing(true);
+          setIsBulletinOpen(false);
+          setIsManualOpen(false);
+        }}
         className="absolute bottom-[21rem] right-10 flex flex-row-reverse items-center bg-white text-emerald-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-52 duration-300 ease-out z-40 h-16 w-16 group overflow-hidden"
         aria-label="シフトカレンダー"
       >
@@ -482,7 +484,7 @@ export default function Home() {
         <span className="whitespace-nowrap font-bold text-base opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-3">
           シフトカレンダー
         </span>
-      </Link>
+      </button>
       <button
         onClick={() => {
           setIsBulletinOpen(true);
@@ -867,7 +869,7 @@ export default function Home() {
         </div>
 
         {/* Right Column: Duty Display */}
-        <div className="w-full h-full flex flex-col items-center justify-between relative bg-emerald-50 dark:bg-black overflow-hidden py-8">
+        <div className="w-full h-full flex flex-col relative bg-emerald-50 dark:bg-black overflow-hidden py-8">
           <CleaningBackground opacity={isHex("#000") ? 0.12 : 0.08} />
           {/* Animated Background Orbs */}
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-300/20 dark:bg-emerald-600/10 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
@@ -903,7 +905,7 @@ export default function Home() {
           </div>
 
           <div className="flex-1 w-full flex items-center justify-center p-4">
-            <div className="w-full max-w-2xl">
+            <div className="w-full max-w-2xl animate-in fade-in duration-500">
               <RouletteDisplay
                 members={data.members}
                 currentMember={currentPerson}
@@ -957,6 +959,140 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* Shift Detail Modal */}
+      {selectedShift && (
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-zinc-900 w-full max-w-md rounded-[2.5rem] shadow-2xl border border-white/10 overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="p-8">
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-center gap-4">
+                  {data?.profiles?.[selectedMember || ""]?.icon && (
+                    <div className="w-16 h-16 rounded-3xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center p-3 border border-emerald-100 dark:border-emerald-800 shadow-inner">
+                      <Image
+                        src={`/icons/${data.profiles[selectedMember || ""].icon}.svg`}
+                        alt={selectedMember || ""}
+                        width={48}
+                        height={48}
+                        className="object-contain"
+                        unoptimized
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="text-2xl font-black dark:text-white uppercase tracking-tight">
+                      {selectedMember}
+                    </h4>
+                    <p className="text-xs font-bold text-gray-400 dark:text-zinc-500 mt-0.5">
+                      SHIFT DETAILS
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedShift(null)}
+                  className="p-2.5 rounded-2xl hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors text-gray-400"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-gray-50 dark:bg-zinc-950/50 p-6 rounded-[1.5rem] border border-gray-100 dark:border-zinc-800">
+                  <div className="flex flex-col gap-2 mb-4">
+                    <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75" />
+                      </svg>
+                      <span className="font-bold text-lg tracking-tight">
+                        {new Date((selectedShift.start.dateTime || selectedShift.start.date) as string).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' })}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="font-bold text-lg tracking-tight">勤務時間</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">開始</span>
+                      <span className="text-2xl font-black dark:text-white">
+                        {selectedShift.start.dateTime
+                          ? new Date(selectedShift.start.dateTime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+                          : '終日'}
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">終了</span>
+                      <span className="text-2xl font-black dark:text-white">
+                        {selectedShift.end.dateTime
+                          ? new Date(selectedShift.end.dateTime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+                          : '終日'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {selectedShift.start.dateTime && selectedShift.end.dateTime && (
+                  <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-2xl flex items-center justify-between px-6 border border-blue-100/50 dark:border-blue-800/20">
+                    <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">合計勤務時間</span>
+                    <span className="text-xl font-black text-blue-700 dark:text-blue-300">
+                      {Math.abs(new Date(selectedShift.end.dateTime).getTime() - new Date(selectedShift.start.dateTime).getTime()) / (1000 * 60 * 60)} <span className="text-sm font-bold opacity-60 ml-0.5">h</span>
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={() => setSelectedShift(null)}
+                className="w-full mt-8 py-4 bg-zinc-900 dark:bg-zinc-800 hover:bg-zinc-800 dark:hover:bg-zinc-700 text-white rounded-2xl font-black text-lg shadow-xl transition-all active:scale-[0.98]"
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Shift Calendar Overlay */}
+      <div
+        className={`fixed inset-y-0 right-0 w-1/2 z-[350] bg-white dark:bg-zinc-900 shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-gray-100 dark:border-zinc-800 flex flex-col ${isShiftShowing ? "translate-x-0" : "translate-x-full"}`}
+      >
+        <CleaningBackground opacity={0.03} />
+        {/* Shift Calendar Toolbar */}
+        <div className="h-24 flex items-center justify-center px-12 border-b border-gray-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md relative flex-shrink-0">
+          <button
+            onClick={() => setIsShiftShowing(false)}
+            className="absolute left-8 p-3 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition group/close text-gray-400 hover:text-gray-600"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-8 h-8">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <div className="flex items-center gap-4">
+            <div className="w-1.5 h-10 bg-emerald-500 rounded-full"></div>
+            <h2 className="text-3xl font-black text-gray-800 dark:text-white tracking-tight">シフトカレンダー</h2>
+            <div className="w-1.5 h-10 bg-emerald-500 rounded-full"></div>
+          </div>
+        </div>
+
+        <div className="flex-1 min-h-0 relative z-10">
+          {data?.profiles && (
+            <ShiftCalendar
+              profiles={data.profiles as Record<string, any>}
+              onShiftClick={(event, member) => {
+                setSelectedShift(event);
+                setSelectedMember(member);
+              }}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

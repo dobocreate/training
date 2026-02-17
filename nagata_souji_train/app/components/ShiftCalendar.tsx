@@ -37,34 +37,42 @@ export function ShiftCalendar({ profiles, onShiftClick }: ShiftCalendarProps) {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        async function fetchEvents() {
+        async function fetchData() {
             try {
-                const res = await fetch("/api/calendar");
-                if (!res.ok) throw new Error("Failed to fetch calendar events");
-                const data = await res.json();
-                setEvents(Array.isArray(data) ? data : []);
+                // Fetch calendar events starting from 60 days ago
+                const timeMin = new Date();
+                timeMin.setDate(timeMin.getDate() - 60);
+                const calendarRes = await fetch(`/api/calendar?timeMin=${timeMin.toISOString()}`);
+                if (!calendarRes.ok) {
+                    throw new Error("Failed to fetch calendar events");
+                }
+                const calendarData = await calendarRes.json();
+                setEvents(Array.isArray(calendarData) ? calendarData : []);
             } catch (err) {
                 console.error(err);
-                setError("カレンダーデータの取得に失敗しました。");
+                setError("データの取得に失敗しました。");
+                setEvents([]);
             } finally {
                 setLoading(false);
             }
         }
-        fetchEvents();
+
+        fetchData();
     }, []);
 
     const tileContent = ({ date, view }: { date: Date; view: string }) => {
         if (view === "month") {
-            const dateStr = date.toISOString().split('T')[0];
+            const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             const dailyEvents = events.filter(event => {
                 const startStr = event.start.dateTime || event.start.date;
-                return startStr?.startsWith(dateStr);
+                return startStr?.includes(dateStr);
             });
 
             if (dailyEvents.length > 0) {
                 return (
                     <div className="w-full mt-2 grid grid-cols-3 gap-1 px-1">
                         {dailyEvents.map(event => {
+                            // Remove "バイト" and any parentheses/spaces
                             const member = event.summary.replace(/バイト|\(|\)|（|）|\s/g, "").trim();
                             const profile = profiles[member];
                             let color;
@@ -76,13 +84,14 @@ export function ShiftCalendar({ profiles, onShiftClick }: ShiftCalendarProps) {
                             }
 
                             return (
-                                <button
+                                <div
                                     key={event.id}
                                     onClick={(e) => {
+                                        e.preventDefault();
                                         e.stopPropagation();
                                         onShiftClick(event, member);
                                     }}
-                                    className={`flex items-center justify-center gap-0.5 px-1 py-0.5 rounded-md shadow-sm border border-black/5 dark:border-white/5 transition-transform hover:scale-110 active:scale-95 z-30 ${isHex(color.bg) ? "" : color.bg} ${color.text} ${isHex(color.bg) ? "" : color.darkBg} ${color.darkText}`}
+                                    className={`flex items-center justify-center gap-0.5 px-1 py-0.5 rounded-md shadow-sm border border-black/5 dark:border-white/5 transition-transform hover:scale-110 active:scale-95 cursor-pointer z-[100] relative pointer-events-auto ${isHex(color.bg) ? "" : color.bg} ${color.text} ${isHex(color.bg) ? "" : color.darkBg} ${color.darkText}`}
                                     style={isHex(color.bg) ? { backgroundColor: color.bg } : {}}
                                     title={`${member} の予定詳細を表示`}
                                 >
@@ -99,7 +108,7 @@ export function ShiftCalendar({ profiles, onShiftClick }: ShiftCalendarProps) {
                                     <span className="text-[9px] font-bold truncate pointer-events-none">
                                         {member}
                                     </span>
-                                </button>
+                                </div>
                             );
                         })}
                     </div>
@@ -179,6 +188,7 @@ export function ShiftCalendar({ profiles, onShiftClick }: ShiftCalendarProps) {
                     height: 100% !important;
                 }
 
+                /* Weekday header */
                 .react-calendar__month-view__weekdays {
                     font-weight: bold;
                     text-transform: none;
@@ -190,13 +200,16 @@ export function ShiftCalendar({ profiles, onShiftClick }: ShiftCalendarProps) {
                     text-decoration: none;
                     color: #4b5563;
                 }
+                /* Sunday Red */
                 .react-calendar__month-view__weekdays__weekday:first-child abbr {
                     color: #ef4444;
                 }
+                /* Saturday Blue */
                 .react-calendar__month-view__weekdays__weekday:last-child abbr {
                     color: #3b82f6;
                 }
 
+                /* Date tile */
                 .react-calendar__tile {
                     position: relative;
                 }
@@ -206,6 +219,7 @@ export function ShiftCalendar({ profiles, onShiftClick }: ShiftCalendarProps) {
                     color: #1f2937;
                 }
 
+                /* Weekend colors for dates */
                 .react-calendar__month-view__days__day--weekend:nth-child(7n+1) abbr {
                     color: #ef4444;
                 }
@@ -213,6 +227,7 @@ export function ShiftCalendar({ profiles, onShiftClick }: ShiftCalendarProps) {
                     color: #3b82f6;
                 }
 
+                /* Navigation */
                 .react-calendar__navigation {
                     height: 100px;
                     display: flex;
@@ -245,6 +260,7 @@ export function ShiftCalendar({ profiles, onShiftClick }: ShiftCalendarProps) {
                     }
                 }
 
+                /* Scrollbar hide */
                 .scrollbar-hide::-webkit-scrollbar {
                     display: none;
                 }
