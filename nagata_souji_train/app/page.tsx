@@ -876,6 +876,24 @@ export default function Home() {
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-300/20 dark:bg-blue-600/10 rounded-full blur-[120px] animate-pulse delay-700 pointer-events-none"></div>
 
           <div className="w-full h-full flex flex-col items-center justify-between py-12 animate-in fade-in duration-500 relative">
+            {/* Toggle Button for Calendar (appears when calendar is closed) */}
+            {!isCalendarOpen && (
+              <button
+                onClick={() => setIsCalendarOpen(true)}
+                className="absolute top-40 left-8 z-50 flex items-center bg-blue-600 text-white rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out h-20 w-20 group overflow-hidden"
+                aria-label="当番カレンダー"
+              >
+                <div className="w-20 h-full flex items-center justify-center flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-10 h-10">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                  </svg>
+                </div>
+                <span className="whitespace-nowrap font-bold text-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-4">
+                  当番カレンダー
+                </span>
+              </button>
+            )}
+
             {/* Title Box - Positioned next to the calendar */}
             <div className="absolute top-10 left-8 z-[100] pointer-events-none w-full flex justify-start">
               <div className="bg-white/95 backdrop-blur-2xl px-10 py-5 rounded-[2rem] shadow-2xl border border-white/50 dark:bg-zinc-900/95 dark:border-zinc-800 text-left inline-block pointer-events-auto min-w-[400px]">
