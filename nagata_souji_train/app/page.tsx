@@ -44,6 +44,9 @@ interface MemberManagerProps {
   onReorderMembers: (newMembers: string[]) => void;
 }
 
+// Persistent flag to track if the splash screen has been shown in the current session
+let hasShownSplashInitial = false;
+
 export default function Home() {
   const [data, setData] = useState<DutyData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,6 +57,10 @@ export default function Home() {
   const [editManualContent, setEditManualContent] = useState("");
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editMessageContent, setEditMessageContent] = useState("");
+
+  // Standby/Splash screen state tracking
+  const [showSplash, setShowSplash] = useState(!hasShownSplashInitial);
+  const [splashClosing, setSplashClosing] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -286,21 +293,21 @@ export default function Home() {
     }
   };
 
-  // Standby/Splash screen state tracking
-  const [showSplash, setShowSplash] = useState(true);
-  const [splashClosing, setSplashClosing] = useState(false);
 
   useEffect(() => {
-    if (!loading && data) {
+    if (!loading && data && showSplash) {
       // Keep visible for 5 seconds as requested
       const timer = setTimeout(() => {
         setSplashClosing(true);
         // After transition-duration (1000ms in className), unmount
-        setTimeout(() => setShowSplash(false), 1000);
+        setTimeout(() => {
+          setShowSplash(false);
+          hasShownSplashInitial = true;
+        }, 1000);
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [loading, data]);
+  }, [loading, data, showSplash]);
 
   if (showSplash) {
     return (
