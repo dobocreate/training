@@ -11,6 +11,7 @@ interface MemberProfileModalProps {
     history: { member: string; date: string }[];
     onClose: () => void;
     onUpdateProfile?: (member: string, color: string, affiliation: string, icon?: string) => void;
+    onRename?: (oldName: string, newName: string) => Promise<void>;
 }
 
 export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
@@ -18,9 +19,15 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
     profiles,
     history,
     onClose,
-    onUpdateProfile
+    onUpdateProfile,
+    onRename
 }) => {
     const [isEditing, setIsEditing] = useState(false);
+    const [renameInput, setRenameInput] = useState(member);
+
+    useEffect(() => {
+        setRenameInput(member);
+    }, [member]);
 
     // Get current profile data
     const currentProfile = profiles[member];
@@ -35,9 +42,18 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
         setPreviewColor(initialColor);
     }, [initialColor]);
 
-    const handleSave = (color: string, affiliation: string, icon?: string) => {
-        if (onUpdateProfile) {
-            onUpdateProfile(member, color, affiliation, icon);
+    const handleSave = async (color: string, affiliation: string, icon?: string) => {
+        const newName = renameInput.trim();
+        if (newName && newName !== member && onRename) {
+            await onRename(member, newName);
+            // If name changed, we also want to update the profile for the NEW name
+            if (onUpdateProfile) {
+                onUpdateProfile(newName, color, affiliation, icon);
+            }
+        } else {
+            if (onUpdateProfile) {
+                onUpdateProfile(member, color, affiliation, icon);
+            }
         }
         setIsEditing(false);
     };
@@ -93,9 +109,19 @@ export const MemberProfileModal: React.FC<MemberProfileModalProps> = ({
                 </div>
 
                 <div className="pt-20 pb-8 px-8 text-center">
-                    <h2 className={`text-2xl font-bold mb-2 ${memberColor.text} ${memberColor.darkText}`}>
-                        {member}
-                    </h2>
+                    {isEditing ? (
+                        <input
+                            type="text"
+                            value={renameInput}
+                            onChange={(e) => setRenameInput(e.target.value)}
+                            className="text-2xl font-bold mb-2 text-center bg-transparent border-b-2 border-gray-300 dark:border-zinc-700 outline-none focus:border-blue-500 w-full text-gray-900 dark:text-white"
+                            placeholder="名前を入力"
+                        />
+                    ) : (
+                        <h2 className={`text-2xl font-bold mb-2 ${memberColor.text} ${memberColor.darkText}`}>
+                            {member}
+                        </h2>
+                    )}
 
                     {isEditing ? (
                         <ProfileEditFormWithPreview

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { memberColors } from "@/lib/colors";
 import { ToggleButton } from "./member-manager/ToggleButton";
 import { MemberQueuePanel } from "./member-manager/MemberQueuePanel";
@@ -12,11 +12,19 @@ interface MemberManagerProps {
     profiles?: Record<string, { color: string; affiliation: string; icon?: string }>;
     onUpdate: (newMembers: string[]) => void;
     onUpdateProfile?: (member: string, color: string, affiliation: string, icon?: string) => void;
+    onRename?: (oldName: string, newName: string) => Promise<void>;
 }
 
-export default function MemberManager({ members, history, profiles = {}, onUpdate, onUpdateProfile }: MemberManagerProps) {
+export default function MemberManager({ members, history, profiles = {}, onUpdate, onUpdateProfile, onRename }: MemberManagerProps) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedMember, setSelectedMember] = useState<string | null>(null);
+
+    // Close modal if selected member is removed (or renamed)
+    useEffect(() => {
+        if (selectedMember && !members.includes(selectedMember)) {
+            setSelectedMember(null);
+        }
+    }, [members, selectedMember]);
 
     // Get all colors currently in use by profiles
     const usedColors = Object.values(profiles).map(p => p.color);
@@ -78,6 +86,7 @@ export default function MemberManager({ members, history, profiles = {}, onUpdat
                     history={history}
                     onClose={() => setSelectedMember(null)}
                     onUpdateProfile={onUpdateProfile}
+                    onRename={onRename}
                 />
             )}
         </>

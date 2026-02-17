@@ -117,15 +117,61 @@ export async function POST(req: Request) {
             console.error("Failed to get active members for rotation:", e);
         }
 
+        // Helper for weighted selection based on duty history
+        const selectWeightedMember = (candidates: string[]) => {
+            if (candidates.length === 0) return null;
+
+            // Calculate duty counts from history
+            const dutyCounts: Record<string, number> = {};
+            candidates.forEach(m => dutyCounts[m] = 0);
+
+            if (data.history) {
+                data.history.forEach(h => {
+                    // Check if member is in candidates list (active or all)
+                    // If candidates are subset, we only care about their counts.
+                    // But history might have old names.
+                    // We match by name.
+                    // If candidate is in history, increment.
+                    // But we initialized candidates in dutyCounts map.
+                    if (dutyCounts[h.member] !== undefined) {
+                        dutyCounts[h.member]++;
+                    }
+                });
+            }
+
+            // Calculate weights: 1 / (count + 1) (Inverse Weighting)
+            const weights = candidates.map(m => {
+                const count = dutyCounts[m] || 0;
+                return { member: m, weight: 1.0 / (count + 1) };
+            });
+
+            const totalWeight = weights.reduce((sum, item) => sum + item.weight, 0);
+            let r = Math.random() * totalWeight;
+
+            for (const item of weights) {
+                r -= item.weight;
+                if (r < 0) return item.member;
+            }
+            return candidates[candidates.length - 1]; // Fallback
+        };
+
         let nextIndex = -1;
+        let selectedName: string | null = null;
+
         if (activeMembers.length > 0) {
-            // Pick random from active members
-            const nextName = activeMembers[Math.floor(Math.random() * activeMembers.length)];
-            nextIndex = data.members.indexOf(nextName);
+            // Weighted selection from active members
+            selectedName = selectWeightedMember(activeMembers);
+        } else {
+            // Fallback: Weighted selection from ALL members
+            selectedName = selectWeightedMember(data.members);
         }
 
+        if (selectedName) {
+            nextIndex = data.members.indexOf(selectedName);
+        }
+
+        // Just in case
         if (nextIndex === -1) {
-            // Fallback: Pick random from ALL members (instead of sequential)
             nextIndex = Math.floor(Math.random() * data.members.length);
         }
 
@@ -232,6 +278,43 @@ export async function POST(req: Request) {
             const index = data.messages.findIndex(m => m.id === id);
             if (index !== -1) {
                 data.messages[index].content = content;
+                writeData(data);
+            }
+        }
+        return NextResponse.json(data);
+    } else if (action === "renameMember") {
+        const { oldName, newName } = body;
+        if (oldName && newName && oldName !== newName) {
+            // Check if new name already exists (prevent duplicates)
+            if (data.members.includes(newName)) {
+                return NextResponse.json({ error: "Member name already exists" }, { status: 400 });
+            }
+
+            // Update members list
+            const index = data.members.indexOf(oldName);
+            if (index !== -1) {
+                data.members[index] = newName;
+
+                // Update profile key
+                if (data.profiles && data.profiles[oldName]) {
+                    data.profiles[newName] = data.profiles[oldName];
+                    delete data.profiles[oldName];
+                }
+
+                // Update history
+                if (data.history) {
+                    data.history.forEach(h => {
+                        if (h.member === oldName) h.member = newName;
+                    });
+                }
+
+                // Update messages
+                if (data.messages) {
+                    data.messages.forEach(m => {
+                        if (m.sender === oldName) m.sender = newName;
+                    });
+                }
+
                 writeData(data);
             }
         }

@@ -295,6 +295,24 @@ export default function Home() {
     }
   };
 
+  const handleRenameMember = async (oldName: string, newName: string) => {
+    if (!newName.trim()) return;
+    try {
+      const res = await fetch("/api/duty", {
+        method: "POST",
+        body: JSON.stringify({ action: "renameMember", oldName, newName: newName.trim() }),
+      });
+      if (!res.ok) {
+        const json = await res.json();
+        alert(json.error || "Failed to rename member");
+        return;
+      }
+      await fetchData();
+    } catch (error) {
+      console.error("Failed to rename member", error);
+    }
+  };
+
 
   useEffect(() => {
     if (!loading && data) {
@@ -407,6 +425,7 @@ export default function Home() {
         profiles={data.profiles || {}}
         onUpdate={handleUpdateMembers}
         onUpdateProfile={handleUpdateProfile}
+        onRename={handleRenameMember}
       />
 
       {/* Mini Bulletin Board (Top Right) */}
