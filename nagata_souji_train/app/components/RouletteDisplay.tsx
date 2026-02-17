@@ -15,20 +15,21 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
     const prevIndexRef = useRef(0);
     const angleStep = 360 / Math.max(members.length, 1);
 
-    // Shortest-path rotation adjustment to avoid full-circle spin on reset
+    // Long spin animation logic
     useEffect(() => {
         const index = members.indexOf(currentMember);
         if (index !== -1) {
-            let delta = index - prevIndexRef.current;
+            // Calculate forward distance
+            let dist = index - prevIndexRef.current;
+            if (dist <= 0) dist += members.length;
 
-            // Adjust delta to take the shortest path (shortest angular distance)
-            if (delta > members.length / 2) {
-                delta -= members.length;
-            } else if (delta < -members.length / 2) {
-                delta += members.length;
-            }
+            // Add extra spins (randomize slightly? or fixed?)
+            // User: "like actual roulette" -> fixed or random number of spins?
+            // "Spin many times". Fixed is fine for visual consistency.
+            const extraSpins = 10;
+            const totalSteps = dist + (members.length * extraSpins);
 
-            setRotation(prev => prev - (delta * angleStep));
+            setRotation(prev => prev - (totalSteps * angleStep));
             prevIndexRef.current = index;
         }
     }, [currentMember, members, angleStep]);
@@ -59,7 +60,7 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
 
             {/* The "Circle of Fans" Container - Pivot at the VERY TOP of screen (framing out top half) */}
             <div
-                className="relative w-[800px] h-[800px] flex items-center justify-center transition-transform duration-[1500ms] ease-out z-10"
+                className="relative w-[800px] h-[800px] flex items-center justify-center transition-transform duration-[8000ms] ease-out z-10"
                 style={{
                     transform: `scale(1.4) rotate(${rotation}deg)`,
                     marginTop: "-400px" // Shifted down by 160px (from -560px)
