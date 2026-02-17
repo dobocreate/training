@@ -75,7 +75,8 @@ export default function CalendarPage() {
                 return (
                     <div className="flex-1 flex flex-col gap-1.5 w-full mt-2 items-center">
                         {dailyEvents.map(event => {
-                            const member = event.summary;
+                            // Remove "バイト" and any parentheses/spaces
+                            const member = event.summary.replace(/バイト|\(|\)|（|）|\s/g, "").trim();
                             const profile = profiles[member];
                             let color;
 
