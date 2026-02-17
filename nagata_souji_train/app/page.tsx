@@ -33,6 +33,7 @@ interface DutyData {
   profiles?: Record<string, { color: string; affiliation: string; icon?: string }>;
   messages?: { id: string; sender: string; content: string; date: string }[];
   manual?: string;
+  activeMembers?: string[];
 }
 
 interface MemberManagerProps {
@@ -908,7 +909,7 @@ export default function Home() {
             <div className="flex-1 w-full flex items-center justify-center p-4">
               <div className="w-full max-w-2xl">
                 <RouletteDisplay
-                  members={data.members}
+                  members={data.activeMembers && data.activeMembers.length > 0 ? data.activeMembers : data.members}
                   currentMember={currentPerson}
                   profiles={data.profiles || {}}
                   onComplete={handleNextWrapper}
@@ -926,15 +927,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {!loading && (
-                  <div className="flex flex-col items-center">
-                    <span className="text-sm uppercase tracking-widest text-gray-600 dark:text-gray-400 font-bold mb-2">次回の担当</span>
-                    <div className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white font-black">
-                      <span className="bg-white dark:bg-zinc-900 px-6 py-3 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 min-w-[120px] text-center">{nextPerson}</span>
-                      <span className="text-base text-gray-600 dark:text-gray-400">さん</span>
-                    </div>
-                  </div>
-                )}
               </div>
 
               <button

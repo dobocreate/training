@@ -41,9 +41,48 @@ function writeData(data: DutyData) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 }
 
+import { getGoogleCalendarEvents } from "@/lib/googleCalendar";
+
 export async function GET() {
     const data = readData();
-    return NextResponse.json(data);
+
+    // Calculate current week range (Sunday to Saturday)
+    const now = new Date();
+    const day = now.getDay(); // 0 is Sunday
+    const diff = now.getDate() - day; // Adjust to Sunday
+    const startOfWeek = new Date(now.setDate(diff));
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    let activeMembers: string[] = [];
+
+    try {
+        const events = await getGoogleCalendarEvents(startOfWeek.toISOString(), endOfWeek.toISOString());
+        // Extract unique member names from event summaries (assuming summary is member name)
+        const memberSet = new Set<string>();
+        // Normalize names (remove "バイト", trim spaces)
+        events.forEach((event: any) => {
+            if (event.summary) {
+                let name = event.summary.replace("バイト", "").trim();
+                // Check if this name exists in our master member list to be safe
+                if (data.members.includes(name)) {
+                    memberSet.add(name);
+                }
+            }
+        });
+        activeMembers = Array.from(memberSet);
+    } catch (error) {
+        console.error("Failed to fetch weekly shifts:", error);
+        // Fallback to all members if calendar fetch fails? Or empty list?
+        // Let's fallback to current members for stability, but observing task req "filter based on shift data"
+        // If error, maybe best to show all or none. Let's keep empty and handle on frontend or just use all as fail-safe.
+        activeMembers = [];
+    }
+
+    return NextResponse.json({ ...data, activeMembers });
 }
 
 export async function POST(req: Request) {
@@ -53,9 +92,45 @@ export async function POST(req: Request) {
 
     if (action === "next") {
         // ... existing next logic ...
+        // Calculate active members for the current week
+        const now = new Date();
+        const day = now.getDay();
+        const diff = now.getDate() - day;
+        const startOfWeek = new Date(now.setDate(diff));
+        startOfWeek.setHours(0, 0, 0, 0);
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
+
+        let activeMembers: string[] = [];
+        try {
+            const events = await getGoogleCalendarEvents(startOfWeek.toISOString(), endOfWeek.toISOString());
+            const memberSet = new Set<string>();
+            events.forEach((event: any) => {
+                if (event.summary) {
+                    let name = event.summary.replace("バイト", "").trim();
+                    if (data.members.includes(name)) memberSet.add(name);
+                }
+            });
+            activeMembers = Array.from(memberSet);
+        } catch (e) {
+            console.error("Failed to get active members for rotation:", e);
+        }
+
+        let nextIndex = -1;
+        if (activeMembers.length > 0) {
+            // Pick random from active members
+            const nextName = activeMembers[Math.floor(Math.random() * activeMembers.length)];
+            nextIndex = data.members.indexOf(nextName);
+        }
+
+        if (nextIndex === -1) {
+            // Fallback: Pick random from ALL members (instead of sequential)
+            nextIndex = Math.floor(Math.random() * data.members.length);
+        }
+
         const currentPerson = data.members[data.currentIndex];
-        // Rotate
-        const nextIndex = (data.currentIndex + 1) % data.members.length;
+        // Rotate (nextIndex is already calculated)
 
         // Save history
         const completionDate = new Date().toISOString();
