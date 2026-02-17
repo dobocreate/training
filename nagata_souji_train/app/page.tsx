@@ -10,6 +10,20 @@ import SearchableSelect from "./components/SearchableSelect";
 import Link from "next/link";
 import { getMemberColor, memberColors, isHex, getCustomColor } from "@/lib/colors";
 
+interface CalendarEvent {
+  id: string;
+  summary: string;
+  description?: string;
+  start: {
+    dateTime?: string;
+    date?: string;
+  };
+  end: {
+    dateTime?: string;
+    date?: string;
+  };
+}
+
 interface DutyData {
   members: string[];
   currentIndex: number;
@@ -444,8 +458,24 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
-      {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
+      {/* Shift Calendar Button (Fixed: Icon on Right, Expands Left) */}
+      <Link
+        href="/calendar"
+        className="absolute bottom-[21rem] right-10 flex flex-row-reverse items-center bg-white text-emerald-600 rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-52 duration-300 ease-out z-40 h-16 w-16 group overflow-hidden"
+        aria-label="シフトカレンダー"
+      >
+        <div className="w-16 h-full flex items-center justify-center flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 11.25h18" />
+            <circle cx="12" cy="15" r="3" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 13.5v1.5l1 1" />
+          </svg>
+        </div>
+        <span className="whitespace-nowrap font-bold text-base opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-3">
+          シフトカレンダー
+        </span>
+      </Link>
       <button
         onClick={() => {
           setIsBulletinOpen(true);
@@ -854,22 +884,6 @@ export default function Home() {
             </button>
           )}
 
-          {/* Shift Calendar Button (Fixed: Icon on Left, Expands Right) */}
-          <Link
-            href="/calendar"
-            className="absolute top-64 left-8 z-50 flex items-center bg-emerald-600 text-white rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out h-20 w-20 group overflow-hidden"
-            aria-label="シフトカレンダー"
-          >
-            <div className="w-20 h-full flex items-center justify-center flex-shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-10 h-10">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9-3.75h.008v.008H12V8.25z" />
-              </svg>
-            </div>
-            <span className="whitespace-nowrap font-bold text-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-4">
-              シフトカレンダー
-            </span>
-          </Link>
-
           {/* Title Box - Positioned next to the calendar */}
           <div className="absolute top-10 left-8 z-[100] pointer-events-none w-full flex justify-start">
             <div className="bg-white/95 backdrop-blur-2xl px-10 py-5 rounded-[2rem] shadow-2xl border border-white/50 dark:bg-zinc-900/95 dark:border-zinc-800 text-left inline-block pointer-events-auto min-w-[400px]">
@@ -929,11 +943,13 @@ export default function Home() {
                   </svg>
                   送信中...
                 </span>
-              ) : "完了して次へ"}
+              ) : (
+                "完了して次へ"
+              )}
             </button>
           </div>
         </div>
       </main>
-    </div >
+    </div>
   );
 }
