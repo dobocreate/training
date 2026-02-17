@@ -20,8 +20,8 @@
     "長田",
     "千々松"
   ],
-  "currentIndex": 10,
-  "lastUpdated": "2026-02-05T08:46:51.100Z",
+  "currentIndex": 12,
+  "lastUpdated": "2026-02-17T00:42:23.945Z",
   "history": [
     {
       "member": "中村",
@@ -6478,6 +6478,14 @@
     {
       "member": "ALIF",
       "date": "2026-02-05T08:46:51.100Z"
+    },
+    {
+      "member": "中村",
+      "date": "2026-02-17T00:42:22.588Z"
+    },
+    {
+      "member": "市山",
+      "date": "2026-02-17T00:42:23.945Z"
     }
   ],
   "profiles": {

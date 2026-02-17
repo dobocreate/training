@@ -7,6 +7,7 @@ import DutyCalendar from "./components/DutyCalendar";
 import RouletteDisplay from "./components/RouletteDisplay";
 import { CleaningBackground } from "./components/CleaningBackground";
 import SearchableSelect from "./components/SearchableSelect";
+import Link from "next/link";
 import { getMemberColor, memberColors, isHex, getCustomColor } from "@/lib/colors";
 
 interface DutyData {
@@ -463,7 +464,6 @@ export default function Home() {
         </span>
       </button>
 
-      {/* Cleaning Menu Button (Fixed: Icon on Right, Expands Left) */}
       <button
         onClick={() => {
           setIsManualOpen(true);
@@ -854,6 +854,22 @@ export default function Home() {
             </button>
           )}
 
+          {/* Shift Calendar Button (Fixed: Icon on Left, Expands Right) */}
+          <Link
+            href="/calendar"
+            className="absolute top-64 left-8 z-50 flex items-center bg-emerald-600 text-white rounded-full shadow-xl border-4 border-white dark:border-zinc-800 transition-all hover:w-72 duration-300 ease-out h-20 w-20 group overflow-hidden"
+            aria-label="シフトカレンダー"
+          >
+            <div className="w-20 h-full flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-10 h-10">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9-3.75h.008v.008H12V8.25z" />
+              </svg>
+            </div>
+            <span className="whitespace-nowrap font-bold text-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-10 group-hover:translate-x-0 ml-4">
+              シフトカレンダー
+            </span>
+          </Link>
+
           {/* Title Box - Positioned next to the calendar */}
           <div className="absolute top-10 left-8 z-[100] pointer-events-none w-full flex justify-start">
             <div className="bg-white/95 backdrop-blur-2xl px-10 py-5 rounded-[2rem] shadow-2xl border border-white/50 dark:bg-zinc-900/95 dark:border-zinc-800 text-left inline-block pointer-events-auto min-w-[400px]">
@@ -918,6 +934,6 @@ export default function Home() {
           </div>
         </div>
       </main>
-    </div>
+    </div >
   );
 }
