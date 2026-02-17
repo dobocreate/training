@@ -39,8 +39,10 @@ export default function CalendarPage() {
     useEffect(() => {
         async function fetchData() {
             try {
-                // Fetch calendar events
-                const calendarRes = await fetch("/api/calendar");
+                // Fetch calendar events starting from 60 days ago
+                const timeMin = new Date();
+                timeMin.setDate(timeMin.getDate() - 60);
+                const calendarRes = await fetch(`/api/calendar?timeMin=${timeMin.toISOString()}`);
                 if (!calendarRes.ok) {
                     throw new Error("Failed to fetch calendar events");
                 }

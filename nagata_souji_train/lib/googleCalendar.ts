@@ -22,7 +22,7 @@ export async function getGoogleCalendarEvents(timeMin?: string, timeMax?: string
   try {
     const response = await calendar.events.list({
       calendarId: GOOGLE_CALENDAR_ID,
-      timeMin: timeMin || new Date().toISOString(),
+      timeMin: timeMin,
       timeMax: timeMax,
       singleEvents: true,
       orderBy: 'startTime',
