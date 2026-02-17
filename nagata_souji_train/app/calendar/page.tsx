@@ -67,10 +67,10 @@ export default function CalendarPage() {
 
     const tileContent = ({ date, view }: { date: Date; view: string }) => {
         if (view === "month") {
-            const dateStr = date.toISOString().split('T')[0];
+            const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             const dailyEvents = events.filter(event => {
                 const startStr = event.start.dateTime || event.start.date;
-                return startStr?.startsWith(dateStr);
+                return startStr?.includes(dateStr);
             });
 
             if (dailyEvents.length > 0) {
@@ -89,7 +89,7 @@ export default function CalendarPage() {
                             }
 
                             return (
-                                <button
+                                <div
                                     key={event.id}
                                     onClick={(e) => {
                                         e.preventDefault();
@@ -97,9 +97,9 @@ export default function CalendarPage() {
                                         setSelectedShift(event);
                                         setSelectedMember(member);
                                     }}
-                                    className={`flex items-center justify-center gap-0.5 px-1 py-0.5 rounded-md shadow-sm border border-black/5 dark:border-white/5 transition-transform hover:scale-105 active:scale-95 z-30 ${isHex(color.bg) ? "" : color.bg} ${color.text} ${isHex(color.bg) ? "" : color.darkBg} ${color.darkText}`}
+                                    className={`flex items-center justify-center gap-0.5 px-1 py-0.5 rounded-md shadow-sm border border-black/5 dark:border-white/5 transition-transform hover:scale-110 active:scale-95 cursor-pointer z-[100] relative pointer-events-auto ${isHex(color.bg) ? "" : color.bg} ${color.text} ${isHex(color.bg) ? "" : color.darkBg} ${color.darkText}`}
                                     style={isHex(color.bg) ? { backgroundColor: color.bg } : {}}
-                                    title={member}
+                                    title={`${member} の予定詳細を表示`}
                                 >
                                     {profile?.icon && (
                                         <Image
@@ -107,14 +107,14 @@ export default function CalendarPage() {
                                             alt={member}
                                             width={12}
                                             height={12}
-                                            className="rounded-full flex-shrink-0"
+                                            className="rounded-full flex-shrink-0 pointer-events-none"
                                             unoptimized
                                         />
                                     )}
-                                    <span className="text-[9px] font-bold truncate">
+                                    <span className="text-[9px] font-bold truncate pointer-events-none">
                                         {member}
                                     </span>
-                                </button>
+                                </div>
                             );
                         })}
                     </div>
@@ -248,11 +248,21 @@ export default function CalendarPage() {
 
                             <div className="space-y-4">
                                 <div className="bg-gray-50 dark:bg-zinc-950/50 p-6 rounded-[1.5rem] border border-gray-100 dark:border-zinc-800">
-                                    <div className="flex items-center gap-3 mb-4 text-emerald-600 dark:text-emerald-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <span className="font-bold text-lg tracking-tight">勤務時間</span>
+                                    <div className="flex flex-col gap-2 mb-4">
+                                        <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75" />
+                                            </svg>
+                                            <span className="font-bold text-lg tracking-tight">
+                                                {new Date(selectedShift.start.dateTime || selectedShift.start.date || "").toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' })}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span className="font-bold text-lg tracking-tight">勤務時間</span>
+                                        </div>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">

@@ -6599,6 +6599,8 @@
       "icon": "dog"
     },
     "長田": {
+      "color": "bg-red-100",
+      "affiliation": "",
       "icon": "fox"
     },
     "千々松": {
