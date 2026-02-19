@@ -19,12 +19,8 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
     useEffect(() => {
         const index = members.indexOf(currentMember);
         if (index !== -1) {
-            // If the list size changed or member was not found before, 
-            // the distance might be weird, but dist logic handles it.
-            // Just ensure index is valid.
-            const safePrevIndex = prevIndexRef.current < members.length ? prevIndexRef.current : 0;
             // Calculate forward distance
-            let dist = index - safePrevIndex;
+            let dist = index - prevIndexRef.current;
             if (dist <= 0) dist += members.length;
 
             // Add extra spins (randomize slightly? or fixed?)
@@ -35,10 +31,6 @@ export default function RouletteDisplay({ members, currentMember, profiles, onCo
 
             setRotation(prev => prev - (totalSteps * angleStep));
             prevIndexRef.current = index;
-        } else {
-            // Fallback: if currentMember is not in list (should not happen with API fix), 
-            // reset prevIndex to avoid invalid calculations next time.
-            prevIndexRef.current = 0;
         }
     }, [currentMember, members, angleStep]);
 

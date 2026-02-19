@@ -155,8 +155,7 @@ export default function Home() {
       });
 
       if (res.ok) {
-        const json = await res.json();
-        setData(json);
+        await fetchData();
       } else {
         console.error("エラーが発生しました");
       }
