@@ -21,8 +21,8 @@
     "千々松",
     "西村"
   ],
-  "currentIndex": 12,
-  "lastUpdated": "2026-02-19T09:45:38.322Z",
+  "currentIndex": 10,
+  "lastUpdated": "2026-02-19T09:53:15.980Z",
   "history": [
     {
       "member": "中村",
@@ -6703,6 +6703,10 @@
     {
       "member": "向原",
       "date": "2026-02-19T09:45:38.322Z"
+    },
+    {
+      "member": "中川",
+      "date": "2026-02-19T09:53:15.980Z"
     }
   ],
   "profiles": {
