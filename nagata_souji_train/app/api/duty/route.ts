@@ -58,15 +58,24 @@ async function getActiveMembers(data: DutyData) {
         const events = await getGoogleCalendarEvents(startOfWeek.toISOString(), endOfWeek.toISOString());
         const memberSet = new Set<string>();
 
+        // Create a normalized list of member names for matching
+        const normalizedMembers = data.members.map(m => ({
+            original: m,
+            normalized: m.replace(/\s+/g, "")
+        }));
+
         events.forEach((event: any) => {
             if (event.summary) {
-                // Remove noise from summary for matching
-                const normalizedSummary = event.summary.replace(/[(\uff08].*?[)\uff09]/g, "").replace(/バイト|\s/g, "").trim();
+                // Remove noise: brackets, spaces, "バイト", times like "10:00"
+                const normalizedSummary = event.summary
+                    .replace(/[(\uff08].*?[)\uff09]/g, "")
+                    .replace(/バイト|\s|\d{1,2}:\d{2}|[~\uff5e\u301c-]/g, "")
+                    .trim();
 
-                data.members.forEach(member => {
-                    // Try exact match first, then partial
-                    if (normalizedSummary === member || event.summary.includes(member)) {
-                        memberSet.add(member);
+                normalizedMembers.forEach(({ original, normalized }) => {
+                    // Match if summary contains name or normalized name
+                    if (normalizedSummary.includes(normalized) || event.summary.includes(original)) {
+                        memberSet.add(original);
                     }
                 });
             }
