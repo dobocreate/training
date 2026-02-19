@@ -43,12 +43,9 @@ function writeData(data: DutyData) {
 
 import { getGoogleCalendarEvents } from "@/lib/googleCalendar";
 
-export async function GET() {
-    const data = readData();
-
-    // Calculate current week range (Sunday to Saturday)
+async function getActiveMembers(data: DutyData) {
     const today = new Date();
-    const day = today.getDay(); // 0 is Sunday
+    const day = today.getDay();
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - day);
     startOfWeek.setHours(0, 0, 0, 0);
@@ -57,30 +54,33 @@ export async function GET() {
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
 
-    let activeMembers: string[] = [];
-
     try {
         const events = await getGoogleCalendarEvents(startOfWeek.toISOString(), endOfWeek.toISOString());
-        // Match member names by checking if they are contained in the event summary
         const memberSet = new Set<string>();
+
         events.forEach((event: any) => {
             if (event.summary) {
+                // Remove noise from summary for matching
+                const normalizedSummary = event.summary.replace(/[(\uff08].*?[)\uff09]/g, "").replace(/バイト|\s/g, "").trim();
+
                 data.members.forEach(member => {
-                    if (event.summary.includes(member)) {
+                    // Try exact match first, then partial
+                    if (normalizedSummary === member || event.summary.includes(member)) {
                         memberSet.add(member);
                     }
                 });
             }
         });
-        activeMembers = Array.from(memberSet);
+        return Array.from(memberSet);
     } catch (error) {
         console.error("Failed to fetch weekly shifts:", error);
-        // Fallback to all members if calendar fetch fails? Or empty list?
-        // Let's fallback to current members for stability, but observing task req "filter based on shift data"
-        // If error, maybe best to show all or none. Let's keep empty and handle on frontend or just use all as fail-safe.
-        activeMembers = [];
+        return [];
     }
+}
 
+export async function GET() {
+    const data = readData();
+    const activeMembers = await getActiveMembers(data);
     return NextResponse.json({ ...data, activeMembers });
 }
 
@@ -90,58 +90,23 @@ export async function POST(req: Request) {
     const data = readData();
 
     if (action === "next") {
-        // ... existing next logic ...
-        // Calculate active members for the current week
-        const now = new Date();
-        const day = now.getDay();
-        const diff = now.getDate() - day;
-        const startOfWeek = new Date(now.setDate(diff));
-        startOfWeek.setHours(0, 0, 0, 0);
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999);
-
-        let activeMembers: string[] = [];
-        try {
-            const events = await getGoogleCalendarEvents(startOfWeek.toISOString(), endOfWeek.toISOString());
-            const memberSet = new Set<string>();
-            events.forEach((event: any) => {
-                if (event.summary) {
-                    data.members.forEach(member => {
-                        if (event.summary.includes(member)) {
-                            memberSet.add(member);
-                        }
-                    });
-                }
-            });
-            activeMembers = Array.from(memberSet);
-        } catch (e) {
-            console.error("Failed to get active members for rotation:", e);
-        }
+        const activeMembers = await getActiveMembers(data);
 
         // Helper for weighted selection based on duty history
         const selectWeightedMember = (candidates: string[]) => {
             if (candidates.length === 0) return null;
 
-            // Calculate duty counts from history
             const dutyCounts: Record<string, number> = {};
             candidates.forEach(m => dutyCounts[m] = 0);
 
             if (data.history) {
                 data.history.forEach(h => {
-                    // Check if member is in candidates list (active or all)
-                    // If candidates are subset, we only care about their counts.
-                    // But history might have old names.
-                    // We match by name.
-                    // If candidate is in history, increment.
-                    // But we initialized candidates in dutyCounts map.
                     if (dutyCounts[h.member] !== undefined) {
                         dutyCounts[h.member]++;
                     }
                 });
             }
 
-            // Calculate weights: 1 / (count + 1) (Inverse Weighting)
             const weights = candidates.map(m => {
                 const count = dutyCounts[m] || 0;
                 return { member: m, weight: 1.0 / (count + 1) };
@@ -154,33 +119,27 @@ export async function POST(req: Request) {
                 r -= item.weight;
                 if (r < 0) return item.member;
             }
-            return candidates[candidates.length - 1]; // Fallback
+            return candidates[candidates.length - 1];
         };
 
-        let nextIndex = -1;
         let selectedName: string | null = null;
 
         if (activeMembers.length > 0) {
-            // Weighted selection from active members
             selectedName = selectWeightedMember(activeMembers);
         } else {
-            // Fallback: Weighted selection from ALL members
             selectedName = selectWeightedMember(data.members);
         }
 
+        let nextIndex = -1;
         if (selectedName) {
             nextIndex = data.members.indexOf(selectedName);
         }
 
-        // Just in case
         if (nextIndex === -1) {
             nextIndex = Math.floor(Math.random() * data.members.length);
         }
 
         const currentPerson = data.members[data.currentIndex];
-        // Rotate (nextIndex is already calculated)
-
-        // Save history
         const completionDate = new Date().toISOString();
         data.history!.push({
             member: currentPerson,
@@ -192,13 +151,12 @@ export async function POST(req: Request) {
 
         writeData(data);
 
-        // Notification logic...
         const nextPerson = data.members[nextIndex];
         const message = `次の掃除担当は ${nextPerson} さんです`;
 
         await sendLineMessage(message);
 
-        return NextResponse.json(data);
+        return NextResponse.json({ ...data, activeMembers });
     } else if (action === "updateMembers") {
         const { members } = body;
         if (Array.isArray(members)) {
