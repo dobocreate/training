@@ -47,10 +47,10 @@ export async function GET() {
     const data = readData();
 
     // Calculate current week range (Sunday to Saturday)
-    const now = new Date();
-    const day = now.getDay(); // 0 is Sunday
-    const diff = now.getDate() - day; // Adjust to Sunday
-    const startOfWeek = new Date(now.setDate(diff));
+    const today = new Date();
+    const day = today.getDay(); // 0 is Sunday
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - day);
     startOfWeek.setHours(0, 0, 0, 0);
 
     const endOfWeek = new Date(startOfWeek);
@@ -61,16 +61,15 @@ export async function GET() {
 
     try {
         const events = await getGoogleCalendarEvents(startOfWeek.toISOString(), endOfWeek.toISOString());
-        // Extract unique member names from event summaries (assuming summary is member name)
+        // Match member names by checking if they are contained in the event summary
         const memberSet = new Set<string>();
-        // Normalize names (remove "バイト", trim spaces)
         events.forEach((event: any) => {
             if (event.summary) {
-                let name = event.summary.replace("バイト", "").trim();
-                // Check if this name exists in our master member list to be safe
-                if (data.members.includes(name)) {
-                    memberSet.add(name);
-                }
+                data.members.forEach(member => {
+                    if (event.summary.includes(member)) {
+                        memberSet.add(member);
+                    }
+                });
             }
         });
         activeMembers = Array.from(memberSet);
@@ -108,8 +107,11 @@ export async function POST(req: Request) {
             const memberSet = new Set<string>();
             events.forEach((event: any) => {
                 if (event.summary) {
-                    let name = event.summary.replace("バイト", "").trim();
-                    if (data.members.includes(name)) memberSet.add(name);
+                    data.members.forEach(member => {
+                        if (event.summary.includes(member)) {
+                            memberSet.add(member);
+                        }
+                    });
                 }
             });
             activeMembers = Array.from(memberSet);
