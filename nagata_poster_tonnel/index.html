@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>トンネル坑内温度調整システム ポスター</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a5f;
+      /* Deep Professional Blue */
+      --primary-light: #2c5282;
+      --secondary: #edf2f7;
+      /* Soft Gray Background */
+      --accent: #d69e2e;
+      /* Muted Gold Accent */
+      --success: #2f855a;
+      /* Forest Green */
+      --danger: #c53030;
+      /* Professional Red */
+      --text-main: #2d3748;
+      /* Dark Slate Text */
+      --text-muted: #718096;
+      /* Muted Slate Text */
+      --white: #ffffff;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      gap: 30px;
+      color: var(--text-main);
+    }
+
+    /* ===== A4 DOCUMENT (794 × 1123 px) ===== */
+    .page {
+      width: 794px;
+      height: 1123px;
+      background: var(--white);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+      border: 1px solid var(--border);
+    }
+
+    /* ========== FLYER HEADER ========== */
+    .header {
+      background: var(--primary);
+      color: var(--white);
+      padding: 24px 30px 20px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      border-bottom: 4px solid var(--accent);
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 300px;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03));
+      transform: skewX(-20deg) translateX(50px);
+    }
+
+    .header-tag {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--primary);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      padding: 3px 12px;
+      border-radius: 2px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .header h1 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .header .subtitle {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.85);
+      letter-spacing: 0.02em;
+    }
+
+    .header-meta {
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .header-side {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    /* ========== DOCUMENT FOOTER ========== */
+    .footer {
+      background: var(--secondary);
+      color: var(--text-muted);
+      font-size: 9px;
+      padding: 10px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ========== SECTION TITLE ========== */
+    .st {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--secondary);
+    }
+
+    .st .num {
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    /* ========== TEXT ========== */
+    p,
+    li {
+      font-size: 10.5px;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    .lead {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    /* ========== FLYer TABLE ========== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+      margin-top: 8px;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--primary);
+      color: var(--white);
+      padding: 6px 10px;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    td {
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      background: var(--white);
+    }
+
+    tr:nth-child(even) td {
+      background: #fafbfc;
+    }
+
+    td.lbl {
+      font-weight: 600;
+      color: var(--primary-light);
+      width: 40%;
+    }
+
+    td.val {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 500;
+    }
+
+    .good {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .ok {
+      color: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .bad {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .warn {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ========== KPI UNITS ========== */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .kpi {
+      background: var(--secondary);
+      border-radius: 4px;
+      padding: 10px 5px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .kpi .v {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .kpi .u {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-left: 2px;
+    }
+
+    .kpi .l {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    /* ========== FLOW DIAGRAM ========== */
+    .flow {
+      display: flex;
+      align-items: stretch;
+      gap: 5px;
+      margin-top: 10px;
+    }
+
+    .fn {
+      background: var(--white);
+      color: var(--primary);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 8px 6px;
+      font-size: 9px;
+      font-weight: 600;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fn.a {
+      border-color: var(--accent);
+      background: #fffcf0;
+    }
+
+    .fn.g {
+      border-color: var(--success);
+      background: #f0fff4;
+    }
+
+    .fa {
+      font-size: 14px;
+      color: var(--border);
+      display: flex;
+      align-items: center;
+    }
+
+    /* ========== METHOD CARDS ========== */
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-hd {
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--secondary);
+      color: var(--primary);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .card-bd {
+      padding: 10px 12px;
+      font-size: 10px;
+      flex: 1;
+    }
+
+    .badge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 2px;
+      margin-left: auto;
+    }
+
+    .bg-green {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+
+    .bg-red {
+      background: #fed7d7;
+      color: #822727;
+    }
+
+    .bg-gray {
+      background: #edf2f7;
+      color: #4a5568;
+    }
+
+    /* ========== FLYER GRID ========== */
+    .body-front {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 30px;
+      gap: 20px;
+      overflow: hidden;
+    }
+
+    .section-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .section-full {
+      width: 100%;
+    }
+
+    /* ========== FIGURE DISPLAY ========== */
+    .body-back {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
+      background: #fafbfc;
+    }
+
+    .fig {
+      flex: 1;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    }
+
+    .fig img {
+      max-width: 100%;
+      max-height: 80%;
+      object-fit: contain;
+    }
+
+    .fig-cap {
+      margin-top: 30px;
+      font-size: 11px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      width: 80%;
+      text-align: center;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+        gap: 0;
+      }
+
+      .page {
+        box-shadow: none;
+        border: none;
+        width: 210mm;
+        height: 297mm;
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===================== PAGE 1: 表面 (Front) ===================== -->
+  <div class="page">
+    <header class="header">
+      <div class="header-tag">Technical Report</div>
+      <span class="header-side">PROJECT: NAGATA TUNNEL TEMPERATURE CONTROL</span>
+      <h1>トンネル坑内温度調整システムの設計検討</h1>
+      <div class="subtitle">湧水集水設備・温度調整回路の4方式比較と最適システム選定</div>
+      <div class="header-meta">
+        <span>● 冷熱源：地下水 18℃</span>
+        <span>● 設計風量：1,000 m³/min</span>
+        <span>● 夏季外気：35℃</span>
+        <span>● 許容上限：37℃以下</span>
+      </div>
+    </header>
+
+    <div class="body-front">
+      <div class="section-row">
+        <!-- 1. 背景と目的 -->
+        <div>
+          <div class="st"><span class="num">01</span>背景と目的</div>
+          <p class="lead">暑熱環境対策は、作業員の安全性と施工品質に直結する最重要課題です。</p>
+          <p>
+            トンネル掘削に伴い施工機械から放出される熱と夏季の外気温上昇が重なり、坑内温度は急激に上昇します。本技術資料では、地下湧水（18℃）を有効活用した「間接冷却方式」の最適解を検証しました。
+          </p>
+          <div class="kpi-row">
+            <div class="kpi">
+              <div class="v">115.9</div>
+              <div class="u">kW</div>
+              <div class="l">Required Load</div>
+            </div>
+            <div class="kpi">
+              <div class="v">18.0</div>
+              <div class="u">℃</div>
+              <div class="l">Water Temp</div>
+            </div>
+            <div class="kpi">
+              <div class="v">37.0</div>
+              <div class="u">℃</div>
+              <div class="l">Max Limit</div>
+            </div>
+            <div class="kpi">
+              <div class="v">04</div>
+              <div class="u">Types</div>
+              <div class="l">Evaluation</div>
+            </div>
+          </div>
+          <div style="margin-top:15px;">
+            <p style="font-weight:700; font-size:9px; color:var(--primary); margin-bottom:5px;">SYSTEM FLOW DIAGRAM</p>
+            <div class="flow">
+              <div class="fn">地山湧水<br>18℃</div>
+              <div class="fa">→</div>
+              <div class="fn a">集水設備<br>(熱交換)</div>
+              <div class="fa">→</div>
+              <div class="fn">循環水<br>20-25℃</div>
+              <div class="fa">→</div>
+              <div class="fn a">M-Cool<br>(放熱)</div>
+              <div class="fa">→</div>
+              <div class="fn g">切羽送風<br>28℃</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 主要設計条件 -->
+        <div>
+          <div class="st"><span class="num">02</span>主要設計条件</div>
+          <table>
+            <thead>
+              <tr>
+                <th colspan="2">DESIGN SPECIFICATIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="lbl">M-Cool 入口温度</td>
+                <td class="val">33.0 ℃</td>
+              </tr>
+              <tr>
+                <td class="lbl">M-Cool 出口温度</td>
+                <td class="val">27.0 ℃</td>
+              </tr>
+              <tr>
+                <td class="lbl">必要冷却負荷</td>
+                <td class="val">115.9 kW</td>
+              </tr>
+              <tr>
+                <td class="lbl">循環水流量</td>
+                <td class="val">200 L/min</td>
+              </tr>
+              <tr>
+                <td class="lbl">チラー性能</td>
+                <td class="val">COP 3.5</td>
+              </tr>
+              <tr>
+                <td class="lbl">ポンプ効率</td>
+                <td class="val">60%</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="font-size:8px; color:var(--text-muted); margin-top:5px;">※夏季最大負荷時を想定した設計値</p>
+        </div>
+      </div>
+
+      <div class="section-full">
+        <div class="st"><span class="num">03</span>検討4方式の概要と比較評価</div>
+        <div class="cards">
+          <div class="card">
+            <div class="card-hd">地中熱交換方式 <span class="badge bg-gray">不採用</span></div>
+            <div class="card-bd">省電力性に優れるが、28孔もの削孔が必要となり初期コスト・工期の面で現実的ではないため不採用。</div>
+          </div>
+          <div class="card" style="border-color:var(--success);">
+            <div class="card-hd" style="background:var(--success); color:white;">水槽式 開放型 <span class="badge bg-green"
+                style="background:white;">採用</span></div>
+            <div class="card-bd">開放構造により<b>メンテナンス性が極めて高い。</b>濁水沈殿も容易で、現場運用に最も適した方式。</div>
+          </div>
+          <div class="card">
+            <div class="card-hd">水槽式 SC型 <span class="badge bg-gray">不採用</span></div>
+            <div class="card-bd">熱交換効率は高いが、密閉シェルの分解洗浄コストが高く、長期運用のメンテナンス性に課題がある。</div>
+          </div>
+          <div class="card">
+            <div class="card-hd">プレート式 <span class="badge bg-red">不採用</span></div>
+            <div class="card-bd">極めてコンパクトだが、トンネル特有の高SS（懸濁物質）環境では閉塞リスクを回避できず不採用。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-full">
+        <div class="st"><span class="num">04</span>施工機械発熱量と環境影響</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px;">
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>工程</th>
+                  <th>出力</th>
+                  <th>発熱量</th>
+                  <th>坑内温度</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>吹付</td>
+                  <td class="val">140kW</td>
+                  <td class="val">112kW</td>
+                  <td><span class="warn">33.6℃</span></td>
+                </tr>
+                <tr>
+                  <td>ずり出</td>
+                  <td class="val">157kW</td>
+                  <td class="val">126kW</td>
+                  <td><span class="bad">34.3℃</span></td>
+                </tr>
+                <tr>
+                  <td>穿孔</td>
+                  <td class="val">160kW</td>
+                  <td class="val">102kW</td>
+                  <td><span class="good">33.1℃</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <p style="font-size:9.5px; line-height:1.5;">
+              <b>[推奨案のポイント]</b><br>水槽式（開放型）はチラー補助により、夏季全工程において許容温度37℃を確実に下回ります。また冬季は0℃から7℃への加温にも対応可能な通年型システムです。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span>TECHNICAL DATA SHEET VOL.19.3</span>
+      <span>PAGE 1 of 2</span>
+      <span>CONFIDENTIAL - NAGATA CORPORATION</span>
+    </footer>
+  </div><!-- /page 1 -->
+
+
+  <!-- ===================== PAGE 2: 裏面 (Back) ===================== -->
+  <div class="page">
+    <header class="header">
+      <div class="header-tag">Technical Schematic</div>
+      <span class="header-side">SYSTEM DIAGRAM OVERVIEW</span>
+      <h1>システム全体構成図</h1>
+      <div class="subtitle">水槽式（開放型）熱交換システムによる温度制御フロー詳細</div>
+      <div class="header-meta">
+        <span>● 地山湧水活用</span>
+        <span>● 間接熱交換方式</span>
+        <span>● メンテナンス性重視</span>
+      </div>
+    </header>
+
+    <div class="body-back">
+      <div class="fig">
+        <img src="images/image1.png" alt="トンネル坑内温度調整システム概要図">
+        <div class="fig-cap">
+          <p><b>TECHNICAL ILLUSTRATION: システム概要図（水槽式・開放型・熱交換方式）</b></p>
+          <p style="margin-top:5px; font-weight:400;">
+            湧水槽内に配置された鋼管群により循環水を冷却。チラー（補助）と組み合わせることで、外気温35℃・施工機械高負荷時においても、切羽送気温度を設計目標値である28℃以下に抑え、快適な作業環境を実現します。</p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span>TECHNICAL DATA SHEET VOL.19.3</span>
+      <span>PAGE 2 of 2</span>
+      <span>CONFIDENTIAL - NAGATA CORPORATION</span>
+    </footer>
+  </div><!-- /page 2 -->
+
+</body>
+
+</html>
