@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>トンネル坑内温度調整システム - トネル掘削工事の省エネ型冷風発生装置</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --mcm-blue: #22ac38;
+      /* Normal green base */
+      --mcm-light-blue: #4cd864;
+      /* Lighter green */
+      --mcm-yellow: #000000;
+      --text-dark: #333333;
+      --bg-gray: #f2f2f2;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: #555;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 0;
+      gap: 40px;
+    }
+
+    .page {
+      width: 794px;
+      height: 1123px;
+      background: var(--white);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- PAGE 1 (Front - Image 2 style) --- */
+    .hero-section {
+      height: 420px;
+      /* Reduced to make room for features */
+      background: linear-gradient(135deg, var(--mcm-blue) 0%, var(--mcm-light-blue) 100%);
+      color: var(--white);
+      position: relative;
+      padding: 30px 40px;
+      text-align: center;
+    }
+
+    .mcm-logo-top {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: var(--white);
+      padding: 5px 15px;
+      border-radius: 4px;
+      font-weight: 900;
+      color: var(--mcm-blue);
+      font-size: 24px;
+    }
+
+    .top-label {
+      font-size: 28px;
+      font-weight: 700;
+      color: #000000;
+      margin-top: 20px;
+    }
+
+    .main-title-box {
+      display: inline-block;
+      background: white;
+      padding: 10px 30px;
+      border-radius: 8px;
+      margin: 40px 0 15px 0;
+      border: 3px solid var(--mcm-blue);
+    }
+
+    .main-title {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--mcm-blue);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .hero-summary {
+      font-size: 11px;
+      line-height: 1.4;
+      max-width: 680px;
+      margin: 10px auto 0;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: #000000;
+      font-weight: 400;
+      backdrop-filter: blur(4px);
+    }
+
+    .catchphrases {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .hero-image-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 40px;
+    }
+
+    .main-product-img {
+      max-width: 80%;
+      z-index: 2;
+    }
+
+    .truck-circle {
+      position: absolute;
+      top: 20px;
+      left: 60px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 5px solid var(--white);
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .truck-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* --- PAGE 2 (Back - Image 1 style) --- */
+    .content-header {
+      background: var(--bg-gray);
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .section-tag {
+      background: var(--text-dark);
+      color: var(--white);
+      padding: 5px 20px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .description-text {
+      padding: 30px;
+      font-size: 15px;
+      line-height: 1.6;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      padding: 20px 30px;
+    }
+
+    .feature-card {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .feature-num {
+      font-size: 40px;
+      font-weight: 900;
+      color: #999;
+      line-height: 1;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--mcm-blue);
+      margin: 10px 0;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+    }
+
+    .specs-section {
+      padding: 20px 30px;
+      flex: 1;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .spec-table th {
+      background-color: #eee;
+      width: 150px;
+    }
+
+    .footer-brand {
+      border-top: 3px solid var(--mcm-blue);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-info h2 {
+      font-size: 24px;
+      color: var(--mcm-blue);
+    }
+
+    .brand-info p {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* Print settings */
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+
+      .page {
+        box-shadow: none;
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PAGE 1: COVER (Poster Style) -->
+  <div class="page" id="front">
+    <div class="hero-section">
+      <div class="mcm-logo-top"
+        style="display: flex; align-items: center; gap: 10px; background: white; padding: 5px 15px; border-radius: 4px;">
+        <div
+          style="font-family: 'Arial Black', sans-serif; font-size: 28px; font-weight: 900; font-style: italic; color: #293688; letter-spacing: -2px; line-height: 1;">
+          MCM</div>
+        <div style="line-height: 1.2; display: flex; flex-direction: column;">
+          <div style="font-size: 16px; font-weight: 900; color: #293688; letter-spacing: 1px;">株式会社 エムシーエム</div>
+          <div style="font-size: 10px; font-weight: 700; color: #293688; text-align: left;">MCM Co.,Ltd.</div>
+        </div>
+      </div>
+      <div class="main-title-box">
+        <div class="main-title">トンネル坑内温度調整システム</div>
+      </div>
+      <div class="hero-summary">
+        夏場の工事中のトンネル坑内は空気温度の上昇、重機からの排熱、吹付けコンクリートの硬化熱などの要因により暑熱環境に陥りやすいので、作業者の熱中症対策が重要です。大電力を使用して暑熱空気を冷却するのは容易ですが、設備費も電気代も膨らむので好ましくないばかりでなく、坑内にそのような冷房装置を持ち込んだ場合には、消費電力の殆どが排熱となり、坑内全体の平均温度をさらに上昇させることになります。
+        一般的には山岳トンネルの建設現場では20℃程度の「夏場に冷たい湧水」が存在するケースが多く、ここに着目しました。湧水と暑熱空気をラジエーターで直接熱交換して冷風を発生させる画期的なシステムです。
+      </div>
+    </div>
+
+    <div class="content-header" style="margin-top: 10px; background: none; justify-content: center;">
+      <div class="section-tag" style="background: #000000; color: #ffffff;">施工条件</div>
+    </div>
+
+    <div class="features-grid" style="grid-template-columns: repeat(5, 1fr); padding: 10px 20px; gap: 8px;">
+      <div class="feature-card" style="padding: 8px; border-color: var(--mcm-light-blue);">
+        <div class="feature-num" style="font-size: 24px; color: #000000;">1</div>
+        <div class="feature-title" style="font-size: 11px; margin: 5px 0;">低電力です！</div>
+        <div class="feature-desc" style="font-size: 9px;">直接熱交換</div>
+      </div>
+      <div class="feature-card" style="padding: 8px; border-color: var(--mcm-light-blue);">
+        <div class="feature-num" style="font-size: 24px; color: #000000;">2</div>
+        <div class="feature-title" style="font-size: 11px; margin: 5px 0;">機動性あり！</div>
+        <div class="feature-desc" style="font-size: 9px;">2t車積載可能</div>
+      </div>
+      <div class="feature-card" style="padding: 8px; border-color: var(--mcm-light-blue);">
+        <div class="feature-num" style="font-size: 24px; color: #000000;">3</div>
+        <div class="feature-title" style="font-size: 11px; margin: 5px 0;">大風量！</div>
+        <div class="feature-desc" style="font-size: 9px;">1,000m³/min</div>
+      </div>
+      <div class="feature-card" style="padding: 8px; border-color: var(--mcm-light-blue);">
+        <div class="feature-num" style="font-size: 24px; color: #000000;">4</div>
+        <div class="feature-title" style="font-size: 11px; margin: 5px 0;">設置容易！</div>
+        <div class="feature-desc" style="font-size: 9px;">200V電源のみ</div>
+      </div>
+      <div class="feature-card" style="padding: 8px; border-color: var(--mcm-light-blue);">
+        <div class="feature-num" style="font-size: 24px; color: #000000;">5</div>
+        <div class="feature-title" style="font-size: 11px; margin: 5px 0;">メンテフリー!</div>
+        <div class="feature-desc" style="font-size: 9px;">シンプルな構造</div>
+      </div>
+    </div>
+
+    <div class="hero-image-container" style="flex: 1; padding-bottom: 20px; min-height: 0;">
+      <div class="truck-circle" style="width: 180px; height: 180px; left: 40px;">
+        <!-- Placeholder for Truck Shot -->
+        <img src="images/tunnel_interior.png" alt="Tunnel Interior"
+          style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <!-- Placeholder for Main Unit -->
+      <div
+        style="width:80%; height:100%; max-height:350px; background:#e0e0e0; border:1px solid #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:24px; font-weight:700; border-radius:10px;">
+        トンネル坑内温度調整システム 製品写真
+      </div>
+    </div>
+
+    <div class="footer-brand">
+      <div class="brand-info">
+        <h2 style="color: #293688;">株式会社 エムシーエム</h2>
+        <p>https://mcm-co.jp</p>
+      </div>
+      <div style="border: 1px solid #ccc; padding: 10px 40px; font-size: 12px; color: #666;">
+        販売代理店
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: DETAILS (Flyer Style) -->
+  <div class="page" id="back">
+    <!-- Overview moved to Page 1 -->
+
+
+    <div class="specs-section" style="margin-top: 20px;">
+      <div class="section-tag" style="margin-bottom: 15px; background: #000; color: #fff;">比較の総括</div>
+      <table class="spec-table" style="width: 100%; border-collapse: collapse;">
+        <tr style="background-color: #eee;">
+          <th style="width: 20%; text-align: center; padding: 10px;">項目</th>
+          <th
+            style="width: 35%; text-align: center; background-color: #e8f5e9; color: var(--mcm-blue); font-weight: 900; padding: 10px;">
+            トンネル坑内温度調整システム</th>
+          <th style="width: 22.5%; text-align: center; padding: 10px;">一般的な冷房装置</th>
+          <th style="width: 22.5%; text-align: center; padding: 10px;">スポットクーラー</th>
+        </tr>
+        <tr>
+          <th style="background-color: #fafafa; text-align: center;">冷却方式</th>
+          <td style="background-color: #f1f8e9; font-weight: 500;">湧水・給水との直接熱交換方式</td>
+          <td style="text-align: center;">冷媒による強制冷却</td>
+          <td style="text-align: center;">冷媒による強制冷却</td>
+        </tr>
+        <tr>
+          <th style="background-color: #fafafa; text-align: center;">坑内への排熱</th>
+          <td style="background-color: #f1f8e9; font-weight: 700; color: var(--mcm-blue);">発生しない（湧水へ放熱）</td>
+          <td style="text-align: center; color: #d32f2f;">多大（平均温度を上昇させる）</td>
+          <td style="text-align: center;">あり</td>
+        </tr>
+        <tr>
+          <th style="background-color: #fafafa; text-align: center;">消費電力</th>
+          <td style="background-color: #f1f8e9; font-weight: 700; color: var(--mcm-blue);">極めて低い（省エネ）</td>
+          <td style="text-align: center;">非常に高い</td>
+          <td style="text-align: center;">高い</td>
+        </tr>
+        <tr>
+          <th style="background-color: #fafafa; text-align: center;">機動性</th>
+          <td style="background-color: #f1f8e9;">2t車に積載・切羽近くへ搬入可能</td>
+          <td style="text-align: center;">大型・定置式のため困難</td>
+          <td style="text-align: center;">比較的容易</td>
+        </tr>
+        <tr>
+          <th style="background-color: #fafafa; text-align: center;">総合評価</th>
+          <td
+            style="background-color: #f1f8e9; text-align: center; font-size: 20px; font-weight: 900; color: var(--mcm-blue);">
+            ◎（最適）</td>
+          <td style="text-align: center; font-size: 20px; color: #999;">△</td>
+          <td style="text-align: center; font-size: 20px; color: #666;">○</td>
+        </tr>
+      </table>
+      <div style="font-size: 10px; color: #666; margin-top: 10px;">
+        ※一般的な冷房装置（チラー等）は消費電力の殆どが排熱となり、坑内環境を悪化させる懸念があります。
+      </div>
+    </div>
+
+    <div class="content-header" style="margin-top: 30px;">
+      <div class="section-tag">システム全体構成図</div>
+    </div>
+
+    <div
+      style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 20px;">
+      <div
+        style="width: 100%; height: 400px; display: flex; align-items: center; justify-content: center; position: relative; margin: 20px 0;">
+        <!-- Using the existing image1.png if it represents the schematic -->
+        <img src="images/image1.png" alt="Schematic Diagram"
+          style="max-width: 100%; max-height: 100%; object-fit: contain;">
+        <div style="position: absolute; bottom: 10px; right: 10px; font-size: 10px; color: #999;">
+          ※システム概要図（水槽式・開放型・熱交換方式）</div>
+      </div>
+    </div>
+
+    <div class="footer-brand" style="margin-top: auto;">
+      <div class="brand-info">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+          <div
+            style="font-family: 'Arial Black', sans-serif; font-size: 24px; font-weight: 900; font-style: italic; color: #293688; letter-spacing: -2px; line-height: 1;">
+            MCM</div>
+          <div style="line-height: 1.2; display: flex; flex-direction: column;">
+            <div style="font-size: 14px; font-weight: 900; color: #293688; letter-spacing: 1px;">株式会社 エムシーエム</div>
+            <div style="font-size: 9px; font-weight: 700; color: #293688; text-align: left;">MCM Co.,Ltd.</div>
+          </div>
+        </div>
+        <h2 style="color: #293688;">株式会社 エムシーエム</h2>
+        <p>https://mcm-co.jp</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
