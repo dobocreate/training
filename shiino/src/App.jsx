@@ -3,8 +3,7 @@ import SpaceBackground from "./components/SpaceBackground";
 import TodoInput from "./components/TodoInput";
 import TodoList from "./components/TodoList";
 import ProgressBar from "./components/ProgressBar";
-import Celebration from "./components/Celebration";
-import Scolding from "./components/Scolding";
+import Mascot from "./components/Mascot";
 import "./App.css";
 
 function App() {
@@ -41,14 +40,6 @@ function App() {
   const incompleteTodos = todos.filter((todo) => !todo.done);
   const completeTodos = todos.filter((todo) => todo.done);
 
-  // 1件以上あって、未完了が0件になったときが「全部完了」。
-  // TODOが空のときは達成ではないので出さない
-  const isAllDone = todos.length > 0 && incompleteTodos.length === 0;
-
-  // 逆に、1件以上あるのに1つも終わっていない状態。
-  // TODOが空のときは怒られる筋合いがないので出さない
-  const isNothingDone = todos.length > 0 && completeTodos.length === 0;
-
   return (
     <div className="container">
       <SpaceBackground />
@@ -82,12 +73,14 @@ function App() {
         complete
       />
 
-      {/* 広い画面では右横に固定し、狭い画面ではここ（リストの下）に並ぶ */}
-      {(isAllDone || isNothingDone) && (
-        <aside className="mascot">
-          {isAllDone ? <Celebration /> : <Scolding />}
-        </aside>
-      )}
+      {/* 広い画面では右横に固定し、狭い画面ではここ（リストの下）に並ぶ。
+          セリフは件数から宇宙人側で決める */}
+      <aside className="mascot">
+        <Mascot
+          completeCount={completeTodos.length}
+          totalCount={todos.length}
+        />
+      </aside>
     </div>
   );
 }
