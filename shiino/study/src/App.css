@@ -41,12 +41,13 @@
 }
 
 /* ===== 全体の並び ===== */
-/* 広い画面では2列、狭い画面では1列に落とす */
+/* 計測を上に全幅で置き、その下を「目標」「振り返り」の2列に分ける */
 .layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
   align-items: start;
+  margin-top: 18px;
 }
 
 .column {
@@ -58,6 +59,65 @@
 
 @media (max-width: 860px) {
   .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== たたんでおく設定（科目・手入力） ===== */
+.tools {
+  margin-top: 18px;
+}
+
+.tools-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--ink-dim);
+  cursor: pointer;
+  /* ブラウザが付ける三角のマークを消して、自前の矢印に差し替える */
+  list-style: none;
+  transition:
+    border-color 0.18s,
+    color 0.18s;
+}
+
+.tools-summary::-webkit-details-marker {
+  display: none;
+}
+
+.tools-summary:hover {
+  border-color: rgba(34, 211, 238, 0.5);
+  color: var(--ink);
+}
+
+.tools-chevron {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+/* 開いているときは矢印を下向きにする */
+.tools[open] .tools-chevron {
+  transform: rotate(90deg);
+}
+
+.tools-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+@media (max-width: 860px) {
+  .tools-body {
     grid-template-columns: 1fr;
   }
 }
@@ -172,11 +232,29 @@
 }
 
 /* ===== 計測 ===== */
+/* 科目・時計・ボタンを横一列に。狭い画面では縦に積む */
+.timer-body {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 18px 26px;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .timer-body {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .timer-body .big-button {
+    width: 100%;
+  }
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
 }
 
 .chip {
@@ -212,10 +290,14 @@
   opacity: 1;
 }
 
+.timer-display {
+  text-align: center;
+}
+
 .timer-clock {
   margin: 0;
   font-family: ui-monospace, "Consolas", monospace;
-  font-size: 52px;
+  font-size: 46px;
   font-weight: 800;
   line-height: 1.1;
   text-align: center;
@@ -227,19 +309,19 @@
 }
 
 .timer-subject {
-  margin: 4px 0 16px;
+  margin: 4px 0 0;
   font-size: 12px;
   text-align: center;
   color: var(--ink-dim);
 }
 
 .big-button {
-  width: 100%;
   border: none;
   border-radius: 12px;
-  padding: 13px;
+  padding: 14px 32px;
   font-size: 15px;
   font-weight: 800;
+  white-space: nowrap;
   letter-spacing: 2px;
   color: #fff;
   cursor: pointer;
@@ -446,7 +528,7 @@
 
 /* ===== 記録一覧 ===== */
 .record-scroll {
-  max-height: 420px;
+  max-height: 340px;
   overflow-y: auto;
 }
 

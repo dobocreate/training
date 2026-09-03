@@ -160,17 +160,20 @@ function App() {
         <p className="app-subtitle">科目ごとに勉強時間を記録する</p>
       </header>
 
+      {/* 主役の計測は幅いっぱいに置く */}
+      <Timer
+        subjects={subjects}
+        running={running}
+        elapsedSeconds={elapsedSeconds}
+        selectedId={selectedId}
+        onSelect={setSelectedId}
+        onStart={startTimer}
+        onStop={stopTimer}
+      />
+
       <div className="layout">
+        {/* 左は目標、右は振り返り、と役割で分ける */}
         <div className="column">
-          <Timer
-            subjects={subjects}
-            running={running}
-            elapsedSeconds={elapsedSeconds}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-            onStart={startTimer}
-            onStop={stopTimer}
-          />
           <BossBattle
             boss={boss}
             subjects={subjects}
@@ -178,16 +181,10 @@ function App() {
             onStart={startBoss}
             onClear={clearBoss}
           />
-          <ManualEntry subjects={subjects} onAdd={addManualRecord} />
-          <SubjectManager
-            subjects={subjects}
-            onAdd={addSubject}
-            onDelete={deleteSubject}
-          />
+          <Journey records={records} />
         </div>
 
         <div className="column">
-          <Journey records={records} />
           <Summary subjects={subjects} records={records} />
           <RecordList
             subjects={subjects}
@@ -196,6 +193,22 @@ function App() {
           />
         </div>
       </div>
+
+      {/* 毎回は使わないものは、たたんでおく */}
+      <details className="tools">
+        <summary className="tools-summary">
+          <span className="tools-chevron">›</span>
+          科目と手入力
+        </summary>
+        <div className="tools-body">
+          <SubjectManager
+            subjects={subjects}
+            onAdd={addSubject}
+            onDelete={deleteSubject}
+          />
+          <ManualEntry subjects={subjects} onAdd={addManualRecord} />
+        </div>
+      </details>
     </div>
   );
 }
