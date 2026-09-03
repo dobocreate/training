@@ -61,6 +61,7 @@ src/
 │   ├── boss.js                ボス戦（ダメージ・残りHP・ペース）
 │   └── storage.js             localStorage の読み書き
 └── components/
+    ├── Icon.jsx               見出し横の小さなアイコン（SVGの線画）
     ├── TitleScreen.jsx        タイトル画面
     ├── Timer.jsx              計測（科目選択・開始／停止）
     ├── Journey.jsx            宇宙旅の航路

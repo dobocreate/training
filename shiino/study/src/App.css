@@ -97,6 +97,10 @@
   color: var(--ink);
 }
 
+.tools-summary .card-icon {
+  margin-left: -2px;
+}
+
 .tools-chevron {
   display: inline-block;
   font-size: 16px;
@@ -133,11 +137,27 @@
 }
 
 .card-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   margin: 0 0 14px;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 3px;
   color: var(--ink-dim);
+}
+
+/* 見出しのアイコン。線の色は currentColor なので、見出しの文字色に合う */
+.card-icon {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
 }
 
 .empty-message {

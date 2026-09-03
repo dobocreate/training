@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Icon from "./Icon";
 import { bossStatus } from "../lib/boss";
 import { formatDuration, toDateKey } from "../lib/time";
 
@@ -99,7 +100,10 @@ function BossBattle({ boss, subjects, records, onStart, onClear }) {
   if (!boss || !status) {
     return (
       <section className="card">
-        <p className="card-title">ボス戦</p>
+        <p className="card-title">
+          <Icon name="target" />
+          ボス戦
+        </p>
         <p className="boss-lead">
           試験日と目標時間を決めると、挑戦した日から勉強したぶんだけHPを削れる。
         </p>
@@ -114,7 +118,10 @@ function BossBattle({ boss, subjects, records, onStart, onClear }) {
   return (
     <section className={`card boss-card is-${status.state}`}>
       <div className="boss-head">
-        <p className="card-title">ボス戦</p>
+        <p className="card-title">
+          <Icon name="target" />
+          ボス戦
+        </p>
         <button type="button" className="delete-button" onClick={onClear}>
           解除
         </button>

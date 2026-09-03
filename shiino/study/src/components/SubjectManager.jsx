@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Icon from "./Icon";
 
 // 科目の色。選びやすいように候補を用意しておく
 const COLORS = [
@@ -37,7 +38,10 @@ function SubjectManager({ subjects, onAdd, onDelete }) {
 
   return (
     <section className="card">
-      <p className="card-title">科目</p>
+      <p className="card-title">
+        <Icon name="book" />
+        科目
+      </p>
 
       <ul className="subject-list">
         {subjects.map((subject) => (

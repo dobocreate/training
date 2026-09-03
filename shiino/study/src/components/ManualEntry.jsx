@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Icon from "./Icon";
 import { toDateKey } from "../lib/time";
 
 // あとから手入力で記録を足すためのパネル。
@@ -32,7 +33,10 @@ function ManualEntry({ subjects, onAdd }) {
 
   return (
     <section className="card">
-      <p className="card-title">手入力で追加</p>
+      <p className="card-title">
+        <Icon name="pencil" />
+        手入力で追加
+      </p>
 
       <form className="manual-form" onSubmit={handleSubmit}>
         <select

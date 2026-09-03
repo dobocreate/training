@@ -1,3 +1,4 @@
+import Icon from "./Icon";
 import { formatDuration, toDateKey, formatDateLabel, formatTimeLabel } from "../lib/time";
 
 // 記録の一覧。日付ごとにまとめて、新しい順に並べる
@@ -16,7 +17,10 @@ function RecordList({ subjects, records, onDelete }) {
 
   return (
     <section className="card">
-      <p className="card-title">記録</p>
+      <p className="card-title">
+        <Icon name="list" />
+        記録
+      </p>
 
       {sortedKeys.length === 0 ? (
         <p className="empty-message">まだ記録がありません</p>

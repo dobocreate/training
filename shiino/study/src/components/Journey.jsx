@@ -1,3 +1,4 @@
+import Icon from "./Icon";
 import { PLANETS, journeyProgress } from "../lib/journey";
 import { formatDuration } from "../lib/time";
 
@@ -10,7 +11,10 @@ function Journey({ records }) {
   return (
     <section className="card">
       <div className="journey-head">
-        <p className="card-title">宇宙旅</p>
+        <p className="card-title">
+          <Icon name="rocket" />
+          宇宙旅
+        </p>
         <span className="journey-total">
           飛行距離 {formatDuration(totalSeconds)}
         </span>

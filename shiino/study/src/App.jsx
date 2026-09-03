@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Icon from "./components/Icon";
 import TitleScreen from "./components/TitleScreen";
 import Timer from "./components/Timer";
 import Journey from "./components/Journey";
@@ -212,6 +213,7 @@ function App() {
       <details className="tools">
         <summary className="tools-summary">
           <span className="tools-chevron">›</span>
+          <Icon name="sliders" />
           科目と手入力
         </summary>
         <div className="tools-body">

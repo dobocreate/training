@@ -1,3 +1,4 @@
+import Icon from "./Icon";
 import { formatClock } from "../lib/time";
 
 // 計測パネル。科目を選んで開始・停止する
@@ -8,7 +9,10 @@ function Timer({ subjects, running, elapsedSeconds, selectedId, onSelect, onStar
 
   return (
     <section className="card timer">
-      <p className="card-title">計測</p>
+      <p className="card-title">
+        <Icon name="timer" />
+        計測
+      </p>
 
       {/* 科目 / 時計 / ボタン を横に並べる。狭い画面ではCSSで縦積みにする */}
       <div className="timer-body">

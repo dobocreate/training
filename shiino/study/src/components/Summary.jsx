@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Icon from "./Icon";
 import {
   formatDuration,
   toDateKey,
@@ -50,7 +51,10 @@ function Summary({ subjects, records }) {
   return (
     <section className="card">
       <div className="summary-head">
-        <p className="card-title">合計</p>
+        <p className="card-title">
+          <Icon name="chart" />
+          合計
+        </p>
         <div className="range-tabs">
           {RANGES.map((item) => (
             <button
