@@ -4,6 +4,7 @@ const KEYS = {
   subjects: "study.subjects",
   records: "study.records",
   running: "study.running",
+  boss: "study.boss",
 };
 
 function load(key, fallback) {
@@ -61,4 +62,17 @@ export function loadRunning() {
 
 export function saveRunning(running) {
   save(KEYS.running, running);
+}
+
+// 挑戦中のボス。設定していなければ null
+export function loadBoss() {
+  const value = load(KEYS.boss, null);
+  if (!value || typeof value.deadline !== "string" || typeof value.createdAt !== "string") {
+    return null;
+  }
+  return value;
+}
+
+export function saveBoss(boss) {
+  save(KEYS.boss, boss);
 }

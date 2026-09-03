@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Timer from "./components/Timer";
+import Journey from "./components/Journey";
+import BossBattle from "./components/BossBattle";
 import Summary from "./components/Summary";
 import ManualEntry from "./components/ManualEntry";
 import RecordList from "./components/RecordList";
@@ -11,6 +13,8 @@ import {
   saveRecords,
   loadRunning,
   saveRunning,
+  loadBoss,
+  saveBoss,
 } from "./lib/storage";
 import "./App.css";
 
@@ -26,6 +30,9 @@ function App() {
 
   // 計測中の状態。{ subjectId, startedAt } か、計測していなければ null
   const [running, setRunning] = useState(loadRunning);
+
+  // 挑戦中のボス。設定していなければ null
+  const [boss, setBoss] = useState(loadBoss);
 
   const [selectedId, setSelectedId] = useState(() => loadSubjects()[0]?.id ?? "");
 
@@ -46,6 +53,10 @@ function App() {
     saveRunning(running);
   }, [running]);
 
+  useEffect(() => {
+    saveBoss(boss);
+  }, [boss]);
+
   // 計測中だけ1秒ごとに現在時刻を更新する
   useEffect(() => {
     if (!running) return undefined;
@@ -57,6 +68,11 @@ function App() {
   const elapsedSeconds = running
     ? Math.max(0, Math.floor((now - new Date(running.startedAt).getTime()) / 1000))
     : 0;
+
+  // 記録の追加口はここ1か所にまとめる
+  const addRecord = (record) => {
+    setRecords((prev) => [...prev, record]);
+  };
 
   const startTimer = () => {
     if (!selectedId || running) return;
@@ -72,15 +88,12 @@ function App() {
     const seconds = Math.floor((Date.now() - new Date(running.startedAt).getTime()) / 1000);
     // 1秒未満は誤操作とみなして記録しない
     if (seconds >= 1) {
-      setRecords((prev) => [
-        ...prev,
-        {
-          id: createId(),
-          subjectId: running.subjectId,
-          seconds: seconds,
-          startedAt: running.startedAt,
-        },
-      ]);
+      addRecord({
+        id: createId(),
+        subjectId: running.subjectId,
+        seconds: seconds,
+        startedAt: running.startedAt,
+      });
     }
     setRunning(null);
   };
@@ -89,11 +102,15 @@ function App() {
   const addManualRecord = ({ subjectId, seconds, dateKey }) => {
     const [y, m, d] = dateKey.split("-").map(Number);
     const nowDate = new Date();
+    // 秒まで入れておく。分で切り捨てると、直前に設定したボスより古い記録に
+    // なってしまい、ダメージとして数えられなくなる
     const startedAt = new Date(
-      y, m - 1, d, nowDate.getHours(), nowDate.getMinutes(),
+      y, m - 1, d,
+      nowDate.getHours(), nowDate.getMinutes(),
+      nowDate.getSeconds(), nowDate.getMilliseconds(),
     ).toISOString();
 
-    setRecords((prev) => [...prev, { id: createId(), subjectId, seconds, startedAt }]);
+    addRecord({ id: createId(), subjectId, seconds, startedAt });
   };
 
   const deleteRecord = (id) => {
@@ -104,6 +121,16 @@ function App() {
     const subject = { id: createId(), name: name, color: color };
     setSubjects((prev) => [...prev, subject]);
     if (!selectedId) setSelectedId(subject.id);
+  };
+
+  // ボスに挑む。挑戦を始めた時刻を覚えておき、それ以降の記録だけをダメージにする
+  const startBoss = (config) => {
+    setBoss({ ...config, createdAt: new Date().toISOString() });
+  };
+
+  const clearBoss = () => {
+    if (!window.confirm("ボス戦を解除します。")) return;
+    setBoss(null);
   };
 
   const deleteSubject = (id) => {
@@ -144,6 +171,13 @@ function App() {
             onStart={startTimer}
             onStop={stopTimer}
           />
+          <BossBattle
+            boss={boss}
+            subjects={subjects}
+            records={records}
+            onStart={startBoss}
+            onClear={clearBoss}
+          />
           <ManualEntry subjects={subjects} onAdd={addManualRecord} />
           <SubjectManager
             subjects={subjects}
@@ -153,6 +187,7 @@ function App() {
         </div>
 
         <div className="column">
+          <Journey records={records} />
           <Summary subjects={subjects} records={records} />
           <RecordList
             subjects={subjects}

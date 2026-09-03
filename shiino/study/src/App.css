@@ -562,3 +562,265 @@
   border-color: #fff;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
 }
+
+/* ===== 宇宙旅 ===== */
+.journey-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.journey-head .card-title {
+  margin: 0;
+}
+
+.journey-total {
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.journey-current {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #a5b4fc, var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.journey-next {
+  margin: 4px 0 26px;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+/* 航路。天体と宇宙船は左からの割合で置くので、position: relative の中に絶対配置する */
+.route {
+  position: relative;
+  height: 26px;
+  margin: 0 10px 22px;
+}
+
+.route-line,
+.route-done {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 3px;
+  border-radius: 999px;
+  transform: translateY(-50%);
+}
+
+.route-line {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* 通ってきたぶんだけ光らせる */
+.route-done {
+  background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.6);
+  transition: width 0.6s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.planet {
+  position: absolute;
+  top: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.3;
+  transition: opacity 0.4s;
+}
+
+.planet.is-reached {
+  opacity: 1;
+  box-shadow: 0 0 10px currentColor;
+}
+
+/* 宇宙船。三角形をCSSで作って、進み具合の位置に置く */
+.ship {
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 13px solid #ffffff;
+  transform: translate(-40%, -50%);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+  transition: left 0.6s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.planet-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.planet-chip {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.planet-chip.is-reached {
+  border-color: var(--planet-color);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--planet-color) 18%, transparent);
+}
+
+.planet-hours {
+  font-family: ui-monospace, "Consolas", monospace;
+  font-size: 10px;
+  opacity: 0.75;
+}
+
+/* ===== ボス戦 ===== */
+.boss-lead {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.boss-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.boss-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.boss-row .is-date {
+  flex: 1;
+}
+
+.boss-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.boss-head .card-title {
+  margin: 0;
+}
+
+.boss-card.is-fighting {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.boss-card.is-defeated {
+  border-color: rgba(163, 230, 53, 0.5);
+}
+
+.boss-name {
+  margin: 8px 0 2px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.boss-meta {
+  margin: 0 0 14px;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+/* HPバーは右から減るので、残量ぶんの幅を左から描く */
+.hp-track {
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.hp-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ef4444, #f97316, #facc15);
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.5);
+  transition: width 0.6s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.hp-text {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.hp-text strong {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.hp-damage {
+  font-size: 11px;
+}
+
+.boss-status {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.boss-days {
+  font-weight: 700;
+  color: #fca5a5;
+}
+
+.boss-pace {
+  color: var(--ink-dim);
+}
+
+.boss-result {
+  margin: 14px 0 0;
+  padding: 9px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-align: center;
+  animation: boss-result-in 0.5s cubic-bezier(0.34, 1.5, 0.64, 1);
+}
+
+@keyframes boss-result-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(-8px);
+  }
+}
+
+.boss-result.is-win {
+  color: #06283d;
+  background: linear-gradient(90deg, var(--cyan), var(--lime));
+  box-shadow: 0 0 24px rgba(163, 230, 53, 0.5);
+}
+
+.boss-result.is-lose {
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+}
