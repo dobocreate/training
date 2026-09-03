@@ -906,3 +906,138 @@
   color: #fca5a5;
   border: 1px solid rgba(239, 68, 68, 0.5);
 }
+
+/* ===== タイトル画面 ===== */
+.title-screen {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  animation: title-in 0.7s ease-out;
+}
+
+@keyframes title-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.title-eyebrow {
+  margin: 0 0 12px;
+  font-size: 11px;
+  letter-spacing: 8px;
+  color: var(--ink-dim);
+}
+
+.title-logo {
+  margin: 0;
+  font-size: 76px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 10px;
+
+  /* 文字の中にグラデーションを流し込む */
+  background: linear-gradient(100deg, #22d3ee, #a78bfa, #ec4899, #22d3ee);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: flow 8s linear infinite;
+  filter: drop-shadow(0 0 30px rgba(167, 139, 250, 0.6));
+}
+
+.title-lead {
+  margin: 16px 0 0;
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--ink-dim);
+}
+
+/* 前回までの状況 */
+.title-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 40px 0 0;
+  padding: 0;
+}
+
+.title-stat {
+  min-width: 140px;
+  padding: 12px 20px;
+  border-radius: 14px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+}
+
+.title-stat dt {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--ink-dim);
+}
+
+.title-stat dd {
+  margin: 6px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.start-button {
+  margin-top: 44px;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 64px;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--violet), var(--cyan));
+  box-shadow: 0 12px 30px rgba(34, 211, 238, 0.4);
+  /* ゆっくり呼吸するように光らせて、押す場所だと分かるようにする */
+  animation: start-pulse 2.4s ease-in-out infinite;
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s;
+}
+
+@keyframes start-pulse {
+  50% {
+    box-shadow:
+      0 12px 30px rgba(34, 211, 238, 0.55),
+      0 0 40px rgba(124, 58, 237, 0.5);
+  }
+}
+
+.start-button:hover {
+  transform: translateY(-3px) scale(1.03);
+}
+
+.start-button:active {
+  transform: translateY(0) scale(1);
+}
+
+.title-hint {
+  margin: 16px 0 0;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(163, 176, 212, 0.65);
+}
+
+@media (max-width: 640px) {
+  .title-logo {
+    font-size: 44px;
+    letter-spacing: 5px;
+  }
+
+  .start-button {
+    padding: 14px 48px;
+    font-size: 17px;
+  }
+}

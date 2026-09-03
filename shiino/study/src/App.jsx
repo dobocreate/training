@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import TitleScreen from "./components/TitleScreen";
 import Timer from "./components/Timer";
 import Journey from "./components/Journey";
 import BossBattle from "./components/BossBattle";
@@ -33,6 +34,9 @@ function App() {
 
   // 挑戦中のボス。設定していなければ null
   const [boss, setBoss] = useState(loadBoss);
+
+  // タイトル画面を抜けたかどうか。開くたびにタイトルから始まる
+  const [started, setStarted] = useState(false);
 
   const [selectedId, setSelectedId] = useState(() => loadSubjects()[0]?.id ?? "");
 
@@ -152,6 +156,16 @@ function App() {
     if (running?.subjectId === id) setRunning(null);
     if (selectedId === id) setSelectedId(rest[0]?.id ?? "");
   };
+
+  if (!started) {
+    return (
+      <TitleScreen
+        records={records}
+        boss={boss}
+        onStart={() => setStarted(true)}
+      />
+    );
+  }
 
   return (
     <div className="app">
