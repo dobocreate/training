@@ -1,0 +1,564 @@
+.app {
+  width: 960px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* ===== ヘッダー ===== */
+.app-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  line-height: 1;
+
+  /* 文字の中にグラデーションを流し込む */
+  background: linear-gradient(100deg, #22d3ee, #a78bfa, #ec4899, #22d3ee);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: flow 8s linear infinite;
+  filter: drop-shadow(0 0 20px rgba(167, 139, 250, 0.5));
+}
+
+@keyframes flow {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+.app-subtitle {
+  margin: 10px 0 0;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--ink-dim);
+}
+
+/* ===== 全体の並び ===== */
+/* 広い画面では2列、狭い画面では1列に落とす */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== カード共通 ===== */
+.card {
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+}
+
+.card-title {
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--ink-dim);
+}
+
+.empty-message {
+  margin: 0;
+  padding: 18px 0;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--ink-dim);
+}
+
+.error-message {
+  min-height: 16px;
+  margin: 8px 2px 0;
+  font-size: 12px;
+  color: #fca5a5;
+}
+
+/* 科目の色を示す丸 */
+.dot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* 入力欄・選択欄の共通見た目 */
+.field {
+  min-width: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+}
+
+.field:focus {
+  border-color: rgba(34, 211, 238, 0.7);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.18);
+}
+
+/* selectの選択肢はブラウザ側で描かれるので、暗い背景色を明示しておく */
+.field option {
+  background: #14102b;
+  color: var(--ink);
+}
+
+.add-button {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--violet), var(--pink));
+  box-shadow: 0 8px 18px rgba(236, 72, 153, 0.35);
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s;
+}
+
+.add-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(236, 72, 153, 0.55);
+}
+
+.delete-button {
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  padding: 3px 9px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    border-color 0.18s;
+}
+
+.delete-button:hover {
+  background: #ef4444;
+  border-color: transparent;
+  color: #fff;
+}
+
+/* ===== 計測 ===== */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  padding: 7px 15px;
+  font-size: 13px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition:
+    border-color 0.18s,
+    background 0.18s;
+}
+
+.chip:hover:not(:disabled) {
+  border-color: var(--chip-color);
+}
+
+/* 選ばれている科目は、その科目の色で縁取る */
+.chip.is-active {
+  border-color: var(--chip-color);
+  background: color-mix(in srgb, var(--chip-color) 22%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--chip-color) 40%, transparent);
+}
+
+.chip:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.chip.is-active:disabled {
+  opacity: 1;
+}
+
+.timer-clock {
+  margin: 0;
+  font-family: ui-monospace, "Consolas", monospace;
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--lime));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.timer-subject {
+  margin: 4px 0 16px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--ink-dim);
+}
+
+.big-button {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--violet), var(--cyan));
+  box-shadow: 0 10px 24px rgba(34, 211, 238, 0.35);
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s;
+}
+
+.big-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(34, 211, 238, 0.5);
+}
+
+.big-button.is-stop {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.4);
+}
+
+.big-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+  transform: none;
+}
+
+/* ===== 手入力 ===== */
+.manual-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.manual-form .field {
+  flex: 1;
+}
+
+/* 科目名が読めなくなるほど潰れるので、科目の選択欄だけ1行使い切る */
+.manual-form select.field {
+  flex: 1 1 100%;
+}
+
+.field.is-date {
+  flex: 0 0 auto;
+}
+
+.duration-inputs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field.is-number {
+  width: 62px;
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.unit {
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+/* ===== 合計 ===== */
+.summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.summary-head .card-title {
+  margin: 0;
+}
+
+.range-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.range-tab {
+  border: none;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--ink-dim);
+  background: transparent;
+  cursor: pointer;
+}
+
+.range-tab.is-active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--violet), var(--cyan));
+}
+
+.summary-total {
+  margin: 0 0 16px;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.subject-bars {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+/* 名前・時間・棒を2行のグリッドで並べる */
+.subject-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  margin-bottom: 12px;
+}
+
+.subject-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+}
+
+.subject-time {
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+.bar-track {
+  grid-column: 1 / -1;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s;
+}
+
+/* ===== 直近7日のグラフ ===== */
+.chart-title {
+  margin: 0 0 10px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--ink-dim);
+}
+
+.week-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.week-day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.week-value {
+  font-size: 9px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+/* 棒は下から伸ばしたいので、枠を flex-end にして高さだけ変える */
+.week-track {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 70px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.week-fill {
+  width: 100%;
+  border-radius: 8px;
+  background: linear-gradient(180deg, var(--cyan), var(--violet));
+  transition: height 0.4s;
+}
+
+.week-label {
+  font-size: 10px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+/* ===== 記録一覧 ===== */
+.record-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.record-group {
+  margin-bottom: 16px;
+}
+
+.record-date {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-dim);
+}
+
+.record-date-total {
+  color: var(--cyan);
+}
+
+.record-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.record-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.record-subject {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-time {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.record-duration {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lime);
+}
+
+/* ===== 科目の管理 ===== */
+.subject-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.subject-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.subject-item-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subject-form {
+  display: flex;
+  gap: 8px;
+}
+
+.subject-form .field {
+  flex: 1;
+}
+
+.color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.color-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch.is-active {
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}

@@ -1,0 +1,80 @@
+:root {
+  --violet: #7c3aed;
+  --cyan: #22d3ee;
+  --pink: #ec4899;
+  --lime: #a3e635;
+  --ink: #eef2ff;
+  --ink-dim: #a3b0d4;
+
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(160, 190, 255, 0.2);
+}
+
+body {
+  margin: 0;
+  padding: 40px 16px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: var(--ink);
+  background-color: #05030f;
+  overflow-x: hidden;
+}
+
+/* 背景の星雲。ゆっくり漂う */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 22% 24%, rgba(88, 28, 235, 0.5), transparent 45%),
+    radial-gradient(circle at 78% 70%, rgba(190, 24, 143, 0.36), transparent 45%),
+    radial-gradient(circle at 60% 10%, rgba(14, 165, 233, 0.3), transparent 42%);
+  filter: blur(70px);
+  animation: nebula-drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes nebula-drift {
+  50% {
+    transform: translate3d(3%, -3%, 0) scale(1.12);
+  }
+  100% {
+    transform: translate3d(-3%, 3%, 0) scale(1.06);
+  }
+}
+
+/* 星。小さな円をタイル状に並べ、背景位置をずらして流している */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    radial-gradient(1.2px 1.2px at 24px 38px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1px 1px at 140px 12px, rgba(190, 210, 255, 0.8), transparent),
+    radial-gradient(1.4px 1.4px at 262px 74px, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(1px 1px at 58px 130px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1.2px 1.2px at 196px 168px, rgba(210, 225, 255, 0.85), transparent),
+    radial-gradient(1px 1px at 96px 210px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1.3px 1.3px at 240px 246px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 12px 280px, rgba(200, 215, 255, 0.75), transparent);
+  background-size: 300px 300px;
+  animation: stars-drift 120s linear infinite;
+}
+
+@keyframes stars-drift {
+  to {
+    background-position: 0 300px;
+  }
+}
+
+/* 動きを減らす設定にしている人には、アニメーションを止める */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
