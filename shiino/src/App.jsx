@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import TodoInput from "./components/TodoInput";
 import TodoList from "./components/TodoList";
 import ProgressBar from "./components/ProgressBar";
+import Celebration from "./components/Celebration";
+import Scolding from "./components/Scolding";
 import "./App.css";
 
 function App() {
@@ -38,6 +40,14 @@ function App() {
   const incompleteTodos = todos.filter((todo) => !todo.done);
   const completeTodos = todos.filter((todo) => todo.done);
 
+  // 1件以上あって、未完了が0件になったときが「全部完了」。
+  // TODOが空のときは達成ではないので出さない
+  const isAllDone = todos.length > 0 && incompleteTodos.length === 0;
+
+  // 逆に、1件以上あるのに1つも終わっていない状態。
+  // TODOが空のときは怒られる筋合いがないので出さない
+  const isNothingDone = todos.length > 0 && completeTodos.length === 0;
+
   return (
     <div className="container">
       <header className="app-header">
@@ -51,6 +61,9 @@ function App() {
         completeCount={completeTodos.length}
         totalCount={todos.length}
       />
+
+      {isAllDone && <Celebration />}
+      {isNothingDone && <Scolding />}
 
       <TodoList
         title="未完了"

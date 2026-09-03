@@ -437,3 +437,302 @@
     justify-content: center;
   }
 }
+
+/* ===== 全部完了したときのお祝い ===== */
+.celebration {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 18px 24px;
+  margin-bottom: 22px;
+  border-radius: 20px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(236, 72, 153, 0.25), transparent 60%),
+    var(--glass);
+  border: 1px solid rgba(236, 72, 153, 0.45);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.35),
+    0 0 40px rgba(236, 72, 153, 0.25);
+  animation: celebration-in 0.55s cubic-bezier(0.34, 1.5, 0.64, 1);
+}
+
+@keyframes celebration-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+}
+
+/* --- 紙吹雪 --- */
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -14px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.9;
+  animation-name: confetti-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  /* left / 色 / 遅延 / 速さ はJS側から1枚ずつ指定している */
+}
+
+@keyframes confetti-fall {
+  from {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  to {
+    transform: translateY(300px) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+/* --- 人のイラスト --- */
+.celebration-figure {
+  display: block;
+  width: 116px;
+  height: 145px;
+  margin: 0 auto 12px;
+  overflow: visible;
+}
+
+/* 本体だけを跳ねさせる（影は別に動かす） */
+.figure-body {
+  animation: figure-jump 1.2s ease-in-out infinite;
+}
+
+@keyframes figure-jump {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-16px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  72% {
+    transform: translateY(-7px);
+  }
+}
+
+/* 跳んでいる間は影を小さくして、浮いて見えるようにする */
+.figure-shadow {
+  fill: rgba(0, 0, 0, 0.4);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: figure-shadow 1.2s ease-in-out infinite;
+}
+
+@keyframes figure-shadow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  30% {
+    transform: scale(0.7);
+    opacity: 0.2;
+  }
+  55% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+}
+
+.figure-head {
+  fill: #f8d3b0;
+}
+
+.figure-hair {
+  fill: #2f2545;
+}
+
+.figure-eye {
+  fill: #2f2545;
+}
+
+.figure-mouth {
+  fill: none;
+  stroke: #2f2545;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.figure-limb {
+  fill: none;
+  stroke: #f8d3b0;
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+/* 腕は肩を中心に回す。fill-box にすると図形自身の座標が基準になる */
+.figure-arm-left,
+.figure-arm-right {
+  transform-box: fill-box;
+  animation: arm-wave 0.62s ease-in-out infinite alternate;
+}
+
+.figure-arm-left {
+  transform-origin: 100% 100%;
+}
+
+.figure-arm-right {
+  transform-origin: 0% 100%;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes arm-wave {
+  from {
+    transform: rotate(-9deg);
+  }
+  to {
+    transform: rotate(9deg);
+  }
+}
+
+/* --- 文言 --- */
+.celebration-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--lime), var(--pink));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: flow 4s linear infinite;
+}
+
+.celebration-text {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+/* ===== 進捗0%のときのお説教 ===== */
+.scolding {
+  position: relative;
+  padding: 26px 18px 24px;
+  margin-bottom: 22px;
+  border-radius: 20px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.28), transparent 60%),
+    var(--glass);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+  animation:
+    celebration-in 0.45s cubic-bezier(0.34, 1.5, 0.64, 1),
+    scolding-glow 1.6s ease-in-out infinite;
+}
+
+/* 枠がじわじわ赤く光る */
+@keyframes scolding-glow {
+  50% {
+    box-shadow:
+      0 20px 45px rgba(0, 0, 0, 0.35),
+      0 0 34px rgba(239, 68, 68, 0.45);
+  }
+}
+
+.scolding-figure {
+  display: block;
+  width: 116px;
+  height: 145px;
+  margin: 0 auto 12px;
+  overflow: visible;
+}
+
+/* 怒って小刻みに震えているように見せる */
+.figure-body-angry {
+  animation: figure-shake 0.32s ease-in-out infinite;
+}
+
+@keyframes figure-shake {
+  0%,
+  100% {
+    transform: translateX(-1.5px) rotate(-1.2deg);
+  }
+  50% {
+    transform: translateX(1.5px) rotate(1.2deg);
+  }
+}
+
+/* こちらは跳ねないので、影は動かさない */
+.figure-shadow-still {
+  animation: none;
+  opacity: 0.45;
+}
+
+.figure-brow {
+  fill: none;
+  stroke: #2f2545;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+/* 叫んでいる口 */
+.figure-shout {
+  fill: #7f1d1d;
+}
+
+/* 怒りマーク */
+.anger-mark path {
+  fill: none;
+  stroke: #ef4444;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.anger-mark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: anger-pulse 0.7s ease-in-out infinite;
+}
+
+@keyframes anger-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.55;
+  }
+}
+
+.scolding-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #facc15, #ef4444, #facc15);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: flow 4s linear infinite;
+}
+
+.scolding-text {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--ink-dim);
+}

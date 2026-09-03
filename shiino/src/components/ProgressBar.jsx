@@ -21,7 +21,7 @@ function ProgressBar({ completeCount, totalCount }) {
         {totalCount === 0
           ? "まずは1つ追加してみよう"
           : percent === 100
-            ? "🎉 全部おわった！"
+            ? "コンプリート！"
             : `${totalCount}件中 ${completeCount}件 完了`}
       </p>
     </div>
