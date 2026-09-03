@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import SpaceBackground from "./components/SpaceBackground";
 import TodoInput from "./components/TodoInput";
 import TodoList from "./components/TodoList";
 import ProgressBar from "./components/ProgressBar";
@@ -50,9 +51,11 @@ function App() {
 
   return (
     <div className="container">
+      <SpaceBackground />
+
       <header className="app-header">
         <h1 className="app-title">TODO</h1>
-        <p className="app-subtitle">今日やることを、片づけていこう</p>
+        <p className="app-subtitle">今日のミッションを、片づけていこう</p>
       </header>
 
       <TodoInput onAdd={addTodo} />
@@ -62,13 +65,10 @@ function App() {
         totalCount={todos.length}
       />
 
-      {isAllDone && <Celebration />}
-      {isNothingDone && <Scolding />}
-
       <TodoList
         title="未完了"
         todos={incompleteTodos}
-        emptyMessage="未完了のTODOはありません"
+        emptyMessage="未完了のミッションはありません"
         onToggle={toggleTodo}
         onDelete={deleteTodo}
       />
@@ -76,11 +76,18 @@ function App() {
       <TodoList
         title="完了"
         todos={completeTodos}
-        emptyMessage="完了したTODOはまだありません"
+        emptyMessage="完了したミッションはまだありません"
         onToggle={toggleTodo}
         onDelete={deleteTodo}
         complete
       />
+
+      {/* 広い画面では右横に固定し、狭い画面ではここ（リストの下）に並ぶ */}
+      {(isAllDone || isNothingDone) && (
+        <aside className="mascot">
+          {isAllDone ? <Celebration /> : <Scolding />}
+        </aside>
+      )}
     </div>
   );
 }

@@ -15,7 +15,7 @@ function TodoInput({ onAdd }) {
 
     // 空のまま追加できないようにする
     if (trimmedText === "") {
-      setError("TODOを入力してください");
+      setError("ミッションを入力してください");
       return;
     }
 
@@ -40,7 +40,7 @@ function TodoInput({ onAdd }) {
           type="text"
           value={text}
           onChange={handleChange}
-          placeholder="やることを入力して Enter"
+          placeholder="ミッションを入力して Enter"
           autoComplete="off"
         />
         <button type="submit" className="add-button">

@@ -1,3 +1,154 @@
+/* ===== 背景の宇宙 ===== */
+.space {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* 星雲。ゆっくり形を変えながら漂う */
+.nebula {
+  position: absolute;
+  inset: -25%;
+  background:
+    radial-gradient(circle at 20% 25%, rgba(88, 28, 235, 0.55), transparent 45%),
+    radial-gradient(circle at 78% 68%, rgba(190, 24, 143, 0.42), transparent 45%),
+    radial-gradient(circle at 62% 12%, rgba(14, 165, 233, 0.36), transparent 42%),
+    radial-gradient(circle at 12% 85%, rgba(16, 185, 129, 0.22), transparent 40%);
+  filter: blur(70px);
+  animation: nebula-drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes nebula-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(4%, -3%, 0) scale(1.15) rotate(6deg);
+  }
+  100% {
+    transform: translate3d(-4%, 4%, 0) scale(1.08) rotate(-6deg);
+  }
+}
+
+/* 星。小さな円をタイル状に並べ、背景位置をずらして流している。
+   タイルの高さぶんだけ動かすと、切れ目なくループする */
+.stars {
+  position: absolute;
+  inset: 0;
+}
+
+.stars-far {
+  background-image:
+    radial-gradient(1px 1px at 24px 38px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1px 1px at 140px 12px, rgba(190, 210, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 262px 74px, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(1px 1px at 58px 130px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 196px 168px, rgba(210, 225, 255, 0.85), transparent),
+    radial-gradient(1px 1px at 96px 210px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 240px 246px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 12px 280px, rgba(200, 215, 255, 0.75), transparent);
+  background-size: 300px 300px;
+  animation: stars-far-drift 120s linear infinite;
+}
+
+@keyframes stars-far-drift {
+  to {
+    background-position: 0 300px;
+  }
+}
+
+.stars-near {
+  background-image:
+    radial-gradient(1.9px 1.9px at 70px 60px, #ffffff, transparent),
+    radial-gradient(2.1px 2.1px at 210px 30px, #cfe3ff, transparent),
+    radial-gradient(1.7px 1.7px at 30px 180px, #ffffff, transparent),
+    radial-gradient(2.3px 2.3px at 160px 230px, #ffe9c9, transparent),
+    radial-gradient(1.7px 1.7px at 300px 140px, #ffffff, transparent),
+    radial-gradient(2px 2px at 380px 330px, #d8b4fe, transparent);
+  background-size: 420px 420px;
+  animation:
+    stars-near-drift 70s linear infinite,
+    twinkle 4s ease-in-out infinite;
+}
+
+@keyframes stars-near-drift {
+  to {
+    background-position: 0 420px;
+  }
+}
+
+@keyframes twinkle {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* 左下に浮かぶ惑星 */
+.planet {
+  position: absolute;
+  left: -100px;
+  bottom: -150px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 28%,
+    #7c3aed,
+    #3b1d75 45%,
+    #1a0f38 72%,
+    #0a0618
+  );
+  box-shadow:
+    0 0 90px rgba(124, 58, 237, 0.35),
+    inset -24px -20px 70px rgba(0, 0, 0, 0.65);
+}
+
+/* 惑星の環 */
+.planet::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 520px;
+  height: 130px;
+  transform: translate(-50%, -50%) rotate(-22deg);
+  border: 2px solid rgba(167, 139, 250, 0.3);
+  border-radius: 50%;
+}
+
+/* たまに流れる流れ星 */
+.shooting-star {
+  position: absolute;
+  top: 8%;
+  left: -12%;
+  width: 130px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #ffffff);
+  opacity: 0;
+  animation: shooting 9s ease-in infinite;
+}
+
+@keyframes shooting {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(20deg);
+  }
+  3% {
+    opacity: 1;
+  }
+  14% {
+    opacity: 0;
+    transform: translate(120vw, 42vh) rotate(20deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(120vw, 42vh) rotate(20deg);
+  }
+}
+
 .container {
   width: 480px;
   max-width: 100%;
@@ -464,27 +615,27 @@
   }
 }
 
-/* --- 紙吹雪 --- */
-.confetti {
+/* --- 舞い落ちる星 --- */
+.sparks {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.confetti-piece {
+.spark {
   position: absolute;
   top: -14px;
-  width: 8px;
-  height: 14px;
-  border-radius: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
   opacity: 0.9;
-  animation-name: confetti-fall;
+  animation-name: spark-fall;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  /* left / 色 / 遅延 / 速さ はJS側から1枚ずつ指定している */
+  /* left / 色 / 遅延 / 速さ はJS側から1粒ずつ指定している */
 }
 
-@keyframes confetti-fall {
+@keyframes spark-fall {
   from {
     transform: translateY(0) rotate(0deg);
     opacity: 0.9;
@@ -493,7 +644,7 @@
     opacity: 0.9;
   }
   to {
-    transform: translateY(300px) rotate(540deg);
+    transform: translateY(300px) rotate(540deg) scale(0.4);
     opacity: 0;
   }
 }
@@ -552,44 +703,97 @@
   }
 }
 
-.figure-head {
-  fill: #f8d3b0;
+/* 頭のグラデーションはSVG側のdefsで定義している */
+.alien-head-happy {
+  fill: url(#happy-skin);
 }
 
-.figure-hair {
-  fill: #2f2545;
+.alien-head-angry {
+  fill: url(#angry-skin);
 }
 
-.figure-eye {
-  fill: #2f2545;
+.alien-head {
+  filter: drop-shadow(0 0 10px rgba(134, 239, 172, 0.45));
 }
 
-.figure-mouth {
+.alien-eye {
+  fill: #0b1020;
+}
+
+.alien-glint {
+  fill: #ffffff;
+  opacity: 0.9;
+}
+
+.alien-mouth {
   fill: none;
-  stroke: #2f2545;
+  stroke: #0b1020;
   stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.alien-mouth-angry {
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+}
+
+.alien-brow {
+  fill: none;
+  stroke: #14532d;
+  stroke-width: 3.4;
   stroke-linecap: round;
 }
 
 .figure-limb {
   fill: none;
-  stroke: #f8d3b0;
+  stroke: var(--alien);
   stroke-width: 9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.alien-neck {
+  stroke-width: 8;
+}
+
+/* 触角 */
+.alien-antenna {
+  fill: none;
+  stroke: var(--alien);
+  stroke-width: 3.4;
   stroke-linecap: round;
 }
 
+.alien-antenna-tip {
+  fill: var(--cyan);
+  filter: drop-shadow(0 0 6px var(--cyan));
+  animation: antenna-blink 1.4s ease-in-out infinite;
+}
+
+.alien-antenna-tip-angry {
+  fill: #ef4444;
+  filter: drop-shadow(0 0 7px #ef4444);
+  animation-duration: 0.6s;
+}
+
+@keyframes antenna-blink {
+  50% {
+    opacity: 0.4;
+  }
+}
+
 /* 腕は肩を中心に回す。fill-box にすると図形自身の座標が基準になる */
-.figure-arm-left,
-.figure-arm-right {
+.alien-arm-left,
+.alien-arm-right {
   transform-box: fill-box;
   animation: arm-wave 0.62s ease-in-out infinite alternate;
 }
 
-.figure-arm-left {
+.alien-arm-left {
   transform-origin: 100% 100%;
 }
 
-.figure-arm-right {
+.alien-arm-right {
   transform-origin: 0% 100%;
   animation-direction: alternate-reverse;
 }
@@ -679,18 +883,6 @@
   opacity: 0.45;
 }
 
-.figure-brow {
-  fill: none;
-  stroke: #2f2545;
-  stroke-width: 3;
-  stroke-linecap: round;
-}
-
-/* 叫んでいる口 */
-.figure-shout {
-  fill: #7f1d1d;
-}
-
 /* 怒りマーク */
 .anger-mark path {
   fill: none;
@@ -735,4 +927,37 @@
   margin: 8px 0 0;
   font-size: 13px;
   color: var(--ink-dim);
+}
+
+/* ===== お祝い・お説教の置き場所 ===== */
+/* 狭い画面では、リストの下にそのまま並べる */
+.mascot .celebration,
+.mascot .scolding {
+  margin-bottom: 0;
+}
+
+/* 横に置くだけの余白がある画面では、カードの右横に固定する。
+   position: fixed なので本文の流れを押しのけず、スクロールしても付いてくる */
+@media (min-width: 1100px) {
+  .mascot {
+    position: fixed;
+    top: 50%;
+    left: calc(50% + 264px);
+    width: 244px;
+    transform: translateY(-50%);
+  }
+
+  .celebration-title {
+    font-size: 18px;
+  }
+
+  .scolding-title {
+    font-size: 16px;
+  }
+
+  .celebration-figure,
+  .scolding-figure {
+    width: 100px;
+    height: 125px;
+  }
 }

@@ -6,7 +6,7 @@ function ProgressBar({ completeCount, totalCount }) {
   return (
     <div className="progress">
       <div className="progress-head">
-        <span className="progress-label">進捗</span>
+        <span className="progress-label">ミッション達成率</span>
         <span className="progress-percent">{percent}%</span>
       </div>
 
@@ -19,9 +19,9 @@ function ProgressBar({ completeCount, totalCount }) {
 
       <p className="progress-note">
         {totalCount === 0
-          ? "まずは1つ追加してみよう"
+          ? "まずは1つ登録しよう"
           : percent === 100
-            ? "コンプリート！"
+            ? "全ミッション完了"
             : `${totalCount}件中 ${completeCount}件 完了`}
       </p>
     </div>

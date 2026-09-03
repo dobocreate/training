@@ -3,12 +3,13 @@
   --pink: #ec4899;
   --cyan: #22d3ee;
   --lime: #a3e635;
-  --ink: #f1f5f9;
-  --ink-dim: #a5b4cf;
+  --alien: #86efac;
+  --ink: #eef2ff;
+  --ink-dim: #a3b0d4;
 
   /* ガラス風パネルの共通色 */
-  --glass: rgba(255, 255, 255, 0.07);
-  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(160, 190, 255, 0.2);
 }
 
 body {
@@ -18,35 +19,8 @@ body {
   box-sizing: border-box;
   font-family: "Segoe UI", system-ui, sans-serif;
   color: var(--ink);
-  background-color: #0b0718;
+  background-color: #05030f;
   overflow-x: hidden;
-}
-
-/* 背景で animation するオーロラ。position:fixed なのでスクロールしても居座る */
-body::before {
-  content: "";
-  position: fixed;
-  inset: -25%;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 20% 25%, rgba(124, 58, 237, 0.55), transparent 45%),
-    radial-gradient(circle at 78% 68%, rgba(236, 72, 153, 0.5), transparent 45%),
-    radial-gradient(circle at 62% 12%, rgba(34, 211, 238, 0.38), transparent 42%),
-    radial-gradient(circle at 12% 85%, rgba(163, 230, 53, 0.28), transparent 40%);
-  filter: blur(70px);
-  animation: aurora 20s ease-in-out infinite alternate;
-}
-
-@keyframes aurora {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(4%, -3%, 0) scale(1.15) rotate(6deg);
-  }
-  100% {
-    transform: translate3d(-4%, 4%, 0) scale(1.08) rotate(-6deg);
-  }
 }
 
 /* 動きを減らす設定にしている人には、アニメーションを止める */
