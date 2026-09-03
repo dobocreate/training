@@ -1,0 +1,439 @@
+.container {
+  width: 480px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* ===== ヘッダー ===== */
+.app-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  line-height: 1;
+
+  /* 文字の中にグラデーションを流し込む。text で切り抜いて色を透明にするのがコツ */
+  background: linear-gradient(100deg, #22d3ee, #a78bfa, #ec4899, #22d3ee);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: flow 8s linear infinite;
+
+  /* 文字の後ろにぼんやりした光を置く */
+  filter: drop-shadow(0 0 24px rgba(167, 139, 250, 0.55));
+}
+
+@keyframes flow {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+.app-subtitle {
+  margin: 10px 0 0;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--ink-dim);
+}
+
+/* ===== 入力エリア ===== */
+.input-block {
+  margin-bottom: 22px;
+}
+
+.input-area {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 18px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+
+/* 入力欄にカーソルがある間、枠全体を光らせる */
+.input-area:focus-within {
+  border-color: rgba(167, 139, 250, 0.75);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.35),
+    0 0 0 4px rgba(124, 58, 237, 0.25);
+}
+
+.input-area.is-error {
+  border-color: rgba(248, 113, 113, 0.7);
+  animation: shake 0.35s;
+}
+
+@keyframes shake {
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+.input-area input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 10px 12px;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.input-area input::placeholder {
+  color: rgba(165, 180, 207, 0.65);
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--violet), var(--pink));
+  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s;
+}
+
+.add-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(236, 72, 153, 0.6);
+}
+
+.add-button:active {
+  transform: translateY(0);
+}
+
+.add-icon {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.error-message {
+  min-height: 18px;
+  margin: 8px 6px 0;
+  font-size: 12px;
+  color: #fca5a5;
+}
+
+/* ===== 進捗バー ===== */
+.progress {
+  padding: 16px 18px;
+  margin-bottom: 22px;
+  border-radius: 18px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+}
+
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.progress-label {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--ink-dim);
+}
+
+.progress-percent {
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(90deg, var(--cyan), var(--lime));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  overflow: hidden;
+}
+
+.progress-bar {
+  position: relative;
+  height: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.6);
+
+  /* 幅はJSから渡ってくるので、変化をなめらかにするだけ */
+  transition: width 0.45s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+
+/* バーの上を左から右へ走る光 */
+.progress-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 80%
+  );
+  animation: shine 2.2s ease-in-out infinite;
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.progress-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+/* ===== リストのエリア ===== */
+.todo-area {
+  padding: 18px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+/* 見出しの左に置く光る丸。未完了はピンク、完了はライムに切り替える */
+.title-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink), var(--violet));
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.9);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.complete-area .title-dot {
+  background: linear-gradient(135deg, var(--cyan), var(--lime));
+  box-shadow: 0 0 12px rgba(163, 230, 53, 0.9);
+  animation: none;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.35);
+    opacity: 0.65;
+  }
+}
+
+/* 件数のバッジ。右端に寄せる */
+.count {
+  margin-left: auto;
+  min-width: 26px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--violet), var(--pink));
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.5);
+}
+
+.complete-area .count {
+  background: linear-gradient(135deg, var(--cyan), var(--lime));
+  color: #06283d;
+  box-shadow: 0 4px 12px rgba(34, 211, 238, 0.45);
+}
+
+.todo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== TODO1件分の行 ===== */
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition:
+    transform 0.2s,
+    background 0.2s,
+    border-color 0.2s;
+
+  /* 追加されたときだけ再生される（Reactは既存の行を作り直さないため） */
+  animation: pop-in 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+}
+
+.list-row:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(167, 139, 250, 0.5);
+}
+
+.list-row:last-child {
+  margin-bottom: 0;
+}
+
+/* 丸いチェックボタン */
+.check-button {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.check-button:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+}
+
+.check-mark {
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 20px;
+  color: transparent;
+  transition: color 0.2s;
+}
+
+/* 完了リストの中だけ、チェックが入った見た目にする */
+.complete-area .check-button {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--cyan), var(--lime));
+  box-shadow: 0 0 14px rgba(163, 230, 53, 0.5);
+}
+
+.complete-area .check-mark {
+  color: #06283d;
+}
+
+.todo-item {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 15px;
+  word-break: break-all;
+}
+
+/* 完了したTODOは打ち消し線をつけて、少し目立たなくする */
+.complete-area .todo-item {
+  color: var(--ink-dim);
+  text-decoration: line-through;
+  text-decoration-color: rgba(236, 72, 153, 0.8);
+  text-decoration-thickness: 2px;
+}
+
+.toggle-button,
+.delete-button {
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s,
+    color 0.2s;
+}
+
+.toggle-button:hover {
+  background: linear-gradient(135deg, var(--violet), var(--pink));
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(236, 72, 153, 0.5);
+}
+
+.delete-button {
+  padding: 6px 11px;
+}
+
+.delete-button:hover {
+  background: #ef4444;
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.55);
+}
+
+/* ===== 0件のときのメッセージ ===== */
+.empty-message {
+  margin: 0;
+  padding: 22px 0;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--ink-dim);
+}
+
+/* ===== 画面が狭いとき ===== */
+@media (max-width: 480px) {
+  .app-title {
+    font-size: 46px;
+  }
+
+  .input-area {
+    flex-wrap: wrap;
+  }
+
+  .add-button {
+    flex: 1;
+    justify-content: center;
+  }
+}
