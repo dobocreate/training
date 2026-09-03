@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>shiino_TODO(JS)</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="app-title">TODOリスト</h1>
+
+      <!-- 入力エリア。Enterキーでも追加できるようにformにしている -->
+      <form class="input-area" id="todo-form">
+        <input
+          id="add-text"
+          type="text"
+          placeholder="TODOを入力"
+          autocomplete="off"
+        />
+        <button type="submit" id="add-button">追加</button>
+      </form>
+      <p class="error-message" id="error-message"></p>
+
+      <div class="todo-area">
+        <p class="title">未完了のTODO<span id="incomplete-count">0</span></p>
+        <ul id="incomplete-list" class="todo-list"></ul>
+        <p class="empty-message" id="incomplete-empty">未完了のTODOはありません</p>
+      </div>
+
+      <div class="todo-area complete-area">
+        <p class="title">完了したTODO<span id="complete-count">0</span></p>
+        <ul id="complete-list" class="todo-list"></ul>
+        <p class="empty-message" id="complete-empty">完了したTODOはありません</p>
+      </div>
+    </div>
+
+    <script src="./index.js"></script>
+  </body>
+</html>

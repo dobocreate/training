@@ -1,0 +1,127 @@
+body {
+  font-family: sans-serif;
+  color: #444;
+  background-color: #f5f7f6;
+  margin: 0;
+  padding: 24px 8px;
+}
+
+.container {
+  width: 440px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.app-title {
+  font-size: 20px;
+  text-align: center;
+  margin: 0 0 16px;
+}
+
+/* 入力エリア */
+.input-area {
+  display: flex;
+  gap: 8px;
+  background-color: #c6e5d9;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+#add-text {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  background-color: #ffffff;
+  font-size: 13px;
+}
+
+button:hover {
+  background-color: #79a8a9;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+/* 未入力で追加したときのメッセージ。普段は空文字なので表示されない */
+.error-message {
+  color: #c1544a;
+  font-size: 13px;
+  min-height: 18px;
+  margin: 6px 4px;
+}
+
+/* TODOリストのエリア */
+.todo-area {
+  border: 2px solid #aacfd0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.complete-area {
+  background-color: #c9dede;
+}
+
+.title {
+  font-weight: bold;
+  text-align: center;
+  margin: 0 0 8px;
+}
+
+/* 件数バッジ */
+.title span {
+  display: inline-block;
+  min-width: 20px;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  font-size: 12px;
+}
+
+.todo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+}
+
+.todo-item {
+  flex: 1;
+  margin: 0;
+  word-break: break-all;
+}
+
+/* 完了したTODOは打ち消し線をつける */
+.complete-area .todo-item {
+  color: #888;
+  text-decoration: line-through;
+}
+
+.delete-button:hover {
+  background-color: #c1544a;
+}
+
+/* リストが空のときだけ表示するメッセージ */
+.empty-message {
+  color: #999;
+  font-size: 13px;
+  text-align: center;
+  margin: 4px 0;
+}
