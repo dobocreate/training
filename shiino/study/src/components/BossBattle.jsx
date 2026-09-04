@@ -3,7 +3,7 @@ import Icon from "./Icon";
 import { bossStatus } from "../lib/boss";
 import { formatDuration, toDateKey } from "../lib/time";
 
-// ボスがいないときに出す設定フォーム
+// ボスに挑むための設定フォーム
 function BossForm({ subjects, onStart }) {
   const [name, setName] = useState("");
   const [deadline, setDeadline] = useState(() => toDateKey(new Date()));
@@ -30,6 +30,11 @@ function BossForm({ subjects, onStart }) {
       targetHours: targetHours,
       subjectId: subjectId,
     });
+
+    // 続けて別のボスを立てられるように、入力を空に戻す
+    setName("");
+    setHours("");
+    setError("");
   };
 
   return (
@@ -93,41 +98,22 @@ function BossForm({ subjects, onStart }) {
   );
 }
 
-// ボス戦。期限までに目標時間ぶん勉強すると撃破できる
-function BossBattle({ boss, subjects, records, onStart, onClear }) {
+// ボス1体ぶんの戦況
+function BossEntry({ boss, subjects, records, onClear }) {
   const status = bossStatus(boss, records);
-
-  if (!boss || !status) {
-    return (
-      <section className="card">
-        <p className="card-title">
-          <Icon name="target" />
-          ボス戦
-        </p>
-        <p className="boss-lead">
-          試験日と目標時間を決めると、挑戦した日から勉強したぶんだけHPを削れる。
-        </p>
-        <BossForm subjects={subjects} onStart={onStart} />
-      </section>
-    );
-  }
-
   const subject = subjects.find((item) => item.id === boss.subjectId);
-  const targetLabel = boss.subjectId === "" ? "すべての科目" : (subject?.name ?? "削除された科目");
+  const targetLabel =
+    boss.subjectId === "" ? "すべての科目" : (subject?.name ?? "削除された科目");
 
   return (
-    <section className={`card boss-card is-${status.state}`}>
+    <li className={`boss-entry is-${status.state}`}>
       <div className="boss-head">
-        <p className="card-title">
-          <Icon name="target" />
-          ボス戦
-        </p>
-        <button type="button" className="delete-button" onClick={onClear}>
+        <p className="boss-name">{boss.name}</p>
+        <button type="button" className="delete-button" onClick={() => onClear(boss.id)}>
           解除
         </button>
       </div>
 
-      <p className="boss-name">{boss.name}</p>
       <p className="boss-meta">
         {boss.deadline} まで ／ {targetLabel} ／ 目標 {boss.targetHours}時間
       </p>
@@ -139,9 +125,7 @@ function BossBattle({ boss, subjects, records, onStart, onClear }) {
 
       <p className="hp-text">
         残りHP <strong>{formatDuration(status.remaining)}</strong>
-        <span className="hp-damage">
-          与ダメージ {formatDuration(status.damage)}
-        </span>
+        <span className="hp-damage">与ダメージ {formatDuration(status.damage)}</span>
       </p>
 
       {status.state === "fighting" && (
@@ -161,6 +145,81 @@ function BossBattle({ boss, subjects, records, onStart, onClear }) {
         <p className="boss-result is-lose">
           期限切れ… あと {formatDuration(status.remaining)} 足りなかった
         </p>
+      )}
+    </li>
+  );
+}
+
+// ボス戦。期限までに目標時間ぶん勉強すると撃破できる。何体でも同時に挑める
+function BossBattle({ bosses, subjects, records, onStart, onClear }) {
+  // 挑戦中がいるときはフォームをたたんでおく。戦況を先に見せたいため
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleStart = (config) => {
+    onStart(config);
+    setIsAdding(false);
+  };
+
+  if (bosses.length === 0) {
+    return (
+      <section className="card">
+        <p className="card-title">
+          <Icon name="target" />
+          ボス戦
+        </p>
+        <p className="boss-lead">
+          試験日と目標時間を決めると、挑戦した日から勉強したぶんだけHPを削れる。
+          期限や科目を分けて、何体でも同時に挑める。
+        </p>
+        <BossForm subjects={subjects} onStart={handleStart} />
+      </section>
+    );
+  }
+
+  // 期限が近い順に並べる。決着したものは下にまとめる
+  const sorted = [...bosses].sort((a, b) => (a.deadline < b.deadline ? -1 : 1));
+
+  return (
+    <section className="card">
+      <div className="boss-card-head">
+        <p className="card-title">
+          <Icon name="target" />
+          ボス戦
+        </p>
+        <span className="boss-count">{bosses.length}体</span>
+      </div>
+
+      <ul className="boss-list">
+        {sorted.map((boss) => (
+          <BossEntry
+            key={boss.id}
+            boss={boss}
+            subjects={subjects}
+            records={records}
+            onClear={onClear}
+          />
+        ))}
+      </ul>
+
+      {isAdding ? (
+        <div className="boss-add">
+          <BossForm subjects={subjects} onStart={handleStart} />
+          <button
+            type="button"
+            className="delete-button is-wide"
+            onClick={() => setIsAdding(false)}
+          >
+            やめる
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="delete-button is-wide"
+          onClick={() => setIsAdding(true)}
+        >
+          ＋ ボスを追加
+        </button>
       )}
     </section>
   );

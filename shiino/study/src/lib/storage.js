@@ -4,7 +4,9 @@ const KEYS = {
   subjects: "study.subjects",
   records: "study.records",
   running: "study.running",
-  boss: "study.boss",
+  bosses: "study.bosses",
+  // ボスを1件しか持てなかったころのキー。読み込みのときだけ見る
+  oldBoss: "study.boss",
 };
 
 function load(key, fallback) {
@@ -51,11 +53,25 @@ export function saveRecords(records) {
   save(KEYS.records, records);
 }
 
-// 計測中の状態。ページを閉じても計測が続くように保存しておく
+// 計測中の状態。ページを閉じても計測が続くように保存しておく。
+// 形は { subjectId, startedAt, accumulated, since }。
+// accumulated は止めていたぶんを除いた確定ぶんの秒数、since は今動いている区間の開始時刻
+// （一時停止中は null）
 export function loadRunning() {
   const value = load(KEYS.running, null);
   if (!value || typeof value.subjectId !== "string" || typeof value.startedAt !== "string") {
     return null;
+  }
+
+  // 一時停止に対応する前の形（accumulated と since が無い）は、
+  // 「開始してから一度も止めずに動いている」とみなして読み替える
+  if (typeof value.accumulated !== "number" || value.since === undefined) {
+    return {
+      subjectId: value.subjectId,
+      startedAt: value.startedAt,
+      accumulated: 0,
+      since: value.startedAt,
+    };
   }
   return value;
 }
@@ -64,15 +80,25 @@ export function saveRunning(running) {
   save(KEYS.running, running);
 }
 
-// 挑戦中のボス。設定していなければ null
-export function loadBoss() {
-  const value = load(KEYS.boss, null);
-  if (!value || typeof value.deadline !== "string" || typeof value.createdAt !== "string") {
-    return null;
-  }
-  return value;
+function isBoss(value) {
+  return (
+    Boolean(value) &&
+    typeof value.deadline === "string" &&
+    typeof value.createdAt === "string"
+  );
 }
 
-export function saveBoss(boss) {
-  save(KEYS.boss, boss);
+// 挑戦中のボス。挑んでいなければ空の配列
+export function loadBosses() {
+  const value = load(KEYS.bosses, null);
+  if (Array.isArray(value)) return value.filter(isBoss);
+
+  // 1件しか持てなかったころのデータを引き継ぐ。
+  // 一度 saveBosses が走れば新しいキーができるので、ここを通るのは移行のときだけ
+  const old = load(KEYS.oldBoss, null);
+  return isBoss(old) ? [{ ...old, id: old.id ?? "boss-1" }] : [];
+}
+
+export function saveBosses(bosses) {
+  save(KEYS.bosses, bosses);
 }

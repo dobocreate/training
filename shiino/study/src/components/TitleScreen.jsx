@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { milestoneProgress } from "../lib/milestones";
 import { bossProgress } from "../lib/boss";
-import { formatDuration, toDateKey, startOfWeekKey } from "../lib/time";
+import { formatClock, formatDuration, toDateKey, startOfWeekKey } from "../lib/time";
 
 // 最初に出るタイトル画面。STARTを押すと本編に入る
-function TitleScreen({ records, boss, onStart }) {
+function TitleScreen({ records, bosses, subjects, running, elapsedSeconds, onStart }) {
   // Enter / Space でも始められるようにする
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -32,11 +32,25 @@ function TitleScreen({ records, boss, onStart }) {
 
   const totalSeconds = records.reduce((sum, record) => sum + record.seconds, 0);
   const progress = milestoneProgress(totalSeconds);
-  const bossNow = bossProgress(boss, records);
+  const bossNow = bossProgress(bosses, records);
+  const isPaused = Boolean(running) && running.since === null;
+
+  const runningSubject = running
+    ? subjects.find((subject) => subject.id === running.subjectId)
+    : null;
 
   return (
     <div className="title-screen">
       <h1 className="title-logo">STUDY LOG</h1>
+
+      {/* 計測したまま閉じても計測は続くので、開いた時点で経過時間が分かるようにする */}
+      {running && (
+        <p className="title-running">
+          <span className={isPaused ? "running-dot is-paused" : "running-dot"} />
+          {`${runningSubject?.name ?? "（削除された科目）"} を${isPaused ? "一時停止中" : "計測中"}`}
+          <span className="running-clock">{formatClock(elapsedSeconds)}</span>
+        </p>
+      )}
 
       {/* 前回までの状況を少しだけ見せて、続きから始める感じを出す */}
       <dl className="title-stats">
@@ -84,7 +98,11 @@ function TitleScreen({ records, boss, onStart }) {
                     style={{ width: `${bossNow.percent}%` }}
                   />
                 </span>
-                <span className="stat-note">{boss.name}</span>
+                <span className="stat-note">
+                  {bossNow.others > 0
+                    ? `${bossNow.name} ほか${bossNow.others}件`
+                    : bossNow.name}
+                </span>
               </>
             ) : (
               "なし"

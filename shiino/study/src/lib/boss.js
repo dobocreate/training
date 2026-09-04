@@ -48,19 +48,34 @@ export function bossStatus(boss, records, now = new Date()) {
 }
 
 // タイトル画面とメニューに出す「達成度」。両方で同じ見せ方になるよう、ここにまとめる。
-// ボスに挑んでいなければ null
-export function bossProgress(boss, records, now = new Date()) {
-  const status = bossStatus(boss, records, now);
-  if (!status) return null;
+// 複数に挑めるので、代表の1件を選んで返す。挑んでいなければ null
+export function bossProgress(bosses, records, now = new Date()) {
+  if (!Array.isArray(bosses) || bosses.length === 0) return null;
 
-  const percent = Math.floor(status.ratio * 100);
+  const all = bosses.map((boss) => ({ boss: boss, status: bossStatus(boss, records, now) }));
+
+  // 挑戦中があれば、そのうち期限がいちばん近いもの。
+  // 全部決着していれば、最後に挑戦したものを出す
+  const fighting = all.filter((item) => item.status.state === "fighting");
+  const picked =
+    fighting.length > 0
+      ? fighting.sort((a, b) => (a.boss.deadline < b.boss.deadline ? -1 : 1))[0]
+      : all.sort((a, b) => (a.boss.createdAt > b.boss.createdAt ? -1 : 1))[0];
+
+  const percent = Math.floor(picked.status.ratio * 100);
+  const base = {
+    percent: percent,
+    name: picked.boss.name,
+    // 代表以外が何件あるか。「ほか◯件」と出すのに使う
+    others: bosses.length - 1,
+  };
 
   // 決着がついたあとは、数字より結果のほうが分かりやすいので言葉にする
-  if (status.state === "defeated") {
-    return { percent: percent, label: "撃破", isAlert: false };
+  if (picked.status.state === "defeated") {
+    return { ...base, label: "撃破", isAlert: false };
   }
-  if (status.state === "expired") {
-    return { percent: percent, label: "期限切れ", isAlert: true };
+  if (picked.status.state === "expired") {
+    return { ...base, label: "期限切れ", isAlert: true };
   }
-  return { percent: percent, label: `${percent}%`, isAlert: false };
+  return { ...base, label: `${percent}%`, isAlert: false };
 }

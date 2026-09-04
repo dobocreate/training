@@ -18,7 +18,7 @@
 
 .app-title {
   margin: 0;
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 700;
   letter-spacing: 2px;
 }
@@ -37,20 +37,21 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 26px;
+  gap: 30px;
 }
 
 .menu-header {
   text-align: center;
 }
 
-/* 幅を絞って1行4つに固定する。7つだと4＋3になり、
-   あふれた3つは中央に寄るので、右側だけ大きく空くのを避けられる */
+/* 幅は機能の画面とそろえたまま、1行3つに固定する。
+   7つだと3＋3＋1の3行になり、縦にも横にも画面を使い切れる。
+   あふれたぶんは中央に寄るので、右側だけ大きく空くことがない */
 .menu-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
   width: 100%;
   max-width: 752px;
   list-style: none;
@@ -60,7 +61,7 @@
 
 /* 伸ばさずに縮むだけにして、どの行もタイルの幅をそろえる */
 .menu-grid li {
-  flex: 0 1 176px;
+  flex: 0 1 241px;
 }
 
 .menu-tile {
@@ -69,10 +70,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
   width: 100%;
   height: 100%;
-  padding: 20px 12px;
+  padding: 34px 18px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--panel);
@@ -91,23 +92,71 @@
 }
 
 .menu-icon {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   fill: none;
   stroke: var(--accent);
-  stroke-width: 1.2;
+  stroke-width: 1.1;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .menu-label {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
 }
 
 .menu-description {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+/* 大きいままだと具合が悪い画面では、詰まった大きさに切り替える。
+   ・狭い画面 … 1列になって間延びするため
+   ・低い画面 … 3行が入りきらず、メニューがスクロールしてしまうため
+   この大きさなら1行4つに収まり、説明も折り返さない */
+@media (max-width: 560px), (max-height: 700px) {
+  .menu-grid li {
+    flex: 0 1 176px;
+  }
+
+  .menu-tile {
+    gap: 7px;
+    padding: 20px 12px;
+  }
+
+  .menu-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .menu-label {
+    font-size: 15px;
+  }
+
+  .menu-description {
+    font-size: 11px;
+  }
+
+  .app-title {
+    font-size: 26px;
+  }
+}
+
+/* 数字キーの番号。バッジと重ならないよう左上に置く */
+.menu-key {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--border-strong);
+}
+
+.menu-hint {
+  margin: 0;
+  font-size: 11px;
   color: var(--ink-dim);
 }
 
@@ -126,6 +175,13 @@
 /* 計測中と期限切れは、気づいてほしいので赤にする */
 .menu-badge.is-alert {
   background: var(--danger);
+}
+
+/* 経過時間はけた数が多いので、少し広げて等幅で出す（数字が動いても幅が揺れない） */
+.menu-badge.is-clock {
+  padding: 2px 7px;
+  font-family: ui-monospace, "Consolas", monospace;
+  font-size: 11px;
 }
 
 /* ===== 機能の画面 ===== */
@@ -277,6 +333,19 @@
   color: #fff;
 }
 
+/* 消す操作ではない、控えめな全幅ボタン（ボスを追加・ファイルを読み込む） */
+.delete-button.is-wide {
+  width: 100%;
+  padding: 9px;
+  font-size: 13px;
+}
+
+.delete-button.is-wide:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* ===== 計測 ===== */
 /* 科目・時計・ボタンを横一列に。狭い画面では縦に積む */
 .timer-body {
@@ -294,6 +363,10 @@
 
   .timer-body .big-button {
     width: 100%;
+  }
+
+  .timer-buttons {
+    flex-direction: column;
   }
 }
 
@@ -346,6 +419,11 @@
   letter-spacing: 1px;
 }
 
+/* 一時停止中は数字が動かないので、止まっていることを色でも示す */
+.timer-clock.is-paused {
+  color: var(--ink-dim);
+}
+
 .timer-subject {
   margin: 4px 0 0;
   font-size: 12px;
@@ -366,6 +444,20 @@
 
 .big-button:hover {
   background: #1d4ed8;
+}
+
+/* 計測中は「一時停止」と「停止して記録」の2つ出す */
+.timer-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.big-button.is-pause {
+  background: var(--ink-dim);
+}
+
+.big-button.is-pause:hover {
+  background: #4b5563;
 }
 
 .big-button.is-stop {
@@ -503,6 +595,39 @@
   transition: width 0.3s;
 }
 
+/* カードの最後に来たときは、下の余白を持たせない */
+.subject-bars:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== 今のペース ===== */
+/* 3つの数字を横に並べる。狭い画面では縦に積む */
+.pace {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+}
+
+.pace-item {
+  flex: 1 1 140px;
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.pace-item dt {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.pace-item dd {
+  margin: 5px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
 /* ===== 直近7日のグラフ ===== */
 .chart-title {
   margin: 0 0 10px;
@@ -605,6 +730,34 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 編集中の行。フォームを縦に置くので、行の見た目をいったん外す */
+.record-row.is-editing {
+  display: block;
+  padding: 12px 10px;
+  background: var(--accent-soft);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.edit-row .is-date {
+  flex: 1 1 130px;
+}
+
+.edit-form .error-message {
+  margin: 0 2px;
 }
 
 /* 足したばかりの1件。どれが今の操作で増えたのか分かるようにする */
@@ -829,12 +982,55 @@
   margin: 0;
 }
 
-.boss-card.is-defeated {
+.boss-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.boss-card-head .card-title {
+  margin: 0;
+}
+
+.boss-count {
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+/* ボス1体ぶん。複数並ぶので、1体ずつ枠で囲って区切る */
+.boss-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.boss-entry {
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.boss-entry.is-defeated {
   border-color: var(--accent);
 }
 
-.boss-card.is-expired {
+.boss-entry.is-expired {
   border-color: var(--danger);
+}
+
+.boss-entry .boss-name {
+  margin: 0;
+}
+
+.boss-add {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .boss-name {
@@ -941,6 +1137,39 @@
   margin: 14px 0 0;
   font-size: 13px;
   color: var(--ink-dim);
+}
+
+/* 計測中の帯。タイトル画面を開いた時点で、動いていることが分かるようにする */
+.title-running {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+.running-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+/* 一時停止中は動いていないので、赤ではなく灰色にする */
+.running-dot.is-paused {
+  background: var(--ink-dim);
+}
+
+.running-clock {
+  font-family: ui-monospace, "Consolas", monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 /* 前回までの状況 */

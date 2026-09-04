@@ -8,9 +8,12 @@ import BossBattle from "./components/BossBattle";
 import Summary from "./components/Summary";
 import ManualEntry from "./components/ManualEntry";
 import RecordList from "./components/RecordList";
-import RecentRecords from "./components/RecentRecords";
 import SubjectManager from "./components/SubjectManager";
+import RecentRecords from "./components/RecentRecords";
+import Pace from "./components/Pace";
+import SubjectTotals from "./components/SubjectTotals";
 import { FEATURES } from "./lib/features";
+import { formatDuration } from "./lib/time";
 import {
   loadSubjects,
   saveSubjects,
@@ -18,8 +21,8 @@ import {
   saveRecords,
   loadRunning,
   saveRunning,
-  loadBoss,
-  saveBoss,
+  loadBosses,
+  saveBosses,
 } from "./lib/storage";
 import "./App.css";
 
@@ -28,16 +31,20 @@ function createId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
+// これより長い計測は、止め忘れ（計測したまま閉じた）の可能性があるので確認する
+const LONG_SESSION_SECONDS = 8 * 60 * 60;
+
 function App() {
   // useState に関数を渡すと、初回だけ実行される（毎回localStorageを読みにいかない）
   const [subjects, setSubjects] = useState(loadSubjects);
   const [records, setRecords] = useState(loadRecords);
 
-  // 計測中の状態。{ subjectId, startedAt } か、計測していなければ null
+  // 計測中の状態。{ subjectId, startedAt, accumulated, since } か、計測していなければ null。
+  // since が null のときは一時停止中
   const [running, setRunning] = useState(loadRunning);
 
-  // 挑戦中のボス。設定していなければ null
-  const [boss, setBoss] = useState(loadBoss);
+  // 挑戦中のボス。何体でも同時に挑める
+  const [bosses, setBosses] = useState(loadBosses);
 
   // 今どの画面にいるか。"title" → "menu" → 機能のキー（FEATURES）と進む。
   // 開くたびにタイトルから始まるので、保存はしない
@@ -66,16 +73,16 @@ function App() {
   }, [running]);
 
   useEffect(() => {
-    saveBoss(boss);
-  }, [boss]);
+    saveBosses(bosses);
+  }, [bosses]);
 
-  // 計測中だけ1秒ごとに現在時刻を更新する
+  // 動いているあいだだけ1秒ごとに現在時刻を更新する（一時停止中は止める）
   useEffect(() => {
-    if (!running) return undefined;
+    if (!running?.since) return undefined;
 
     const timerId = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timerId);
-  }, [running]);
+  }, [running?.since]);
 
   // 機能の画面では Escape でメニューに戻れるようにする
   useEffect(() => {
@@ -89,8 +96,12 @@ function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [screen]);
 
+  // 確定ぶん（accumulated）に、今動いている区間のぶんを足す
   const elapsedSeconds = running
-    ? Math.max(0, Math.floor((now - new Date(running.startedAt).getTime()) / 1000))
+    ? running.accumulated +
+      (running.since
+        ? Math.max(0, Math.floor((now - new Date(running.since).getTime()) / 1000))
+        : 0)
     : 0;
 
   // 記録の追加口はここ1か所にまとめる。
@@ -104,16 +115,43 @@ function App() {
     if (!selectedId || running) return;
 
     // 表示が1秒遅れないように、開始と同時に基準の時刻もそろえる
+    const at = new Date().toISOString();
     setNow(Date.now());
-    setRunning({ subjectId: selectedId, startedAt: new Date().toISOString() });
+    setRunning({ subjectId: selectedId, startedAt: at, accumulated: 0, since: at });
+  };
+
+  // 一時停止。ここまでのぶんを accumulated に畳んで、区間を閉じる
+  const pauseTimer = () => {
+    if (!running?.since) return;
+    setRunning({ ...running, accumulated: elapsedSeconds, since: null });
+  };
+
+  const resumeTimer = () => {
+    if (!running || running.since) return;
+    setNow(Date.now());
+    setRunning({ ...running, since: new Date().toISOString() });
   };
 
   const stopTimer = () => {
     if (!running) return;
 
-    const seconds = Math.floor((Date.now() - new Date(running.startedAt).getTime()) / 1000);
+    const seconds = elapsedSeconds;
     // 1秒未満は誤操作とみなして記録しない
     if (seconds >= 1) {
+      // 計測したまま閉じていた場合、何時間ぶんも入ってしまう。
+      // 消す前に必ず本人に選ばせる（黙って捨てない）
+      if (seconds >= LONG_SESSION_SECONDS) {
+        const message =
+          `${formatDuration(seconds)} と、かなり長い計測になっています。\n` +
+          "計測したまま閉じていた可能性があります。\n\n" +
+          "OK … このまま記録する\n" +
+          "キャンセル … 記録しないで破棄する";
+        if (!window.confirm(message)) {
+          setRunning(null);
+          return;
+        }
+      }
+
       addRecord({
         id: createId(),
         subjectId: running.subjectId,
@@ -139,6 +177,24 @@ function App() {
     addRecord({ id: createId(), subjectId, seconds, startedAt });
   };
 
+  // 記録の修正。日付だけ差し替え、何時に始めたかは元のまま残す
+  const updateRecord = (id, { subjectId, seconds, dateKey }) => {
+    setRecords((prev) =>
+      prev.map((record) => {
+        if (record.id !== id) return record;
+
+        const old = new Date(record.startedAt);
+        const [y, m, d] = dateKey.split("-").map(Number);
+        const startedAt = new Date(
+          y, m - 1, d,
+          old.getHours(), old.getMinutes(), old.getSeconds(), old.getMilliseconds(),
+        ).toISOString();
+
+        return { ...record, subjectId, seconds, startedAt };
+      }),
+    );
+  };
+
   const deleteRecord = (id) => {
     setRecords((prev) => prev.filter((record) => record.id !== id));
   };
@@ -151,31 +207,39 @@ function App() {
 
   // ボスに挑む。挑戦を始めた時刻を覚えておき、それ以降の記録だけをダメージにする
   const startBoss = (config) => {
-    setBoss({ ...config, createdAt: new Date().toISOString() });
+    setBosses((prev) => [
+      ...prev,
+      { ...config, id: createId(), createdAt: new Date().toISOString() },
+    ]);
   };
 
-  const clearBoss = () => {
-    if (!window.confirm("ボス戦を解除します。")) return;
-    setBoss(null);
+  const clearBoss = (id) => {
+    const boss = bosses.find((item) => item.id === id);
+    if (!window.confirm(`「${boss.name}」のボス戦を解除します。`)) return;
+    setBosses((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // 科目を消しても記録は残す。過去に積み上げた時間まで失われないようにするため。
+  // 科目のいなくなった記録は「（削除された科目）」として一覧に出る
   const deleteSubject = (id) => {
     const subject = subjects.find((item) => item.id === id);
     const count = records.filter((record) => record.subjectId === id).length;
+    const isRunningSubject = running?.subjectId === id;
 
-    // 記録ごと消えるので、消える件数を伝えてから確認する
-    const message =
-      count === 0
-        ? `「${subject.name}」を削除します。`
-        : `「${subject.name}」と、その記録${count}件を削除します。`;
-    if (!window.confirm(message)) return;
+    const lines = [`「${subject.name}」を削除します。`];
+    if (count > 0) {
+      lines.push(`記録${count}件はそのまま残ります（「（削除された科目）」と表示されます）。`);
+    }
+    if (isRunningSubject) {
+      lines.push("計測中のぶんは、記録してから停止します。");
+    }
+    if (!window.confirm(lines.join("\n"))) return;
+
+    // 計測中の科目が消える場合も、計測ぶんは捨てずに記録してから止める
+    if (isRunningSubject) stopTimer();
 
     const rest = subjects.filter((item) => item.id !== id);
     setSubjects(rest);
-    setRecords((prev) => prev.filter((record) => record.subjectId !== id));
-
-    // 計測中の科目が消えた場合は、計測も止める（記録は残さない）
-    if (running?.subjectId === id) setRunning(null);
     if (selectedId === id) setSelectedId(rest[0]?.id ?? "");
   };
 
@@ -183,7 +247,10 @@ function App() {
     return (
       <TitleScreen
         records={records}
-        boss={boss}
+        bosses={bosses}
+        subjects={subjects}
+        running={running}
+        elapsedSeconds={elapsedSeconds}
         onStart={() => setScreen("menu")}
       />
     );
@@ -193,7 +260,13 @@ function App() {
   const feature = FEATURES.find((item) => item.key === screen);
   if (!feature) {
     return (
-      <Menu running={running} boss={boss} records={records} onSelect={setScreen} />
+      <Menu
+        running={running}
+        elapsedSeconds={elapsedSeconds}
+        bosses={bosses}
+        records={records}
+        onSelect={setScreen}
+      />
     );
   }
 
@@ -211,9 +284,9 @@ function App() {
         <h1 className="wordmark">STUDY LOG</h1>
       </header>
 
-      {/* 1画面に1機能だけ出す。
-          記録が増える計測・手入力には、足したぶんをその場で確かめられるよう
-          「追加した記録」を続けて置く */}
+      {/* そのページの機能を先頭に置き、続けて「そこで一緒に見たくなるもの」を
+          1〜2枚そえる。合計→マイルストーン→記録→合計 と一巡するように組んであり、
+          同じ組み合わせのページができないようにしている */}
       <div className="screen-body">
         {feature.key === "timer" && (
           <>
@@ -224,8 +297,11 @@ function App() {
               selectedId={selectedId}
               onSelect={setSelectedId}
               onStart={startTimer}
+              onPause={pauseTimer}
+              onResume={resumeTimer}
               onStop={stopTimer}
             />
+            <Pace records={records} />
             <RecentRecords
               subjects={subjects}
               records={records}
@@ -235,30 +311,65 @@ function App() {
           </>
         )}
 
-        {feature.key === "summary" && <Summary subjects={subjects} records={records} />}
-
-        {feature.key === "records" && (
-          <RecordList subjects={subjects} records={records} onDelete={deleteRecord} />
+        {feature.key === "summary" && (
+          <>
+            <Summary subjects={subjects} records={records} />
+            <Milestones records={records} />
+          </>
         )}
 
-        {feature.key === "milestones" && <Milestones records={records} />}
+        {feature.key === "records" && (
+          <>
+            <RecordList
+              subjects={subjects}
+              records={records}
+              onDelete={deleteRecord}
+              onUpdate={updateRecord}
+            />
+            <Summary subjects={subjects} records={records} />
+          </>
+        )}
+
+        {feature.key === "milestones" && (
+          <>
+            <Milestones records={records} />
+            <RecordList
+              subjects={subjects}
+              records={records}
+              onDelete={deleteRecord}
+              onUpdate={updateRecord}
+            />
+          </>
+        )}
 
         {feature.key === "boss" && (
-          <BossBattle
-            boss={boss}
-            subjects={subjects}
-            records={records}
-            onStart={startBoss}
-            onClear={clearBoss}
-          />
+          <>
+            <BossBattle
+              bosses={bosses}
+              subjects={subjects}
+              records={records}
+              onStart={startBoss}
+              onClear={clearBoss}
+            />
+            <Pace records={records} />
+            <RecentRecords
+              subjects={subjects}
+              records={records}
+              newestId={newestRecordId}
+              onDelete={deleteRecord}
+            />
+          </>
         )}
 
         {feature.key === "subjects" && (
-          <SubjectManager
-            subjects={subjects}
-            onAdd={addSubject}
-            onDelete={deleteSubject}
-          />
+          <>
+            <SubjectManager
+              subjects={subjects}
+              onAdd={addSubject}
+              onDelete={deleteSubject}
+            />
+            <SubjectTotals subjects={subjects} records={records} />
+          </>
         )}
 
         {feature.key === "manual" && (
@@ -270,6 +381,7 @@ function App() {
               newestId={newestRecordId}
               onDelete={deleteRecord}
             />
+            <Pace records={records} />
           </>
         )}
       </div>

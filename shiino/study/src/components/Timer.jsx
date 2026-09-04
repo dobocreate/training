@@ -1,11 +1,29 @@
 import Icon from "./Icon";
 import { formatClock } from "../lib/time";
 
-// 計測パネル。科目を選んで開始・停止する
-function Timer({ subjects, running, elapsedSeconds, selectedId, onSelect, onStart, onStop }) {
+// 計測パネル。科目を選んで開始・一時停止・停止する。
+// running.since が null なら一時停止中（時計は止まったまま）
+function Timer({
+  subjects,
+  running,
+  elapsedSeconds,
+  selectedId,
+  onSelect,
+  onStart,
+  onPause,
+  onResume,
+  onStop,
+}) {
   const runningSubject = running
     ? subjects.find((s) => s.id === running.subjectId)
     : null;
+  const isPaused = Boolean(running) && running.since === null;
+
+  const stateText = () => {
+    if (!running) return "科目を選んで開始";
+    const name = runningSubject?.name ?? "（削除された科目）";
+    return isPaused ? `${name} を一時停止中` : `${name} を計測中`;
+  };
 
   return (
     <section className="card timer">
@@ -33,16 +51,27 @@ function Timer({ subjects, running, elapsedSeconds, selectedId, onSelect, onStar
         </div>
 
         <div className="timer-display">
-          <p className="timer-clock">{formatClock(elapsedSeconds)}</p>
-          <p className="timer-subject">
-            {runningSubject ? `${runningSubject.name} を計測中` : "科目を選んで開始"}
+          <p className={isPaused ? "timer-clock is-paused" : "timer-clock"}>
+            {formatClock(elapsedSeconds)}
           </p>
+          <p className="timer-subject">{stateText()}</p>
         </div>
 
         {running ? (
-          <button type="button" className="big-button is-stop" onClick={onStop}>
-            停止して記録
-          </button>
+          <div className="timer-buttons">
+            {isPaused ? (
+              <button type="button" className="big-button" onClick={onResume}>
+                再開
+              </button>
+            ) : (
+              <button type="button" className="big-button is-pause" onClick={onPause}>
+                一時停止
+              </button>
+            )}
+            <button type="button" className="big-button is-stop" onClick={onStop}>
+              停止して記録
+            </button>
+          </div>
         ) : (
           <button
             type="button"
