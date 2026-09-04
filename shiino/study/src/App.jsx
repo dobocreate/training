@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import Icon from "./components/Icon";
 import TitleScreen from "./components/TitleScreen";
+import Menu from "./components/Menu";
 import Timer from "./components/Timer";
-import Journey from "./components/Journey";
+import Milestones from "./components/Milestones";
 import BossBattle from "./components/BossBattle";
 import Summary from "./components/Summary";
 import ManualEntry from "./components/ManualEntry";
 import RecordList from "./components/RecordList";
+import RecentRecords from "./components/RecentRecords";
 import SubjectManager from "./components/SubjectManager";
+import { FEATURES } from "./lib/features";
 import {
   loadSubjects,
   saveSubjects,
@@ -36,8 +39,12 @@ function App() {
   // 挑戦中のボス。設定していなければ null
   const [boss, setBoss] = useState(loadBoss);
 
-  // タイトル画面を抜けたかどうか。開くたびにタイトルから始まる
-  const [started, setStarted] = useState(false);
+  // 今どの画面にいるか。"title" → "menu" → 機能のキー（FEATURES）と進む。
+  // 開くたびにタイトルから始まるので、保存はしない
+  const [screen, setScreen] = useState("title");
+
+  // 直前に足した記録のid。計測・手入力の下で、どれが今足したぶんかを示すのに使う
+  const [newestRecordId, setNewestRecordId] = useState(null);
 
   const [selectedId, setSelectedId] = useState(() => loadSubjects()[0]?.id ?? "");
 
@@ -70,13 +77,27 @@ function App() {
     return () => clearInterval(timerId);
   }, [running]);
 
+  // 機能の画面では Escape でメニューに戻れるようにする
+  useEffect(() => {
+    if (screen === "title" || screen === "menu") return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setScreen("menu");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [screen]);
+
   const elapsedSeconds = running
     ? Math.max(0, Math.floor((now - new Date(running.startedAt).getTime()) / 1000))
     : 0;
 
-  // 記録の追加口はここ1か所にまとめる
+  // 記録の追加口はここ1か所にまとめる。
+  // 計測でも手入力でも同じように「今足したぶん」を示せるよう、idもここで覚える
   const addRecord = (record) => {
     setRecords((prev) => [...prev, record]);
+    setNewestRecordId(record.id);
   };
 
   const startTimer = () => {
@@ -158,37 +179,69 @@ function App() {
     if (selectedId === id) setSelectedId(rest[0]?.id ?? "");
   };
 
-  if (!started) {
+  if (screen === "title") {
     return (
       <TitleScreen
         records={records}
         boss={boss}
-        onStart={() => setStarted(true)}
+        onStart={() => setScreen("menu")}
       />
     );
   }
 
+  // ここから先は機能の画面。キーが一覧に無ければメニューを出す
+  const feature = FEATURES.find((item) => item.key === screen);
+  if (!feature) {
+    return <Menu running={running} onSelect={setScreen} />;
+  }
+
   return (
     <div className="app">
-      <header className="app-header">
-        <h1 className="app-title">STUDY LOG</h1>
-        <p className="app-subtitle">科目ごとに勉強時間を記録する</p>
+      <header className="screen-header">
+        <button
+          type="button"
+          className="back-button"
+          onClick={() => setScreen("menu")}
+        >
+          <Icon name={feature.icon} />
+          メニューに戻る
+        </button>
+        <h1 className="wordmark">STUDY LOG</h1>
       </header>
 
-      {/* 主役の計測は幅いっぱいに置く */}
-      <Timer
-        subjects={subjects}
-        running={running}
-        elapsedSeconds={elapsedSeconds}
-        selectedId={selectedId}
-        onSelect={setSelectedId}
-        onStart={startTimer}
-        onStop={stopTimer}
-      />
+      {/* 1画面に1機能だけ出す。
+          記録が増える計測・手入力には、足したぶんをその場で確かめられるよう
+          「追加した記録」を続けて置く */}
+      <div className="screen-body">
+        {feature.key === "timer" && (
+          <>
+            <Timer
+              subjects={subjects}
+              running={running}
+              elapsedSeconds={elapsedSeconds}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              onStart={startTimer}
+              onStop={stopTimer}
+            />
+            <RecentRecords
+              subjects={subjects}
+              records={records}
+              newestId={newestRecordId}
+              onDelete={deleteRecord}
+            />
+          </>
+        )}
 
-      <div className="layout">
-        {/* 左は目標、右は振り返り、と役割で分ける */}
-        <div className="column">
+        {feature.key === "summary" && <Summary subjects={subjects} records={records} />}
+
+        {feature.key === "records" && (
+          <RecordList subjects={subjects} records={records} onDelete={deleteRecord} />
+        )}
+
+        {feature.key === "milestones" && <Milestones records={records} />}
+
+        {feature.key === "boss" && (
           <BossBattle
             boss={boss}
             subjects={subjects}
@@ -196,35 +249,30 @@ function App() {
             onStart={startBoss}
             onClear={clearBoss}
           />
-          <Journey records={records} />
-        </div>
+        )}
 
-        <div className="column">
-          <Summary subjects={subjects} records={records} />
-          <RecordList
-            subjects={subjects}
-            records={records}
-            onDelete={deleteRecord}
-          />
-        </div>
-      </div>
-
-      {/* 毎回は使わないものは、たたんでおく */}
-      <details className="tools">
-        <summary className="tools-summary">
-          <span className="tools-chevron">›</span>
-          <Icon name="sliders" />
-          科目と手入力
-        </summary>
-        <div className="tools-body">
+        {feature.key === "subjects" && (
           <SubjectManager
             subjects={subjects}
             onAdd={addSubject}
             onDelete={deleteSubject}
           />
-          <ManualEntry subjects={subjects} onAdd={addManualRecord} />
-        </div>
-      </details>
+        )}
+
+        {feature.key === "manual" && (
+          <>
+            <ManualEntry subjects={subjects} onAdd={addManualRecord} />
+            <RecentRecords
+              subjects={subjects}
+              records={records}
+              newestId={newestRecordId}
+              onDelete={deleteRecord}
+            />
+          </>
+        )}
+      </div>
+
+      <p className="screen-hint">Esc キーでもメニューに戻れる</p>
     </div>
   );
 }

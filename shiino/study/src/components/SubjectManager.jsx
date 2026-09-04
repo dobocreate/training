@@ -3,14 +3,14 @@ import Icon from "./Icon";
 
 // 科目の色。選びやすいように候補を用意しておく
 const COLORS = [
-  "#22d3ee",
-  "#a3e635",
-  "#f472b6",
-  "#a78bfa",
-  "#fbbf24",
-  "#fb7185",
-  "#34d399",
-  "#60a5fa",
+  "#2563eb",
+  "#059669",
+  "#db2777",
+  "#7c3aed",
+  "#d97706",
+  "#dc2626",
+  "#0891b2",
+  "#475569",
 ];
 
 function SubjectManager({ subjects, onAdd, onDelete }) {

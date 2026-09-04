@@ -17,13 +17,11 @@ const SHAPES = {
       <path d="M8 0.8 V3 M8 13 V15.2 M0.8 8 H3 M13 8 H15.2" />
     </>
   ),
-  // ロケット
-  rocket: (
+  // 旗（マイルストーン）
+  flag: (
     <>
-      <path d="M8 1.4 C10 3.6 11 6.1 11 8.6 V11 H5 V8.6 C5 6.1 6 3.6 8 1.4 Z" />
-      <circle cx="8" cy="6.3" r="1.4" />
-      <path d="M5 8.8 L2.8 11.6 L5 11 M11 8.8 L13.2 11.6 L11 11" />
-      <path d="M6.8 12.4 L8 15 L9.2 12.4" />
+      <path d="M4 1.8 V14.2" />
+      <path d="M4 2.8 H12.8 L10.7 5.9 L12.8 9 H4 Z" />
     </>
   ),
   // 棒グラフ
@@ -56,19 +54,12 @@ const SHAPES = {
       <path d="M9.8 3.8 L12.2 6.2" />
     </>
   ),
-  // つまみ（設定）
-  sliders: (
-    <>
-      <path d="M2.6 5 H13.4 M2.6 11 H13.4" />
-      <circle cx="6" cy="5" r="1.7" />
-      <circle cx="10" cy="11" r="1.7" />
-    </>
-  ),
 };
 
-function Icon({ name }) {
+// 既定は見出し用の小さいサイズ。メニューでは className を渡して大きく描く
+function Icon({ name, className = "card-icon" }) {
   return (
-    <svg className="card-icon" viewBox="0 0 16 16" aria-hidden="true">
+    <svg className={className} viewBox="0 0 16 16" aria-hidden="true">
       {SHAPES[name]}
     </svg>
   );

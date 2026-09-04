@@ -28,9 +28,9 @@ function save(key, value) {
 
 // 最初に開いたときに入れておく科目
 const DEFAULT_SUBJECTS = [
-  { id: "s1", name: "数学", color: "#22d3ee" },
-  { id: "s2", name: "英語", color: "#f472b6" },
-  { id: "s3", name: "プログラミング", color: "#a3e635" },
+  { id: "s1", name: "数学", color: "#2563eb" },
+  { id: "s2", name: "英語", color: "#db2777" },
+  { id: "s3", name: "プログラミング", color: "#059669" },
 ];
 
 export function loadSubjects() {

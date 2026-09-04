@@ -15,4 +15,4 @@ cd todo  && npm run dev              # http://localhost:5173
 cd study && npm run dev -- --port 5176
 ```
 
-どれも React + Vite。見た目は宇宙をテーマにした共通の雰囲気でそろえている。
+どれも React + Vite。

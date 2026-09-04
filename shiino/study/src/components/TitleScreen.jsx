@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { journeyProgress } from "../lib/journey";
+import { milestoneProgress } from "../lib/milestones";
 import { formatDuration, toDateKey } from "../lib/time";
 
 // 最初に出るタイトル画面。STARTを押すと本編に入る
@@ -23,11 +23,10 @@ function TitleScreen({ records, boss, onStart }) {
     .reduce((sum, record) => sum + record.seconds, 0);
 
   const totalSeconds = records.reduce((sum, record) => sum + record.seconds, 0);
-  const journey = journeyProgress(totalSeconds);
+  const progress = milestoneProgress(totalSeconds);
 
   return (
     <div className="title-screen">
-      <p className="title-eyebrow">SPACE STUDY</p>
       <h1 className="title-logo">STUDY LOG</h1>
       <p className="title-lead">科目ごとに勉強時間を記録する</p>
 
@@ -38,8 +37,8 @@ function TitleScreen({ records, boss, onStart }) {
           <dd>{formatDuration(todaySeconds)}</dd>
         </div>
         <div className="title-stat">
-          <dt>現在地</dt>
-          <dd>{journey.current.name}</dd>
+          <dt>到達段階</dt>
+          <dd>{progress.current.name}</dd>
         </div>
         <div className="title-stat">
           <dt>挑戦中のボス</dt>
