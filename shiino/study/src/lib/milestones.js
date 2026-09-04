@@ -1,6 +1,8 @@
 // マイルストーンの計算。累計の勉強時間から、今どの段階まで来たかを出す。
 // Reactに依存しない純粋な関数だけを置く。
 
+import { toDateKey } from "./time.js";
+
 // hours は「その段階に到達するのに必要な累計勉強時間」
 export const MILESTONES = [
   { name: "スタート", hours: 0 },
@@ -43,4 +45,33 @@ export function milestoneProgress(totalSeconds) {
     position: next ? (index + ratio) / (MILESTONES.length - 1) : 1,
     isComplete: next === null,
   };
+}
+
+// 段階ごとに「最初に到達した日」を出す。到達していなければ null。
+// 記録を日付の古い順に積み上げて、しきい値を超えた時点の日付を段階に割り当てる。
+// 累計は日付順に増えるので、いちど超えた段階が後から取り消されることはない
+export function milestoneReachedDates(records) {
+  // 同じ日の記録はまとめてから、日付順に見る
+  const perDay = new Map();
+  records.forEach((record) => {
+    const key = toDateKey(record.startedAt);
+    perDay.set(key, (perDay.get(key) ?? 0) + record.seconds);
+  });
+
+  const dates = new Array(MILESTONES.length).fill(null);
+  let totalSeconds = 0;
+  let index = 0;
+
+  [...perDay.keys()].sort().forEach((key) => {
+    totalSeconds += perDay.get(key);
+    const hours = totalSeconds / 3600;
+
+    // 1日で2段階まとめて超えることもあるので、超えたぶんだけ進める
+    while (index < MILESTONES.length && hours >= MILESTONES[index].hours) {
+      dates[index] = key;
+      index += 1;
+    }
+  });
+
+  return dates;
 }

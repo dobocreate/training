@@ -920,102 +920,104 @@
   color: var(--ink-dim);
 }
 
-.milestone-current {
-  margin: 0;
-  font-size: 26px;
-  font-weight: 700;
+/* 今いる段階。ここが主役なので大きく出す */
+.milestone-now {
+  margin: 10px 0 0;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 1px;
+  color: var(--accent);
 }
 
 .milestone-next {
-  margin: 4px 0 26px;
-  font-size: 12px;
+  margin: 8px 0 16px;
+  font-size: 13px;
   color: var(--ink-dim);
 }
 
-/* 目盛りと現在位置は左からの割合で置くので、position: relative の中に絶対配置する */
-.track {
-  position: relative;
-  height: 22px;
-  margin: 0 10px 22px;
-}
-
-.track-line,
-.track-done {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  height: 3px;
+/* 今いる区間の進み具合 */
+.milestone-bar {
+  height: 14px;
   border-radius: 999px;
-  transform: translateY(-50%);
+  background: var(--bg);
+  overflow: hidden;
 }
 
-.track-line {
-  width: 100%;
-  background: var(--border);
-}
-
-.track-done {
+.milestone-bar-fill {
+  height: 100%;
+  border-radius: 999px;
   background: var(--accent);
   transition: width 0.3s;
 }
 
-.step {
-  position: absolute;
-  top: 50%;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--border-strong);
-  transform: translate(-50%, -50%);
-}
-
-.step.is-reached {
-  background: var(--accent);
-}
-
-/* 現在位置のマーク */
-.marker {
-  position: absolute;
-  top: 50%;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 3px solid var(--accent);
-  background: var(--panel);
-  transform: translate(-50%, -50%);
-  transition: left 0.3s;
-}
-
-.step-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+/* 段階の一覧。到達した日を残して、積み上げてきたことが見えるようにする */
+.milestone-steps {
   list-style: none;
-  margin: 0;
+  margin: 18px 0 0;
   padding: 0;
 }
 
-.step-chip {
+.milestone-step {
   display: flex;
-  align-items: baseline;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--border-strong);
+}
+
+.milestone-step.is-reached {
+  color: var(--ink);
+}
+
+/* 今いる段階だけ、行ごと目立たせる */
+.milestone-step.is-current {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+  font-weight: 700;
+}
+
+.milestone-mark {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  width: 16px;
+  color: var(--accent);
+}
+
+.milestone-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.milestone-hours {
+  flex-shrink: 0;
+  width: 68px;
+  text-align: right;
+  font-family: ui-monospace, "Consolas", monospace;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.milestone-date {
+  flex-shrink: 0;
+  width: 100px;
+  text-align: right;
   font-size: 11px;
   color: var(--ink-dim);
 }
 
-.step-chip.is-reached {
-  border-color: var(--accent);
+.milestone-step.is-current .milestone-date {
   color: var(--accent);
-  background: var(--accent-soft);
 }
 
-.step-hours {
-  font-family: ui-monospace, "Consolas", monospace;
-  font-size: 10px;
-  opacity: 0.75;
+/* 狭い画面では、必要な時間より到達日のほうを残す */
+@media (max-width: 560px) {
+  .milestone-hours {
+    display: none;
+  }
 }
 
 /* ===== 目標 ===== */
