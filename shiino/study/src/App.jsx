@@ -192,7 +192,9 @@ function App() {
   // ここから先は機能の画面。キーが一覧に無ければメニューを出す
   const feature = FEATURES.find((item) => item.key === screen);
   if (!feature) {
-    return <Menu running={running} onSelect={setScreen} />;
+    return (
+      <Menu running={running} boss={boss} records={records} onSelect={setScreen} />
+    );
   }
 
   return (
@@ -271,8 +273,6 @@ function App() {
           </>
         )}
       </div>
-
-      <p className="screen-hint">Esc キーでもメニューに戻れる</p>
     </div>
   );
 }

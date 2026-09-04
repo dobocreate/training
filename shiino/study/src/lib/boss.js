@@ -46,3 +46,21 @@ export function bossStatus(boss, records, now = new Date()) {
     state: state,
   };
 }
+
+// タイトル画面とメニューに出す「達成度」。両方で同じ見せ方になるよう、ここにまとめる。
+// ボスに挑んでいなければ null
+export function bossProgress(boss, records, now = new Date()) {
+  const status = bossStatus(boss, records, now);
+  if (!status) return null;
+
+  const percent = Math.floor(status.ratio * 100);
+
+  // 決着がついたあとは、数字より結果のほうが分かりやすいので言葉にする
+  if (status.state === "defeated") {
+    return { percent: percent, label: "撃破", isAlert: false };
+  }
+  if (status.state === "expired") {
+    return { percent: percent, label: "期限切れ", isAlert: true };
+  }
+  return { percent: percent, label: `${percent}%`, isAlert: false };
+}

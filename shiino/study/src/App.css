@@ -1,7 +1,14 @@
+/* 機能の画面。幅はメニューとそろえる。
+   中身が少ないページでも下だけ大きく空かないよう、画面の高さいっぱいを取って
+   本文を上下中央に置く（中身が画面より高いときは、そのまま下に伸びる） */
 .app {
-  width: 960px;
+  width: 752px;
   max-width: 100%;
+  min-height: calc(100vh - 64px);
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* ===== ヘッダー ===== */
@@ -113,6 +120,11 @@
   font-size: 10px;
   font-weight: 700;
   color: #fff;
+  background: var(--accent);
+}
+
+/* 計測中と期限切れは、気づいてほしいので赤にする */
+.menu-badge.is-alert {
   background: var(--danger);
 }
 
@@ -156,13 +168,6 @@
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: var(--ink-dim);
-}
-
-.screen-hint {
-  margin: 14px 0 0;
-  font-size: 11px;
-  text-align: center;
   color: var(--ink-dim);
 }
 
@@ -948,9 +953,14 @@
   padding: 0;
 }
 
+/* 3枚は行数がそろわないことがあるので、中身を上下中央に置いて
+   下だけ空いて見えないようにする */
 .title-stat {
-  min-width: 140px;
-  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 158px;
+  padding: 14px 20px;
   border-radius: 10px;
   background: var(--panel);
   border: 1px solid var(--border);
@@ -965,6 +975,39 @@
   margin: 6px 0 0;
   font-size: 18px;
   font-weight: 700;
+}
+
+/* ボス戦の達成度。数字の下に細い帯を出す */
+.stat-track {
+  display: block;
+  height: 5px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.stat-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.stat-fill.is-alert {
+  background: var(--danger);
+}
+
+/* ボスの名前。長くても札の幅を押し広げないように省略する */
+.stat-note {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .start-button {
