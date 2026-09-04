@@ -44,7 +44,6 @@ function Menu({ running, elapsedSeconds, goals, records, onSelect }) {
               <span className="menu-key">{index + 1}</span>
               <Icon name={feature.icon} className="menu-icon" />
               <span className="menu-label">{feature.label}</span>
-              <span className="menu-description">{feature.description}</span>
 
               {/* 計測したまま別の画面に移れるので、経過時間をそのまま出す */}
               {feature.key === "timer" && running && (

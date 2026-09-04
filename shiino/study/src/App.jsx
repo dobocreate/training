@@ -4,7 +4,7 @@ import TitleScreen from "./components/TitleScreen";
 import Menu from "./components/Menu";
 import Timer from "./components/Timer";
 import Milestones from "./components/Milestones";
-import BossBattle from "./components/BossBattle";
+import GoalList from "./components/GoalList";
 import Summary from "./components/Summary";
 import ManualEntry from "./components/ManualEntry";
 import RecordList from "./components/RecordList";
@@ -337,9 +337,9 @@ function App() {
         <h1 className="wordmark">STUDY LOG</h1>
       </header>
 
-      {/* そのページの機能を先頭に置き、続けて「そこで一緒に見たくなるもの」を
-          1〜2枚そえる。合計→マイルストーン→記録→合計 と一巡するように組んであり、
-          同じ組み合わせのページができないようにしている */}
+      {/* そのページの機能を先頭に置き、続けて「そこで一緒に見たくなるもの」をそえる。
+          ただし集計そのものを見せるカード（合計・マイルストーン）は、
+          どこが本家か分からなくなるので、それぞれの画面にしか置かない */}
       <div className="screen-body">
         {feature.key === "timer" && (
           <>
@@ -365,22 +365,20 @@ function App() {
           </>
         )}
 
-        {feature.key === "summary" && (
-          <>
-            <Summary subjects={subjects} records={records} />
-            <Milestones records={records} />
-          </>
-        )}
+        {feature.key === "summary" && <Summary subjects={subjects} records={records} />}
 
+        {/* 一覧が主役なので先に置き、そのすぐ下で足せるようにする。
+            足したぶんは一覧の中で色が付き、見える位置まで自動でスクロールする */}
         {feature.key === "records" && (
           <>
             <RecordList
               subjects={subjects}
               records={records}
+              newestId={newestRecordId}
               onDelete={deleteRecord}
               onUpdate={updateRecord}
             />
-            <Summary subjects={subjects} records={records} />
+            <ManualEntry subjects={subjects} onAdd={addManualRecord} />
           </>
         )}
 
@@ -423,19 +421,6 @@ function App() {
               onDelete={deleteSubject}
             />
             <SubjectTotals subjects={subjects} records={records} />
-          </>
-        )}
-
-        {feature.key === "manual" && (
-          <>
-            <ManualEntry subjects={subjects} onAdd={addManualRecord} />
-            <RecentRecords
-              subjects={subjects}
-              records={records}
-              newestId={newestRecordId}
-              onDelete={deleteRecord}
-            />
-            <Pace records={records} />
           </>
         )}
       </div>

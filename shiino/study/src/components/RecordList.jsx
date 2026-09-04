@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Icon from "./Icon";
 import { formatDuration, toDateKey, formatDateLabel, formatTimeLabel } from "../lib/time";
 
@@ -88,8 +88,15 @@ function EditRow({ record, subjects, onSave, onCancel }) {
 }
 
 // 記録の一覧。日付ごとにまとめて、新しい順に並べる
-function RecordList({ subjects, records, onDelete, onUpdate }) {
+function RecordList({ subjects, records, newestId, onDelete, onUpdate }) {
   const [editingId, setEditingId] = useState(null);
+
+  // 足したばかりの1件まで自動で送る。
+  // 過去の日付を手入力すると一覧の途中に入るので、そのままだと見えないことがあるため
+  const newestRef = useRef(null);
+  useEffect(() => {
+    newestRef.current?.scrollIntoView({ block: "nearest" });
+  }, [newestId]);
 
   const findSubject = (id) => subjects.find((subject) => subject.id === id);
 
@@ -149,7 +156,13 @@ function RecordList({ subjects, records, onDelete, onUpdate }) {
 
                     const subject = findSubject(record.subjectId);
                     return (
-                      <li key={record.id} className="record-row">
+                      <li
+                        key={record.id}
+                        ref={record.id === newestId ? newestRef : null}
+                        className={
+                          record.id === newestId ? "record-row is-new" : "record-row"
+                        }
+                      >
                         <span
                           className="dot"
                           style={{ backgroundColor: subject?.color ?? "#64748b" }}
