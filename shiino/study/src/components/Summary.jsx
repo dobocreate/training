@@ -1,12 +1,7 @@
 import { useState } from "react";
 import Icon from "./Icon";
-import {
-  formatDuration,
-  toDateKey,
-  startOfWeekKey,
-  recentDateKeys,
-  formatDateLabel,
-} from "../lib/time";
+import WeekChart from "./WeekChart";
+import { formatDuration, toDateKey, startOfWeekKey } from "../lib/time";
 
 const RANGES = [
   { key: "today", label: "今日" },
@@ -27,6 +22,8 @@ function Summary({ subjects, records }) {
 
   const target = records.filter((record) => inRange(record, range));
   const total = target.reduce((sum, record) => sum + record.seconds, 0);
+  // 休憩は勉強時間には入れない。参考として横に添えるだけ
+  const breakTotal = target.reduce((sum, record) => sum + (record.breakSeconds ?? 0), 0);
 
   // 科目ごとの合計を出して、多い順に並べる
   const perSubject = subjects
@@ -38,15 +35,6 @@ function Summary({ subjects, records }) {
     }))
     .filter((item) => item.seconds > 0)
     .sort((a, b) => b.seconds - a.seconds);
-
-  // 直近7日は範囲切り替えの影響を受けず、いつも同じものを出す
-  const days = recentDateKeys(7).map((key) => ({
-    key,
-    seconds: records
-      .filter((record) => toDateKey(record.startedAt) === key)
-      .reduce((sum, record) => sum + record.seconds, 0),
-  }));
-  const maxDay = Math.max(...days.map((d) => d.seconds), 1);
 
   return (
     <section className="card">
@@ -69,7 +57,12 @@ function Summary({ subjects, records }) {
         </div>
       </div>
 
-      <p className="summary-total">{formatDuration(total)}</p>
+      <p className="summary-total">
+        {formatDuration(total)}
+        {breakTotal > 0 && (
+          <span className="summary-break">休憩 {formatDuration(breakTotal)}</span>
+        )}
+      </p>
 
       {perSubject.length === 0 ? (
         <p className="empty-message">この期間の記録はまだありません</p>
@@ -98,23 +91,9 @@ function Summary({ subjects, records }) {
         </ul>
       )}
 
+      {/* 直近7日は範囲切り替えの影響を受けず、いつも同じものを出す */}
       <p className="chart-title">直近7日</p>
-      <ul className="week-chart">
-        {days.map((day) => (
-          <li key={day.key} className="week-day">
-            <span className="week-value">
-              {day.seconds > 0 ? formatDuration(day.seconds) : ""}
-            </span>
-            <span className="week-track">
-              <span
-                className="week-fill"
-                style={{ height: `${(day.seconds / maxDay) * 100}%` }}
-              />
-            </span>
-            <span className="week-label">{formatDateLabel(day.key)}</span>
-          </li>
-        ))}
-      </ul>
+      <WeekChart records={records} />
     </section>
   );
 }

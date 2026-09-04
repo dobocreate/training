@@ -4,9 +4,11 @@ const KEYS = {
   subjects: "study.subjects",
   records: "study.records",
   running: "study.running",
-  bosses: "study.bosses",
-  // ボスを1件しか持てなかったころのキー。読み込みのときだけ見る
-  oldBoss: "study.boss",
+  goals: "study.goals",
+  // 「ボス戦」と呼んでいたころ・1件しか持てなかったころのキー。
+  // 読み込みのときだけ見る
+  oldGoals: "study.bosses",
+  oldGoal: "study.boss",
 };
 
 function load(key, fallback) {
@@ -54,9 +56,14 @@ export function saveRecords(records) {
 }
 
 // 計測中の状態。ページを閉じても計測が続くように保存しておく。
-// 形は { subjectId, startedAt, accumulated, since }。
-// accumulated は止めていたぶんを除いた確定ぶんの秒数、since は今動いている区間の開始時刻
-// （一時停止中は null）
+// 形は { subjectId, startedAt, accumulated, since, breakAccumulated, pausedAt }。
+//
+//   accumulated      … 勉強ぶんの確定秒数（一時停止のたびにここへ畳む）
+//   since            … 今動いている区間の開始時刻。一時停止中は null
+//   breakAccumulated … 休憩ぶんの確定秒数（再開のたびにここへ畳む）
+//   pausedAt         … 今の休憩の開始時刻。動いているあいだは null
+//
+// since と pausedAt は必ずどちらか片方だけが入る
 export function loadRunning() {
   const value = load(KEYS.running, null);
   if (!value || typeof value.subjectId !== "string" || typeof value.startedAt !== "string") {
@@ -71,16 +78,25 @@ export function loadRunning() {
       startedAt: value.startedAt,
       accumulated: 0,
       since: value.startedAt,
+      breakAccumulated: 0,
+      pausedAt: null,
     };
   }
-  return value;
+
+  // 休憩を数える前の形には、休憩ぶんの入れ物だけ足す
+  return {
+    ...value,
+    breakAccumulated:
+      typeof value.breakAccumulated === "number" ? value.breakAccumulated : 0,
+    pausedAt: typeof value.pausedAt === "string" ? value.pausedAt : null,
+  };
 }
 
 export function saveRunning(running) {
   save(KEYS.running, running);
 }
 
-function isBoss(value) {
+function isGoal(value) {
   return (
     Boolean(value) &&
     typeof value.deadline === "string" &&
@@ -88,17 +104,20 @@ function isBoss(value) {
   );
 }
 
-// 挑戦中のボス。挑んでいなければ空の配列
-export function loadBosses() {
-  const value = load(KEYS.bosses, null);
-  if (Array.isArray(value)) return value.filter(isBoss);
+// 決めてある目標。1つも無ければ空の配列
+export function loadGoals() {
+  const value = load(KEYS.goals, null);
+  if (Array.isArray(value)) return value.filter(isGoal);
 
-  // 1件しか持てなかったころのデータを引き継ぐ。
-  // 一度 saveBosses が走れば新しいキーができるので、ここを通るのは移行のときだけ
-  const old = load(KEYS.oldBoss, null);
-  return isBoss(old) ? [{ ...old, id: old.id ?? "boss-1" }] : [];
+  // 古い名前で保存されたデータを引き継ぐ。
+  // 一度 saveGoals が走れば新しいキーができるので、ここを通るのは移行のときだけ
+  const oldList = load(KEYS.oldGoals, null);
+  if (Array.isArray(oldList)) return oldList.filter(isGoal);
+
+  const single = load(KEYS.oldGoal, null);
+  return isGoal(single) ? [{ ...single, id: single.id ?? "goal-1" }] : [];
 }
 
-export function saveBosses(bosses) {
-  save(KEYS.bosses, bosses);
+export function saveGoals(goals) {
+  save(KEYS.goals, goals);
 }

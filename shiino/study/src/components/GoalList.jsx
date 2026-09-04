@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Icon from "./Icon";
-import { bossStatus } from "../lib/boss";
+import { goalStatus } from "../lib/goals";
 import { formatDuration, toDateKey } from "../lib/time";
 
-// ボスに挑むための設定フォーム
-function BossForm({ subjects, onStart }) {
+// 目標を決めるためのフォーム
+function GoalForm({ subjects, onAdd }) {
   const [name, setName] = useState("");
   const [deadline, setDeadline] = useState(() => toDateKey(new Date()));
   const [hours, setHours] = useState("");
@@ -16,7 +16,7 @@ function BossForm({ subjects, onStart }) {
 
     const targetHours = Number(hours);
     if (!Number.isFinite(targetHours) || targetHours <= 0) {
-      setError("目標時間を入力してください");
+      setError("目標の時間を入力してください");
       return;
     }
     if (deadline < toDateKey(new Date())) {
@@ -24,26 +24,26 @@ function BossForm({ subjects, onStart }) {
       return;
     }
 
-    onStart({
-      name: name.trim() === "" ? "ボス" : name.trim(),
+    onAdd({
+      name: name.trim() === "" ? "目標" : name.trim(),
       deadline: deadline,
       targetHours: targetHours,
       subjectId: subjectId,
     });
 
-    // 続けて別のボスを立てられるように、入力を空に戻す
+    // 続けてもう1つ決められるように、入力を空に戻す
     setName("");
     setHours("");
     setError("");
   };
 
   return (
-    <form className="boss-form" onSubmit={handleSubmit}>
+    <form className="goal-form" onSubmit={handleSubmit}>
       <input
         className="field"
         type="text"
         value={name}
-        placeholder="ボスの名前（例：期末テスト）"
+        placeholder="目標の名前（例：期末テスト）"
         autoComplete="off"
         onChange={(event) => {
           setName(event.target.value);
@@ -64,7 +64,7 @@ function BossForm({ subjects, onStart }) {
         ))}
       </select>
 
-      <div className="boss-row">
+      <div className="goal-row">
         <input
           className="field is-date"
           type="date"
@@ -89,7 +89,7 @@ function BossForm({ subjects, onStart }) {
         <span className="unit">時間</span>
 
         <button type="submit" className="add-button">
-          挑戦
+          追加
         </button>
       </div>
 
@@ -98,51 +98,54 @@ function BossForm({ subjects, onStart }) {
   );
 }
 
-// ボス1体ぶんの戦況
-function BossEntry({ boss, subjects, records, onClear }) {
-  const status = bossStatus(boss, records);
-  const subject = subjects.find((item) => item.id === boss.subjectId);
+// 目標1つぶんの状況
+function GoalEntry({ goal, subjects, records, onDelete }) {
+  const status = goalStatus(goal, records);
+  const subject = subjects.find((item) => item.id === goal.subjectId);
   const targetLabel =
-    boss.subjectId === "" ? "すべての科目" : (subject?.name ?? "削除された科目");
+    goal.subjectId === "" ? "すべての科目" : (subject?.name ?? "削除された科目");
 
   return (
-    <li className={`boss-entry is-${status.state}`}>
-      <div className="boss-head">
-        <p className="boss-name">{boss.name}</p>
-        <button type="button" className="delete-button" onClick={() => onClear(boss.id)}>
-          解除
+    <li className={`goal-entry is-${status.state}`}>
+      <div className="goal-head">
+        <p className="goal-name">{goal.name}</p>
+        <button type="button" className="delete-button" onClick={() => onDelete(goal.id)}>
+          削除
         </button>
       </div>
 
-      <p className="boss-meta">
-        {boss.deadline} まで ／ {targetLabel} ／ 目標 {boss.targetHours}時間
+      <p className="goal-meta">
+        {goal.deadline} まで ／ {targetLabel} ／ 目標 {goal.targetHours}時間
       </p>
 
-      {/* HPバー。削ったぶんだけ右から減っていく */}
-      <div className="hp-track">
-        <div className="hp-fill" style={{ width: `${(1 - status.ratio) * 100}%` }} />
+      {/* 勉強したぶんだけ左から伸びる。タイトル画面の達成度と同じ向きにそろえてある */}
+      <div className="goal-track">
+        <div
+          className={`goal-fill is-${status.state}`}
+          style={{ width: `${status.ratio * 100}%` }}
+        />
       </div>
 
-      <p className="hp-text">
-        残りHP <strong>{formatDuration(status.remaining)}</strong>
-        <span className="hp-damage">与ダメージ {formatDuration(status.damage)}</span>
+      <p className="goal-text">
+        達成 <strong>{formatDuration(status.done)}</strong>
+        <span className="goal-remaining">残り {formatDuration(status.remaining)}</span>
       </p>
 
-      {status.state === "fighting" && (
-        <div className="boss-status">
-          <span className="boss-days">残り {status.daysLeft}日</span>
-          <span className="boss-pace">
+      {status.state === "active" && (
+        <div className="goal-status">
+          <span className="goal-days">残り {status.daysLeft}日</span>
+          <span className="goal-pace">
             1日あたり {formatDuration(status.needPerDay)} 必要
           </span>
         </div>
       )}
 
-      {status.state === "defeated" && (
-        <p className="boss-result is-win">撃破！ 目標を達成した</p>
+      {status.state === "done" && (
+        <p className="goal-result is-win">達成！ 目標の時間に届いた</p>
       )}
 
       {status.state === "expired" && (
-        <p className="boss-result is-lose">
+        <p className="goal-result is-lose">
           期限切れ… あと {formatDuration(status.remaining)} 足りなかった
         </p>
       )}
@@ -150,60 +153,60 @@ function BossEntry({ boss, subjects, records, onClear }) {
   );
 }
 
-// ボス戦。期限までに目標時間ぶん勉強すると撃破できる。何体でも同時に挑める
-function BossBattle({ bosses, subjects, records, onStart, onClear }) {
-  // 挑戦中がいるときはフォームをたたんでおく。戦況を先に見せたいため
+// 目標。期限までに決めた時間ぶん勉強すると達成になる。いくつでも同時に持てる
+function GoalList({ goals, subjects, records, onAdd, onDelete }) {
+  // すでに目標があるときはフォームをたたんでおく。状況を先に見せたいため
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleStart = (config) => {
-    onStart(config);
+  const handleAdd = (config) => {
+    onAdd(config);
     setIsAdding(false);
   };
 
-  if (bosses.length === 0) {
+  if (goals.length === 0) {
     return (
       <section className="card">
         <p className="card-title">
           <Icon name="target" />
-          ボス戦
+          目標
         </p>
-        <p className="boss-lead">
-          試験日と目標時間を決めると、挑戦した日から勉強したぶんだけHPを削れる。
-          期限や科目を分けて、何体でも同時に挑める。
+        <p className="goal-lead">
+          期限と時間を決めると、決めた日からの勉強が積み上がっていく。
+          期限や科目を分けて、いくつでも同時に持てる。
         </p>
-        <BossForm subjects={subjects} onStart={handleStart} />
+        <GoalForm subjects={subjects} onAdd={handleAdd} />
       </section>
     );
   }
 
-  // 期限が近い順に並べる。決着したものは下にまとめる
-  const sorted = [...bosses].sort((a, b) => (a.deadline < b.deadline ? -1 : 1));
+  // 期限が近い順に並べる
+  const sorted = [...goals].sort((a, b) => (a.deadline < b.deadline ? -1 : 1));
 
   return (
     <section className="card">
-      <div className="boss-card-head">
+      <div className="goal-card-head">
         <p className="card-title">
           <Icon name="target" />
-          ボス戦
+          目標
         </p>
-        <span className="boss-count">{bosses.length}体</span>
+        <span className="goal-count">{goals.length}件</span>
       </div>
 
-      <ul className="boss-list">
-        {sorted.map((boss) => (
-          <BossEntry
-            key={boss.id}
-            boss={boss}
+      <ul className="goal-list">
+        {sorted.map((goal) => (
+          <GoalEntry
+            key={goal.id}
+            goal={goal}
             subjects={subjects}
             records={records}
-            onClear={onClear}
+            onDelete={onDelete}
           />
         ))}
       </ul>
 
       {isAdding ? (
-        <div className="boss-add">
-          <BossForm subjects={subjects} onStart={handleStart} />
+        <div className="goal-add">
+          <GoalForm subjects={subjects} onAdd={handleAdd} />
           <button
             type="button"
             className="delete-button is-wide"
@@ -218,11 +221,11 @@ function BossBattle({ bosses, subjects, records, onStart, onClear }) {
           className="delete-button is-wide"
           onClick={() => setIsAdding(true)}
         >
-          ＋ ボスを追加
+          ＋ 目標を追加
         </button>
       )}
     </section>
   );
 }
 
-export default BossBattle;
+export default GoalList;

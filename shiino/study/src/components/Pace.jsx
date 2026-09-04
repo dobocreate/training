@@ -1,7 +1,7 @@
 import Icon from "./Icon";
 import { formatDuration, toDateKey, startOfWeekKey, recentDateKeys } from "../lib/time";
 
-// 計測とボス戦の画面に添える、今のペース。
+// 計測と目標の画面に添える、今のペース。
 // 「今日はどれだけやったか」「この調子で足りるか」をその場で確かめられるようにする
 function Pace({ records }) {
   const todayKey = toDateKey(new Date());

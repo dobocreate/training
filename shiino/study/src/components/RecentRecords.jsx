@@ -21,7 +21,7 @@ function RecentRecords({ subjects, records, newestId, onDelete }) {
       {recent.length === 0 ? (
         <p className="empty-message">まだ記録がありません</p>
       ) : (
-        <ul className="record-list">
+        <ul className="record-list is-recent">
           {recent.map((record) => {
             const subject = subjects.find((item) => item.id === record.subjectId);
             return (
@@ -33,14 +33,23 @@ function RecentRecords({ subjects, records, newestId, onDelete }) {
                   className="dot"
                   style={{ backgroundColor: subject?.color ?? "#64748b" }}
                 />
-                <span className="record-subject">
-                  {subject?.name ?? "（削除された科目）"}
-                </span>
                 <span className="record-time">
                   {formatDateLabel(toDateKey(record.startedAt))}{" "}
                   {formatTimeLabel(record.startedAt)}
                 </span>
-                <span className="record-duration">{formatDuration(record.seconds)}</span>
+                <span className="record-subject">
+                  {subject?.name ?? "（削除された科目）"}
+                </span>
+
+                <span className="record-times">
+                  {record.breakSeconds > 0 && (
+                    <span className="record-break">
+                      休憩 {formatDuration(record.breakSeconds)}
+                    </span>
+                  )}
+                  <span className="record-duration">{formatDuration(record.seconds)}</span>
+                </span>
+
                 <button
                   type="button"
                   className="delete-button"

@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { milestoneProgress } from "../lib/milestones";
-import { bossProgress } from "../lib/boss";
+import { goalProgress } from "../lib/goals";
+import { studyStreak } from "../lib/streak";
+import WeekChart from "./WeekChart";
 import { formatClock, formatDuration, toDateKey, startOfWeekKey } from "../lib/time";
 
 // 最初に出るタイトル画面。STARTを押すと本編に入る
-function TitleScreen({ records, bosses, subjects, running, elapsedSeconds, onStart }) {
+function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStart }) {
   // Enter / Space でも始められるようにする
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -32,7 +34,8 @@ function TitleScreen({ records, bosses, subjects, running, elapsedSeconds, onSta
 
   const totalSeconds = records.reduce((sum, record) => sum + record.seconds, 0);
   const progress = milestoneProgress(totalSeconds);
-  const bossNow = bossProgress(bosses, records);
+  const goalNow = goalProgress(goals, records);
+  const streak = studyStreak(records);
   const isPaused = Boolean(running) && running.since === null;
 
   const runningSubject = running
@@ -67,6 +70,19 @@ function TitleScreen({ records, bosses, subjects, running, elapsedSeconds, onSta
             <span className="stat-note">今週 {formatDuration(weekSeconds)}</span>
           </dd>
         </div>
+        {/* 0日でも札は出す（列を欠けさせないため）。
+            今日まだのときだけ補足で伝えて、途切れかけていることを分かるようにする */}
+        <div className="title-stat">
+          <dt>連続日数</dt>
+          <dd>
+            {streak.days > 0 ? `${streak.days}日` : "なし"}
+            {streak.days > 0 && (
+              <span className={streak.hasToday ? "stat-note" : "stat-note is-pending"}>
+                {streak.hasToday ? "今日ぶんは記録ずみ" : "今日はまだ"}
+              </span>
+            )}
+          </dd>
+        </div>
         <div className="title-stat">
           <dt>到達段階</dt>
           <dd>
@@ -85,23 +101,23 @@ function TitleScreen({ records, bosses, subjects, running, elapsedSeconds, onSta
           </dd>
         </div>
         <div className="title-stat">
-          <dt>ボス戦の達成度</dt>
+          <dt>目標の達成度</dt>
           <dd>
-            {bossNow ? (
+            {goalNow ? (
               <>
-                {bossNow.label}
+                {goalNow.label}
                 <span className="stat-track">
                   <span
                     className={
-                      bossNow.isAlert ? "stat-fill is-alert" : "stat-fill"
+                      goalNow.isAlert ? "stat-fill is-alert" : "stat-fill"
                     }
-                    style={{ width: `${bossNow.percent}%` }}
+                    style={{ width: `${goalNow.percent}%` }}
                   />
                 </span>
                 <span className="stat-note">
-                  {bossNow.others > 0
-                    ? `${bossNow.name} ほか${bossNow.others}件`
-                    : bossNow.name}
+                  {goalNow.others > 0
+                    ? `${goalNow.name} ほか${goalNow.others}件`
+                    : goalNow.name}
                 </span>
               </>
             ) : (
@@ -110,6 +126,11 @@ function TitleScreen({ records, bosses, subjects, running, elapsedSeconds, onSta
           </dd>
         </div>
       </dl>
+
+      {/* 数字ばかりなので、形で「どの日にやったか」が分かるものを1つ置く */}
+      <div className="title-week">
+        <WeekChart records={records} compact />
+      </div>
 
       <button type="button" className="start-button" onClick={onStart}>
         START

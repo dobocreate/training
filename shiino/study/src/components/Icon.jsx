@@ -9,7 +9,7 @@ const SHAPES = {
       <path d="M8 9.2 V6.4 M6.4 2.2 H9.6 M8 2.2 V4" />
     </>
   ),
-  // 的（ボス戦の目標）
+  // 的（目標）
   target: (
     <>
       <circle cx="8" cy="8" r="6" />

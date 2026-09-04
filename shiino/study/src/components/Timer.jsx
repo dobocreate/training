@@ -7,6 +7,7 @@ function Timer({
   subjects,
   running,
   elapsedSeconds,
+  breakSeconds,
   selectedId,
   onSelect,
   onStart,
@@ -55,6 +56,13 @@ function Timer({
             {formatClock(elapsedSeconds)}
           </p>
           <p className="timer-subject">{stateText()}</p>
+
+          {/* 一時停止中はここが動く。再開後も、その回にとった休憩の合計を出しておく */}
+          {running && breakSeconds > 0 && (
+            <p className={isPaused ? "timer-break is-running" : "timer-break"}>
+              休憩 {formatClock(breakSeconds)}
+            </p>
+          )}
         </div>
 
         {running ? (

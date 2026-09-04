@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import Icon from "./Icon";
 import { FEATURES } from "../lib/features";
-import { bossProgress } from "../lib/boss";
+import { goalProgress } from "../lib/goals";
 import { formatClock } from "../lib/time";
 
 // STARTのあとに出るメニュー。アイコンを押すと、その機能の画面に移る
-function Menu({ running, elapsedSeconds, bosses, records, onSelect }) {
-  const bossNow = bossProgress(bosses, records);
+function Menu({ running, elapsedSeconds, goals, records, onSelect }) {
+  const goalNow = goalProgress(goals, records);
   const isPaused = Boolean(running) && running.since === null;
 
   // タイトルがEnter、機能の画面がEscなので、ここも数字キーで選べるようにする
@@ -59,14 +59,14 @@ function Menu({ running, elapsedSeconds, bosses, records, onSelect }) {
                 </span>
               )}
 
-              {/* 挑戦中なら、開かなくても達成度が分かるようにする */}
-              {feature.key === "boss" && bossNow && (
+              {/* 目標があれば、開かなくても達成度が分かるようにする */}
+              {feature.key === "goal" && goalNow && (
                 <span
                   className={
-                    bossNow.isAlert ? "menu-badge is-alert" : "menu-badge"
+                    goalNow.isAlert ? "menu-badge is-alert" : "menu-badge"
                   }
                 >
-                  {bossNow.label}
+                  {goalNow.label}
                 </span>
               )}
             </button>

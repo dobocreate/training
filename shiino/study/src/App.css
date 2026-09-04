@@ -333,7 +333,7 @@
   color: #fff;
 }
 
-/* 消す操作ではない、控えめな全幅ボタン（ボスを追加・ファイルを読み込む） */
+/* 消す操作ではない、控えめな全幅ボタン（目標を追加するなど） */
 .delete-button.is-wide {
   width: 100%;
   padding: 9px;
@@ -417,6 +417,19 @@
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: 1px;
+}
+
+/* 休憩の時間。一時停止中はこちらが動いているので、色を戻して目立たせる */
+.timer-break {
+  margin: 3px 0 0;
+  font-family: ui-monospace, "Consolas", monospace;
+  font-size: 12px;
+  color: var(--border-strong);
+}
+
+.timer-break.is-running {
+  color: var(--ink-dim);
+  font-weight: 700;
 }
 
 /* 一時停止中は数字が動かないので、止まっていることを色でも示す */
@@ -554,6 +567,13 @@
   font-weight: 700;
 }
 
+.summary-break {
+  margin-left: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+
 .subject-bars {
   list-style: none;
   margin: 0 0 18px;
@@ -684,6 +704,11 @@
   white-space: nowrap;
 }
 
+/* タイトル画面では数字を省き、形だけ見せる */
+.week-chart.is-compact .week-track {
+  height: 56px;
+}
+
 /* ===== 記録一覧 ===== */
 .record-scroll {
   max-height: 340px;
@@ -716,11 +741,26 @@
 .record-row {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 8px 10px;
+  gap: 10px;
+  padding: 9px 12px;
   margin-bottom: 6px;
   border-radius: 6px;
   background: var(--bg);
+}
+
+/* 時刻は左にそろえる。上から時系列で追えるようにするため。
+   等幅にしておくと、けたが変わっても縦の線がずれない */
+.record-time {
+  flex-shrink: 0;
+  min-width: 38px;
+  font-family: ui-monospace, "Consolas", monospace;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+/* 「追加した記録」は日付も出すので、そのぶん広く取る */
+.record-list.is-recent .record-time {
+  min-width: 88px;
 }
 
 .record-subject {
@@ -730,6 +770,73 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 時間は右にそろえる。枠の幅を決めておくことで、
+   休憩があってもなくても勉強時間が同じ位置に来る */
+.record-times {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 150px;
+}
+
+/* 休憩は勉強時間より控えめに出す */
+.record-break {
+  font-size: 11px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.record-duration {
+  min-width: 68px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.record-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+}
+
+/* 狭い画面では、幅を固定すると科目名が潰れてしまう。
+   列はそろわなくなるが、名前が読めるほうを優先する */
+@media (max-width: 560px) {
+  .record-list.is-recent .record-time {
+    min-width: 0;
+  }
+
+  .record-times {
+    width: auto;
+  }
+
+  .record-duration {
+    min-width: 0;
+  }
+}
+
+/* 編集は消す操作ではないので、削除ボタンと見た目を分ける */
+.edit-button {
+  flex-shrink: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--ink-dim);
+  background: transparent;
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 /* 編集中の行。フォームを縦に置くので、行の見た目をいったん外す */
@@ -764,17 +871,6 @@
 .record-row.is-new {
   background: var(--accent-soft);
   box-shadow: inset 3px 0 0 var(--accent);
-}
-
-.record-time {
-  font-size: 11px;
-  color: var(--ink-dim);
-  white-space: nowrap;
-}
-
-.record-duration {
-  font-size: 13px;
-  font-weight: 700;
 }
 
 /* ===== 科目の管理 ===== */
@@ -947,42 +1043,42 @@
   opacity: 0.75;
 }
 
-/* ===== ボス戦 ===== */
-.boss-lead {
+/* ===== 目標 ===== */
+.goal-lead {
   margin: 0 0 12px;
   font-size: 12px;
   color: var(--ink-dim);
 }
 
-.boss-form {
+.goal-form {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.boss-row {
+.goal-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
 
-.boss-row .is-date {
+.goal-row .is-date {
   flex: 1;
 }
 
-.boss-head {
+.goal-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
 }
 
-.boss-head .card-title {
+.goal-head .card-title {
   margin: 0;
 }
 
-.boss-card-head {
+.goal-card-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -990,17 +1086,17 @@
   margin-bottom: 14px;
 }
 
-.boss-card-head .card-title {
+.goal-card-head .card-title {
   margin: 0;
 }
 
-.boss-count {
+.goal-count {
   font-size: 12px;
   color: var(--ink-dim);
 }
 
-/* ボス1体ぶん。複数並ぶので、1体ずつ枠で囲って区切る */
-.boss-list {
+/* 目標1つぶん。複数並ぶので、1つずつ枠で囲って区切る */
+.goal-list {
   list-style: none;
   margin: 0 0 12px;
   padding: 0;
@@ -1009,58 +1105,62 @@
   gap: 12px;
 }
 
-.boss-entry {
+.goal-entry {
   padding: 14px;
   border-radius: 8px;
   border: 1px solid var(--border);
 }
 
-.boss-entry.is-defeated {
+.goal-entry.is-done {
   border-color: var(--accent);
 }
 
-.boss-entry.is-expired {
+.goal-entry.is-expired {
   border-color: var(--danger);
 }
 
-.boss-entry .boss-name {
+.goal-entry .goal-name {
   margin: 0;
 }
 
-.boss-add {
+.goal-add {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.boss-name {
+.goal-name {
   margin: 8px 0 2px;
   font-size: 20px;
   font-weight: 700;
 }
 
-.boss-meta {
+.goal-meta {
   margin: 0 0 14px;
   font-size: 11px;
   color: var(--ink-dim);
 }
 
-/* HPバーは右から減るので、残量ぶんの幅を左から描く */
-.hp-track {
+/* 勉強したぶんだけ左から伸びる。タイトル画面の達成度と同じ向き */
+.goal-track {
   height: 12px;
   border-radius: 999px;
   background: var(--bg);
   overflow: hidden;
 }
 
-.hp-fill {
+.goal-fill {
   height: 100%;
   border-radius: 999px;
-  background: var(--danger);
+  background: var(--accent);
   transition: width 0.3s;
 }
 
-.hp-text {
+.goal-fill.is-expired {
+  background: var(--danger);
+}
+
+.goal-text {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -1070,16 +1170,16 @@
   color: var(--ink-dim);
 }
 
-.hp-text strong {
+.goal-text strong {
   font-size: 14px;
   color: var(--ink);
 }
 
-.hp-damage {
+.goal-remaining {
   font-size: 11px;
 }
 
-.boss-status {
+.goal-status {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -1088,15 +1188,15 @@
   font-size: 12px;
 }
 
-.boss-days {
+.goal-days {
   font-weight: 700;
 }
 
-.boss-pace {
+.goal-pace {
   color: var(--ink-dim);
 }
 
-.boss-result {
+.goal-result {
   margin: 14px 0 0;
   padding: 9px;
   border-radius: 6px;
@@ -1105,12 +1205,12 @@
   text-align: center;
 }
 
-.boss-result.is-win {
+.goal-result.is-win {
   color: #fff;
   background: var(--accent);
 }
 
-.boss-result.is-lose {
+.goal-result.is-lose {
   color: var(--danger);
   border: 1px solid var(--danger);
 }
@@ -1172,14 +1272,21 @@
   color: var(--ink);
 }
 
-/* 前回までの状況 */
+/* 前回までの状況。4枚を等幅で割り付け、下の棒グラフと横幅をそろえる */
 .title-stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  margin: 36px 0 0;
+  width: 100%;
+  max-width: 830px;
+  margin: 32px 0 0;
   padding: 0;
+}
+
+@media (max-width: 720px) {
+  .title-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* 3枚は行数がそろわないことがあるので、中身を上下中央に置いて
@@ -1188,7 +1295,10 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 158px;
+  /* 割り付けはグリッド側でするので、札は枠の幅にそのまま従わせる。
+     border-box にしないと padding が足されて、狭い画面ではみ出す */
+  box-sizing: border-box;
+  min-width: 0;
   padding: 14px 20px;
   border-radius: 10px;
   background: var(--panel);
@@ -1206,7 +1316,7 @@
   font-weight: 700;
 }
 
-/* ボス戦の達成度。数字の下に細い帯を出す */
+/* 目標の達成度。数字の下に細い帯を出す */
 .stat-track {
   display: block;
   height: 5px;
@@ -1227,7 +1337,11 @@
   background: var(--danger);
 }
 
-/* ボスの名前。長くても札の幅を押し広げないように省略する */
+/* 目標の名前。長くても札の幅を押し広げないように省略する */
+.stat-note.is-pending {
+  color: var(--accent);
+}
+
 .stat-note {
   display: block;
   margin-top: 6px;
@@ -1237,6 +1351,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* 直近7日。カード列と同じ幅にそろえる */
+.title-week {
+  width: 100%;
+  max-width: 830px;
+  margin-top: 12px;
+  padding: 14px 18px 12px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
 }
 
 .start-button {

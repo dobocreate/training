@@ -154,27 +154,41 @@ function RecordList({ subjects, records, onDelete, onUpdate }) {
                           className="dot"
                           style={{ backgroundColor: subject?.color ?? "#64748b" }}
                         />
+                        <span className="record-time">{formatTimeLabel(record.startedAt)}</span>
                         <span className="record-subject">
                           {subject?.name ?? "（削除された科目）"}
                         </span>
-                        <span className="record-time">{formatTimeLabel(record.startedAt)}</span>
-                        <span className="record-duration">{formatDuration(record.seconds)}</span>
-                        <button
-                          type="button"
-                          className="delete-button"
-                          onClick={() => setEditingId(record.id)}
-                          aria-label="この記録を編集"
-                        >
-                          編集
-                        </button>
-                        <button
-                          type="button"
-                          className="delete-button"
-                          onClick={() => onDelete(record.id)}
-                          aria-label="この記録を削除"
-                        >
-                          ✕
-                        </button>
+
+                        {/* 休憩があってもなくても勉強時間の位置がずれないよう、幅を固定した枠に入れる */}
+                        <span className="record-times">
+                          {record.breakSeconds > 0 && (
+                            <span className="record-break">
+                              休憩 {formatDuration(record.breakSeconds)}
+                            </span>
+                          )}
+                          <span className="record-duration">
+                            {formatDuration(record.seconds)}
+                          </span>
+                        </span>
+
+                        <span className="record-actions">
+                          <button
+                            type="button"
+                            className="edit-button"
+                            onClick={() => setEditingId(record.id)}
+                            aria-label="この記録を編集"
+                          >
+                            編集
+                          </button>
+                          <button
+                            type="button"
+                            className="delete-button"
+                            onClick={() => onDelete(record.id)}
+                            aria-label="この記録を削除"
+                          >
+                            ✕
+                          </button>
+                        </span>
                       </li>
                     );
                   })}

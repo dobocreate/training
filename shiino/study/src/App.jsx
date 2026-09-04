@@ -21,14 +21,23 @@ import {
   saveRecords,
   loadRunning,
   saveRunning,
-  loadBosses,
-  saveBosses,
+  loadGoals,
+  saveGoals,
 } from "./lib/storage";
 import "./App.css";
 
 // idは重複しなければよいので、時刻と乱数を組み合わせて作る
 function createId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+// 「その時刻から今まで」の秒数。
+// 端末の時計が巻き戻ってもマイナスにならないようにしておく
+function secondsSince(isoString, nowMs) {
+  return Math.max(
+    0,
+    Math.floor((nowMs - new Date(isoString).getTime()) / 1000),
+  );
 }
 
 // これより長い計測は、止め忘れ（計測したまま閉じた）の可能性があるので確認する
@@ -43,8 +52,8 @@ function App() {
   // since が null のときは一時停止中
   const [running, setRunning] = useState(loadRunning);
 
-  // 挑戦中のボス。何体でも同時に挑める
-  const [bosses, setBosses] = useState(loadBosses);
+  // 決めてある目標。いくつでも同時に持てる
+  const [goals, setGoals] = useState(loadGoals);
 
   // 今どの画面にいるか。"title" → "menu" → 機能のキー（FEATURES）と進む。
   // 開くたびにタイトルから始まるので、保存はしない
@@ -53,7 +62,9 @@ function App() {
   // 直前に足した記録のid。計測・手入力の下で、どれが今足したぶんかを示すのに使う
   const [newestRecordId, setNewestRecordId] = useState(null);
 
-  const [selectedId, setSelectedId] = useState(() => loadSubjects()[0]?.id ?? "");
+  const [selectedId, setSelectedId] = useState(
+    () => loadSubjects()[0]?.id ?? "",
+  );
 
   // 経過時間は「今の時刻 − 開始時刻」で出す。
   // 1秒ごとに数を足していく方式だと、タブが裏に回ったときにずれるため
@@ -73,16 +84,17 @@ function App() {
   }, [running]);
 
   useEffect(() => {
-    saveBosses(bosses);
-  }, [bosses]);
+    saveGoals(goals);
+  }, [goals]);
 
-  // 動いているあいだだけ1秒ごとに現在時刻を更新する（一時停止中は止める）
+  // 計測中は1秒ごとに現在時刻を更新する。
+  // 一時停止中も休憩の時間が進むので、止めずに動かし続ける
   useEffect(() => {
-    if (!running?.since) return undefined;
+    if (!running) return undefined;
 
     const timerId = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timerId);
-  }, [running?.since]);
+  }, [running]);
 
   // 機能の画面では Escape でメニューに戻れるようにする
   useEffect(() => {
@@ -96,12 +108,15 @@ function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [screen]);
 
-  // 確定ぶん（accumulated）に、今動いている区間のぶんを足す
+  // 確定ぶんに、今の区間のぶんを足す。勉強と休憩で同じ数え方をする
   const elapsedSeconds = running
     ? running.accumulated +
-      (running.since
-        ? Math.max(0, Math.floor((now - new Date(running.since).getTime()) / 1000))
-        : 0)
+      (running.since ? secondsSince(running.since, now) : 0)
+    : 0;
+
+  const breakSeconds = running
+    ? running.breakAccumulated +
+      (running.pausedAt ? secondsSince(running.pausedAt, now) : 0)
     : 0;
 
   // 記録の追加口はここ1か所にまとめる。
@@ -117,19 +132,38 @@ function App() {
     // 表示が1秒遅れないように、開始と同時に基準の時刻もそろえる
     const at = new Date().toISOString();
     setNow(Date.now());
-    setRunning({ subjectId: selectedId, startedAt: at, accumulated: 0, since: at });
+    setRunning({
+      subjectId: selectedId,
+      startedAt: at,
+      accumulated: 0,
+      since: at,
+      breakAccumulated: 0,
+      pausedAt: null,
+    });
   };
 
-  // 一時停止。ここまでのぶんを accumulated に畳んで、区間を閉じる
+  // 一時停止。勉強ぶんを accumulated に畳んで閉じ、休憩の計測をはじめる
   const pauseTimer = () => {
     if (!running?.since) return;
-    setRunning({ ...running, accumulated: elapsedSeconds, since: null });
+    setNow(Date.now());
+    setRunning({
+      ...running,
+      accumulated: elapsedSeconds,
+      since: null,
+      pausedAt: new Date().toISOString(),
+    });
   };
 
+  // 再開。休憩ぶんを breakAccumulated に畳んで閉じ、勉強の計測に戻す
   const resumeTimer = () => {
     if (!running || running.since) return;
     setNow(Date.now());
-    setRunning({ ...running, since: new Date().toISOString() });
+    setRunning({
+      ...running,
+      since: new Date().toISOString(),
+      breakAccumulated: breakSeconds,
+      pausedAt: null,
+    });
   };
 
   const stopTimer = () => {
@@ -156,6 +190,8 @@ function App() {
         id: createId(),
         subjectId: running.subjectId,
         seconds: seconds,
+        // 一時停止していたぶん。集計には入れず、記録として残すだけ
+        breakSeconds: breakSeconds,
         startedAt: running.startedAt,
       });
     }
@@ -166,15 +202,25 @@ function App() {
   const addManualRecord = ({ subjectId, seconds, dateKey }) => {
     const [y, m, d] = dateKey.split("-").map(Number);
     const nowDate = new Date();
-    // 秒まで入れておく。分で切り捨てると、直前に設定したボスより古い記録に
-    // なってしまい、ダメージとして数えられなくなる
+    // 秒まで入れておく。分で切り捨てると、直前に決めた目標より古い記録に
+    // なってしまい、目標のぶんとして数えられなくなる
     const startedAt = new Date(
-      y, m - 1, d,
-      nowDate.getHours(), nowDate.getMinutes(),
-      nowDate.getSeconds(), nowDate.getMilliseconds(),
+      y,
+      m - 1,
+      d,
+      nowDate.getHours(),
+      nowDate.getMinutes(),
+      nowDate.getSeconds(),
+      nowDate.getMilliseconds(),
     ).toISOString();
 
-    addRecord({ id: createId(), subjectId, seconds, startedAt });
+    addRecord({
+      id: createId(),
+      subjectId,
+      seconds,
+      breakSeconds: 0,
+      startedAt,
+    });
   };
 
   // 記録の修正。日付だけ差し替え、何時に始めたかは元のまま残す
@@ -186,8 +232,13 @@ function App() {
         const old = new Date(record.startedAt);
         const [y, m, d] = dateKey.split("-").map(Number);
         const startedAt = new Date(
-          y, m - 1, d,
-          old.getHours(), old.getMinutes(), old.getSeconds(), old.getMilliseconds(),
+          y,
+          m - 1,
+          d,
+          old.getHours(),
+          old.getMinutes(),
+          old.getSeconds(),
+          old.getMilliseconds(),
         ).toISOString();
 
         return { ...record, subjectId, seconds, startedAt };
@@ -205,18 +256,18 @@ function App() {
     if (!selectedId) setSelectedId(subject.id);
   };
 
-  // ボスに挑む。挑戦を始めた時刻を覚えておき、それ以降の記録だけをダメージにする
-  const startBoss = (config) => {
-    setBosses((prev) => [
+  // 目標を決める。決めた時刻を覚えておき、それ以降の記録だけを数える
+  const addGoal = (config) => {
+    setGoals((prev) => [
       ...prev,
       { ...config, id: createId(), createdAt: new Date().toISOString() },
     ]);
   };
 
-  const clearBoss = (id) => {
-    const boss = bosses.find((item) => item.id === id);
-    if (!window.confirm(`「${boss.name}」のボス戦を解除します。`)) return;
-    setBosses((prev) => prev.filter((item) => item.id !== id));
+  // 目標は名前・期限・時間を決め直せばすぐ作れるので、確認は挟まない
+  // （記録の削除に確認が無いのと同じ扱い）
+  const deleteGoal = (id) => {
+    setGoals((prev) => prev.filter((item) => item.id !== id));
   };
 
   // 科目を消しても記録は残す。過去に積み上げた時間まで失われないようにするため。
@@ -228,7 +279,9 @@ function App() {
 
     const lines = [`「${subject.name}」を削除します。`];
     if (count > 0) {
-      lines.push(`記録${count}件はそのまま残ります（「（削除された科目）」と表示されます）。`);
+      lines.push(
+        `記録${count}件はそのまま残ります（「（削除された科目）」と表示されます）。`,
+      );
     }
     if (isRunningSubject) {
       lines.push("計測中のぶんは、記録してから停止します。");
@@ -247,7 +300,7 @@ function App() {
     return (
       <TitleScreen
         records={records}
-        bosses={bosses}
+        goals={goals}
         subjects={subjects}
         running={running}
         elapsedSeconds={elapsedSeconds}
@@ -263,7 +316,7 @@ function App() {
       <Menu
         running={running}
         elapsedSeconds={elapsedSeconds}
-        bosses={bosses}
+        goals={goals}
         records={records}
         onSelect={setScreen}
       />
@@ -294,6 +347,7 @@ function App() {
               subjects={subjects}
               running={running}
               elapsedSeconds={elapsedSeconds}
+              breakSeconds={breakSeconds}
               selectedId={selectedId}
               onSelect={setSelectedId}
               onStart={startTimer}
@@ -342,14 +396,14 @@ function App() {
           </>
         )}
 
-        {feature.key === "boss" && (
+        {feature.key === "goal" && (
           <>
-            <BossBattle
-              bosses={bosses}
+            <GoalList
+              goals={goals}
               subjects={subjects}
               records={records}
-              onStart={startBoss}
-              onClear={clearBoss}
+              onAdd={addGoal}
+              onDelete={deleteGoal}
             />
             <Pace records={records} />
             <RecentRecords
