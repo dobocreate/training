@@ -134,22 +134,6 @@
   }
 }
 
-/* 数字キーの番号。バッジと重ならないよう左上に置く */
-.menu-key {
-  position: absolute;
-  top: 10px;
-  left: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--border-strong);
-}
-
-.menu-hint {
-  margin: 0;
-  font-size: 11px;
-  color: var(--ink-dim);
-}
-
 .menu-badge {
   position: absolute;
   top: 10px;

@@ -338,7 +338,7 @@ function App() {
       </header>
 
       {/* そのページの機能を先頭に置き、続けて「そこで一緒に見たくなるもの」をそえる。
-          ただし集計そのものを見せるカード（合計・マイルストーン）は、
+          ただし一覧・集計を見せるカード（記録・合計・マイルストーン）は、
           どこが本家か分からなくなるので、それぞれの画面にしか置かない */}
       <div className="screen-body">
         {feature.key === "timer" && (
@@ -382,17 +382,7 @@ function App() {
           </>
         )}
 
-        {feature.key === "milestones" && (
-          <>
-            <Milestones records={records} />
-            <RecordList
-              subjects={subjects}
-              records={records}
-              onDelete={deleteRecord}
-              onUpdate={updateRecord}
-            />
-          </>
-        )}
+        {feature.key === "milestones" && <Milestones records={records} />}
 
         {feature.key === "goal" && (
           <>
