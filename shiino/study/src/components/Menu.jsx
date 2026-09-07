@@ -14,7 +14,6 @@ function Menu({ running, elapsedSeconds, goals, records, onSelect }) {
       <div className="menu-panel">
         <header className="menu-header">
           <h1 className="app-title">STUDY LOG</h1>
-          <p className="menu-lead">機能を選んでください</p>
         </header>
 
         <ul className="menu-grid">
