@@ -40,8 +40,31 @@
   gap: 30px;
 }
 
+/* タイトルと項目をまとめて囲む枠。背景を一段明るくして、メニューの範囲がひと目で分かるようにする */
+.menu-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  /* 中のタイル一覧が今までどおり752pxで1行3つに並ぶよう、余白と枠線のぶんだけ広げる */
+  max-width: calc(752px + 28px * 2 + 2px * 2);
+  box-sizing: border-box;
+  padding: 36px 28px;
+  border: 2px solid var(--border-strong);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: 0 6px 24px rgba(31, 41, 55, 0.06);
+}
+
 .menu-header {
   text-align: center;
+}
+
+.menu-lead {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--ink-dim);
 }
 
 /* 幅は機能の画面とそろえたまま、1行3つに固定する。
@@ -74,9 +97,9 @@
   width: 100%;
   height: 100%;
   padding: 36px 18px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-strong);
   border-radius: 10px;
-  background: var(--panel);
+  background: var(--bg);
   color: var(--ink);
   font-family: inherit;
   text-align: center;
@@ -111,6 +134,12 @@
    ・低い画面 … 3行が入りきらず、メニューがスクロールしてしまうため
    この大きさなら1行4つに収まる */
 @media (max-width: 560px), (max-height: 700px) {
+  .menu-panel {
+    gap: 20px;
+    padding: 24px 16px;
+    border-radius: 12px;
+  }
+
   .menu-grid li {
     flex: 0 1 176px;
   }
