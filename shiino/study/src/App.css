@@ -2,13 +2,32 @@
    中身が少ないページでも下だけ大きく空かないよう、画面の高さいっぱいを取って
    本文を上下中央に置く（中身が画面より高いときは、そのまま下に伸びる） */
 .app {
-  width: 752px;
+  /* 中身は752px。それを囲む枠の余白と線のぶんだけ広げる（メニューの枠と同じ幅） */
+  width: calc(752px + 28px * 2 + 2px * 2);
   max-width: 100%;
   min-height: calc(100vh - 64px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+/* 機能の画面を囲む枠。メニューの枠（.menu-panel）と同じ見た目にそろえる */
+.screen-panel {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 28px 28px 36px;
+  border: 2px solid var(--frame);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: 0 6px 24px rgba(31, 41, 55, 0.06);
+}
+
+@media (max-width: 560px) {
+  .screen-panel {
+    padding: 16px 12px 24px;
+    border-radius: 12px;
+  }
 }
 
 /* ===== ヘッダー ===== */
@@ -51,7 +70,7 @@
   max-width: calc(752px + 28px * 2 + 2px * 2);
   box-sizing: border-box;
   padding: 36px 28px;
-  border: 2px solid var(--border-strong);
+  border: 2px solid var(--frame);
   border-radius: 16px;
   background: var(--panel);
   box-shadow: 0 6px 24px rgba(31, 41, 55, 0.06);
@@ -422,7 +441,7 @@
   margin: 3px 0 0;
   font-family: ui-monospace, "Consolas", monospace;
   font-size: 12px;
-  color: var(--border-strong);
+  color: var(--muted);
 }
 
 .timer-break.is-running {
@@ -997,7 +1016,7 @@
   height: 60px;
   padding: 4px;
   border-radius: 50%;
-  background: var(--border);
+  background: var(--muted);
   box-sizing: border-box;
 }
 
@@ -1009,7 +1028,7 @@
   height: 100%;
   border-radius: 50%;
   background: var(--panel);
-  color: var(--border-strong);
+  color: var(--muted);
 }
 
 .trophy-icon {
@@ -1025,7 +1044,7 @@
 .trophy-name {
   font-size: 15px;
   font-weight: 700;
-  color: var(--border-strong);
+  color: var(--muted);
 }
 
 .trophy-caption {
@@ -1060,7 +1079,7 @@
 .trophy.is-current .trophy-badge {
   background: conic-gradient(
     var(--accent) calc(var(--ratio, 0) * 1turn),
-    var(--border) 0
+    var(--muted) 0
   );
 }
 

@@ -1,12 +1,17 @@
 :root {
   --bg: #f4f5f7;
   --panel: #ffffff;
-  --border: #e2e5ea;
-  --border-strong: #cbd2dc;
+  /* 枠線はすべて同じ薄い青にそろえる（画面の外枠・カード・ボタン・入力欄） */
+  --border: #dbe5f8;
+  --border-strong: #dbe5f8;
+  /* 枠線ではなく「薄いグレー」として使う色（未到達の鍵、休憩の文字など） */
+  --muted: #cbd2dc;
   --ink: #1f2937;
   --ink-dim: #6b7280;
   --accent: #2563eb;
   --accent-soft: #eff4ff;
+  /* 画面を囲む外枠。中の枠線と同じ色にして統一感を出す */
+  --frame: #dbe5f8;
   --danger: #dc2626;
 }
 

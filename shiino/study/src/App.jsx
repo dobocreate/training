@@ -325,94 +325,91 @@ function App() {
 
   return (
     <div className="app">
-      <header className="screen-header">
-        <button
-          type="button"
-          className="back-button"
-          onClick={() => setScreen("menu")}
-        >
-          <Icon name={feature.icon} />
-          メニューに戻る
-        </button>
-        <h1 className="wordmark">STUDY LOG</h1>
-      </header>
+      {/* メニューと同じく、画面全体をひとつの枠で囲む */}
+      <div className="screen-panel">
+        <header className="screen-header">
+          <button
+            type="button"
+            className="back-button"
+            onClick={() => setScreen("menu")}
+          >
+            <Icon name={feature.icon} />
+            メニューに戻る
+          </button>
+          <h1 className="wordmark">STUDY LOG</h1>
+        </header>
 
-      {/* そのページの機能を先頭に置き、続けて「そこで一緒に見たくなるもの」をそえる。
-          ただし一覧・集計を見せるカード（記録・合計・マイルストーン）は、
-          どこが本家か分からなくなるので、それぞれの画面にしか置かない */}
-      <div className="screen-body">
-        {feature.key === "timer" && (
-          <>
-            <Timer
-              subjects={subjects}
-              running={running}
-              elapsedSeconds={elapsedSeconds}
-              breakSeconds={breakSeconds}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-              onStart={startTimer}
-              onPause={pauseTimer}
-              onResume={resumeTimer}
-              onStop={stopTimer}
-            />
-            <Pace records={records} />
-            <RecentRecords
-              subjects={subjects}
-              records={records}
-              newestId={newestRecordId}
-              onDelete={deleteRecord}
-            />
-          </>
-        )}
+        {/* そのページの機能を先頭に置き、続けて「そこで一緒に見たくなるもの」をそえる。
+            ただし一覧・集計を見せるカード（記録・合計・トロフィー）は、
+            どこが本家か分からなくなるので、それぞれの画面にしか置かない */}
+        <div className="screen-body">
+          {feature.key === "timer" && (
+            <>
+              <Timer
+                subjects={subjects}
+                running={running}
+                elapsedSeconds={elapsedSeconds}
+                breakSeconds={breakSeconds}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                onStart={startTimer}
+                onPause={pauseTimer}
+                onResume={resumeTimer}
+                onStop={stopTimer}
+              />
+              <Pace records={records} />
+              <RecentRecords
+                subjects={subjects}
+                records={records}
+                newestId={newestRecordId}
+                onDelete={deleteRecord}
+              />
+            </>
+          )}
 
-        {feature.key === "summary" && <Summary subjects={subjects} records={records} />}
+          {feature.key === "summary" && <Summary subjects={subjects} records={records} />}
 
-        {/* 一覧が主役なので先に置き、そのすぐ下で足せるようにする。
-            足したぶんは一覧の中で色が付き、見える位置まで自動でスクロールする */}
-        {feature.key === "records" && (
-          <>
-            <RecordList
-              subjects={subjects}
-              records={records}
-              newestId={newestRecordId}
-              onDelete={deleteRecord}
-              onUpdate={updateRecord}
-            />
-            <ManualEntry subjects={subjects} onAdd={addManualRecord} />
-          </>
-        )}
+          {/* 一覧が主役なので先に置き、そのすぐ下で足せるようにする。
+              足したぶんは一覧の中で色が付き、見える位置まで自動でスクロールする */}
+          {feature.key === "records" && (
+            <>
+              <RecordList
+                subjects={subjects}
+                records={records}
+                newestId={newestRecordId}
+                onDelete={deleteRecord}
+                onUpdate={updateRecord}
+              />
+              <ManualEntry subjects={subjects} onAdd={addManualRecord} />
+            </>
+          )}
 
-        {feature.key === "milestones" && <Milestones records={records} />}
+          {feature.key === "milestones" && <Milestones records={records} />}
 
-        {feature.key === "goal" && (
-          <>
-            <GoalList
-              goals={goals}
-              subjects={subjects}
-              records={records}
-              onAdd={addGoal}
-              onDelete={deleteGoal}
-            />
-            <Pace records={records} />
-            <RecentRecords
-              subjects={subjects}
-              records={records}
-              newestId={newestRecordId}
-              onDelete={deleteRecord}
-            />
-          </>
-        )}
+          {feature.key === "goal" && (
+            <>
+              <GoalList
+                goals={goals}
+                subjects={subjects}
+                records={records}
+                onAdd={addGoal}
+                onDelete={deleteGoal}
+              />
+              <Pace records={records} />
+            </>
+          )}
 
-        {feature.key === "subjects" && (
-          <>
-            <SubjectManager
-              subjects={subjects}
-              onAdd={addSubject}
-              onDelete={deleteSubject}
-            />
-            <SubjectTotals subjects={subjects} records={records} />
-          </>
-        )}
+          {feature.key === "subjects" && (
+            <>
+              <SubjectManager
+                subjects={subjects}
+                onAdd={addSubject}
+                onDelete={deleteSubject}
+              />
+              <SubjectTotals subjects={subjects} records={records} />
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
