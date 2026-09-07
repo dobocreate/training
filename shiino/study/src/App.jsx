@@ -13,7 +13,8 @@ import RecentRecords from "./components/RecentRecords";
 import Pace from "./components/Pace";
 import SubjectTotals from "./components/SubjectTotals";
 import { FEATURES } from "./lib/features";
-import { formatDuration } from "./lib/time";
+import { formatDuration, toDateKey } from "./lib/time";
+import { dayLimitError, remainingOnDay } from "./lib/dayLimit";
 import {
   loadSubjects,
   saveSubjects,
@@ -169,7 +170,20 @@ function App() {
   const stopTimer = () => {
     if (!running) return;
 
-    const seconds = elapsedSeconds;
+    let seconds = elapsedSeconds;
+
+    // 1日の合計は24時間まで。超えるぶんは切り詰め、そのことを本人に伝える
+    const remaining = remainingOnDay(records, toDateKey(running.startedAt));
+    if (seconds > remaining) {
+      window.alert(
+        "1日に記録できるのは合計24時間までです。\n" +
+          (remaining > 0
+            ? `この日の残り ${formatDuration(remaining)} ぶんだけ記録します。`
+            : "この日はすでに24時間ぶん記録されているため、今回の計測は記録しません。"),
+      );
+      seconds = remaining;
+    }
+
     // 1秒未満は誤操作とみなして記録しない
     if (seconds >= 1) {
       // 計測したまま閉じていた場合、何時間ぶんも入ってしまう。
@@ -198,8 +212,12 @@ function App() {
     setRunning(null);
   };
 
-  // 手入力ぶんの追加。日付は選べるが、時刻は「今の時刻」を使う
+  // 手入力ぶんの追加。日付は選べるが、時刻は「今の時刻」を使う。
+  // 入れられなかったときは理由の文言を返す（フォームがそのまま表示する）
   const addManualRecord = ({ subjectId, seconds, dateKey }) => {
+    const error = dayLimitError(records, dateKey, seconds);
+    if (error) return error;
+
     const [y, m, d] = dateKey.split("-").map(Number);
     const nowDate = new Date();
     // 秒まで入れておく。分で切り捨てると、直前に決めた目標より古い記録に
@@ -221,10 +239,15 @@ function App() {
       breakSeconds: 0,
       startedAt,
     });
+    return "";
   };
 
-  // 記録の修正。日付だけ差し替え、何時に始めたかは元のまま残す
+  // 記録の修正。日付だけ差し替え、何時に始めたかは元のまま残す。
+  // 直せなかったときは理由の文言を返す
   const updateRecord = (id, { subjectId, seconds, dateKey }) => {
+    const error = dayLimitError(records, dateKey, seconds, id);
+    if (error) return error;
+
     setRecords((prev) =>
       prev.map((record) => {
         if (record.id !== id) return record;
@@ -244,6 +267,7 @@ function App() {
         return { ...record, subjectId, seconds, startedAt };
       }),
     );
+    return "";
   };
 
   const deleteRecord = (id) => {

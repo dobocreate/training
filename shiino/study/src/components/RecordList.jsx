@@ -20,7 +20,9 @@ function EditRow({ record, subjects, onSave, onCancel }) {
       return;
     }
 
-    onSave(record.id, { subjectId: subjectId, seconds: seconds, dateKey: dateKey });
+    // 1日の上限を超えたときなどは理由が返ってくるので、フォームを閉じずに見せる
+    const problem = onSave(record.id, { subjectId: subjectId, seconds: seconds, dateKey: dateKey });
+    if (problem) setError(problem);
   };
 
   return (
@@ -47,7 +49,10 @@ function EditRow({ record, subjects, onSave, onCancel }) {
             className="field is-date"
             type="date"
             value={dateKey}
-            onChange={(event) => setDateKey(event.target.value)}
+            onChange={(event) => {
+              setDateKey(event.target.value);
+              setError("");
+            }}
           />
           <input
             className="field is-number"
@@ -111,8 +116,10 @@ function RecordList({ subjects, records, newestId, onDelete, onUpdate }) {
   const sortedKeys = [...groups.keys()].sort().reverse();
 
   const handleSave = (id, values) => {
-    onUpdate(id, values);
+    const problem = onUpdate(id, values);
+    if (problem) return problem;
     setEditingId(null);
+    return "";
   };
 
   return (

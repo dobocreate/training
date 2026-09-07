@@ -25,7 +25,12 @@ function ManualEntry({ subjects, onAdd }) {
       return;
     }
 
-    onAdd({ subjectId, seconds, dateKey });
+    // 1日の上限を超えたときなどは理由が返ってくるので、入力を残したまま見せる
+    const problem = onAdd({ subjectId, seconds, dateKey });
+    if (problem) {
+      setError(problem);
+      return;
+    }
     setHours("");
     setMinutes("");
     setError("");
@@ -59,7 +64,10 @@ function ManualEntry({ subjects, onAdd }) {
           type="date"
           value={dateKey}
           max={toDateKey(new Date())}
-          onChange={(e) => setDateKey(e.target.value)}
+          onChange={(e) => {
+            setDateKey(e.target.value);
+            setError("");
+          }}
         />
 
         <div className="duration-inputs">
