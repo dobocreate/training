@@ -100,8 +100,8 @@ function recentSecondsBySubject(subjects, records) {
 }
 
 // ===== 嫌い優先 → 全体を上げる、の切り替え =====
-// 平均の自信がこれ以上になったら、好き嫌いで差をつけるのをやめて全体を上げる向きにする。
-// それまでは嫌いな科目を優先して勧める
+// 差があるとき、平均の自信がこれ以上になったら好き嫌いの足し引きをやめて、差だけで勧める。
+// それまでは嫌いな科目を優先する。横並びのときは平均に関係なく嫌いな科目が先
 export const RAISE_ALL_FROM = 80;
 
 export function isRaisingAll(subjects) {
@@ -121,9 +121,6 @@ export function priorityOf(subject, subjects) {
 // ぴったり 0 だと、1回の付け直しですぐ崩れてしまうので少し幅を持たせる
 export const LEVEL_THRESHOLD = 5;
 
-// 横並びになったら、みんなで目指す次のライン。平均にこれを足して、10の倍数に切り上げる
-export const LEVEL_STEP = 10;
-
 export function isLeveled(subjects) {
   return subjects.length > 1 && spread(subjects) <= LEVEL_THRESHOLD;
 }
@@ -134,18 +131,8 @@ export function averageConfidence(subjects) {
   return Math.round(total / subjects.length);
 }
 
-// グラフに引く目標ライン。
-// 平均 80% までは 80% が目標。80% を超えたら、次の 10 の倍数（nextTargetOf）
-export function goalLineOf(subjects) {
-  return isRaisingAll(subjects) ? nextTargetOf(subjects) : RAISE_ALL_FROM;
-}
-
-// 横並びのときの共通の目標ライン。100 を超えたら 100 で止める
-export function nextTargetOf(subjects) {
-  const average = averageConfidence(subjects);
-  const raised = Math.ceil((average + 1) / LEVEL_STEP) * LEVEL_STEP;
-  return Math.min(CONFIDENCE_MAX, raised);
-}
+// 目標。全科目でここを目指す。グラフの目標ラインと文言に使う
+export const GOAL = CONFIDENCE_MAX;
 
 // 科目を「やるべき順」に並べる。
 //
@@ -154,16 +141,14 @@ export function nextTargetOf(subjects) {
 //   2. 同じなら、直近7日でいちばん触っていない科目
 //   3. それでも同じなら、科目一覧の並び順
 //
-// 横並びのとき（底上げモード）
-//   差で選べないので、平均 80% までは嫌いな科目から順に上げていく
+// 横並びのとき
+//   差で選べないので、嫌いな科目から順に上げていく（平均が高くても同じ）
 //   1. ★の少ない（嫌いな）科目
 //   2. 同じなら、直近7日でいちばん触っていない科目
 //   3. それでも同じなら、科目一覧の並び順
-//   平均が 80% 以上なら、好き嫌いは見ずに 2 → 3 の順（まんべんなく全体を上げる）
 export function sortByPriority(subjects, records) {
   const recent = recentSecondsBySubject(subjects, records);
   const leveled = isLeveled(subjects);
-  const raisingAll = isRaisingAll(subjects);
   const scored = subjects.map((subject, index) => ({
     subject: subject,
     priority: priorityOf(subject, subjects),
@@ -173,9 +158,6 @@ export function sortByPriority(subjects, records) {
   }));
 
   scored.sort((a, b) => {
-    if (leveled && raisingAll) {
-      return a.recentSeconds - b.recentSeconds || a.feeling - b.feeling || a.index - b.index;
-    }
     if (leveled) {
       return a.feeling - b.feeling || a.recentSeconds - b.recentSeconds || a.index - b.index;
     }

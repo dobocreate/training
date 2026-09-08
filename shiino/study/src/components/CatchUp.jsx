@@ -11,15 +11,14 @@ import {
   isLeveled,
   isRaisingAll,
   averageConfidence,
-  nextTargetOf,
-  goalLineOf,
-  RAISE_ALL_FROM,
+  GOAL,
 } from "../lib/confidence";
+import { skillsOf, gapNotice, uncheckedOf } from "../lib/skills";
 
 // 計測の画面に添える「追いつき」のカード。
 // いちばん自信のある科目を先頭にして、他の科目がどれだけ後ろにいるかを見せ、
 // 差が大きい科目から順に時間を回すよう勧める
-function CatchUp({ subjects, records, selectedId, running, onSelect }) {
+function CatchUp({ subjects, skills = [], records, selectedId, running, onSelect }) {
   const leader = leaderSubject(subjects);
   const recommended = recommendSubject(subjects, records);
   const gapSpread = spread(subjects);
@@ -27,14 +26,8 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
   // 横並び（底上げモード）。差を埋めるのではなく、共通のラインをみんなで目指す
   const leveled = isLeveled(subjects);
   const average = averageConfidence(subjects);
-  const target = nextTargetOf(subjects);
-  // 平均 80% 以上なら、嫌い優先をやめて全体を上げる。
-  // 「次のライン」を引いて全体を上げるのは、横並びかつ 80% 以上のときだけ。
-  // それまでの横並びは、ラインを引かずに嫌いな科目から上げていく
+  // 平均 80% 以上なら、嫌い優先をやめて全体を上げる
   const raisingAll = isRaisingAll(subjects);
-  const raising = leveled && raisingAll;
-  // 棒に引く目標の線。80% までは 80%、超えたら次の 10 の倍数
-  const goal = goalLineOf(subjects);
 
   // 自信が高い順に並べる（先頭が上）
   const ordered = [...subjects].sort(
@@ -45,12 +38,9 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
     if (subjects.length === 0) return "科目を足すと、ここで自信をくらべられるよ";
     if (subjects.length === 1) return "科目が1つだけだから、まだくらべる相手がいないね";
     if (leveled) {
-      if (average >= 100) return "全科目 100%！もう言うことないよ。好きな科目を好きなだけやろう";
-      if (raisingAll) {
-        return `みんな ${average}% で ${RAISE_ALL_FROM}% 超え！ここからは全体を上げよう。次は全部で ${target}%。まずは最近やってない ${recommended.name} から`;
-      }
+      if (average >= GOAL) return `全科目 ${GOAL}%！もう言うことないよ。好きな科目を好きなだけやろう`;
       const lead = isDisliked(recommended) ? `嫌いな ${recommended.name}` : recommended.name;
-      return `差はもうないよ。みんな ${average}% くらい。${RAISE_ALL_FROM}% までは ${lead} から上げていこう！`;
+      return `横並び！${GOAL}% を目指して、まずは ${lead} から！`;
     }
     const top = normalizeConfidence(leader.confidence);
     const gap = gapOf(recommended, subjects);
@@ -67,14 +57,9 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
           <Icon name="trend" />
           追いつき
         </p>
-        {subjects.length > 1 && (
-          <span className="milestone-total">
-            {raising
-              ? `横並び！次のライン ${target}%`
-              : leveled
-                ? `横並び！嫌いな科目から ${goal}% へ`
-                : `最大の差 ${gapSpread}%・目標 ${goal}%`}
-          </span>
+        {/* 横並びのときは本文で伝えるので、右上には差があるときだけ出す */}
+        {subjects.length > 1 && !leveled && (
+          <span className="milestone-total">最大の差 {gapSpread}%・目標 {GOAL}%</span>
         )}
       </div>
 
@@ -85,7 +70,7 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
           {ordered.map((subject) => {
             const value = normalizeConfidence(subject.confidence);
             // 差があるときは先頭までの残り。横並びのときは目標の線までの残り
-            const gap = leveled ? Math.max(0, goal - value) : gapOf(subject, subjects);
+            const gap = leveled ? Math.max(0, GOAL - value) : gapOf(subject, subjects);
             return (
               <li key={subject.id} className="subject-bar">
                 <span className="subject-name">
@@ -101,6 +86,19 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
                   <ConfidenceBadge value={value} isBehind={gap > 0} />
                 </span>
 
+                {/* やることリストがあれば、何個できたかと、感覚とのずれを添える */}
+                {skillsOf(subject.id, skills).length > 0 && (
+                  <span className="skill-note">
+                    やること {skillsOf(subject.id, skills).filter((k) => k.done).length} /{" "}
+                    {skillsOf(subject.id, skills).length}
+                    {gapNotice({ ...subject, confidence: subject.selfConfidence ?? subject.confidence }, skills) && (
+                      <span className="skill-gap">
+                        ・{gapNotice({ ...subject, confidence: subject.selfConfidence ?? subject.confidence }, skills)}
+                      </span>
+                    )}
+                  </span>
+                )}
+
                 {/* 棒は 100% を全幅にする。
                     目標の線（点線）はいつも引き、差があるときは先頭の位置にも実線を引く */}
                 <span className="bar-track catch-up-track">
@@ -108,9 +106,7 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
                     className="bar-fill"
                     style={{ width: `${value}%`, backgroundColor: subject.color }}
                   />
-                  {goal < 100 && (
-                    <span className="leader-line is-target" style={{ left: `${goal}%` }} />
-                  )}
+                  <span className="leader-line is-target" style={{ left: `${GOAL}%` }} />
                   {!leveled && leader && gap > 0 && (
                     <span
                       className="leader-line"
@@ -124,14 +120,14 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
         </ul>
       )}
 
-      {recommended && subjects.length > 1 && (leveled ? average < 100 : gapSpread > 0) && (
+      {recommended && subjects.length > 1 && (leveled ? average < GOAL : gapSpread > 0) && (
         <div className="catch-up-recommend">
           <span className="catch-up-recommend-label">次はこれ</span>
           <span className="subject-name">
             <span className="dot" style={{ backgroundColor: recommended.color }} />
             {recommended.name}
           </span>
-          <ConfidenceBadge value={recommended.confidence} isBehind={!raising} />
+          <ConfidenceBadge value={recommended.confidence} isBehind />
           {/* 計測中は科目を変えられないので、そのときは押せなくする */}
           <button
             type="button"
@@ -142,6 +138,12 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
           >
             {recommended.id === selectedId ? "選んでるよ" : "これにする"}
           </button>
+          {/* その科目で、まだできていないことを1つ出す。何から手を付けるかが決まる */}
+          {uncheckedOf(recommended.id, skills)[0] && (
+            <span className="next-skill">
+              まずは「{uncheckedOf(recommended.id, skills)[0].text}」から
+            </span>
+          )}
         </div>
       )}
     </section>

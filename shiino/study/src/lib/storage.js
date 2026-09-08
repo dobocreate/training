@@ -1,6 +1,7 @@
 // localStorage への読み書き。壊れた値が入っていても落ちないように、必ず try で包む。
 
 import { normalizeConfidence, normalizeFeeling } from "./confidence.js";
+import { normalizeSelfWeight, DEFAULT_SELF_WEIGHT } from "./skills.js";
 
 const KEYS = {
   subjects: "study.subjects",
@@ -8,6 +9,8 @@ const KEYS = {
   running: "study.running",
   goals: "study.goals",
   confidenceLog: "study.confidenceLog",
+  skills: "study.skills",
+  settings: "study.settings",
   // 「ボス戦」と呼んでいたころ・1件しか持てなかったころのキー。
   // 読み込みのときだけ見る
   oldGoals: "study.bosses",
@@ -143,4 +146,34 @@ export function loadConfidenceLog() {
 
 export function saveConfidenceLog(log) {
   save(KEYS.confidenceLog, log);
+}
+
+// 「やること」チェックリスト。形は { id, subjectId, text, done, doneAt, createdAt }
+export function loadSkills() {
+  const value = load(KEYS.skills, []);
+  return Array.isArray(value)
+    ? value
+        .filter((item) => item && typeof item.subjectId === "string" && typeof item.text === "string")
+        .map((item) => ({
+          ...item,
+          done: Boolean(item.done),
+          doneAt: typeof item.doneAt === "string" ? item.doneAt : null,
+        }))
+    : [];
+}
+
+export function saveSkills(skills) {
+  save(KEYS.skills, skills);
+}
+
+// 設定。今は自己申告の重み（%）だけ
+export function loadSettings() {
+  const value = load(KEYS.settings, null);
+  return {
+    selfWeight: normalizeSelfWeight(value?.selfWeight ?? DEFAULT_SELF_WEIGHT),
+  };
+}
+
+export function saveSettings(settings) {
+  save(KEYS.settings, settings);
 }

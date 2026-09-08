@@ -1384,18 +1384,12 @@
 /* 前回までの状況。4枚を等幅で割り付け、下の棒グラフと横幅をそろえる */
 .title-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   width: 100%;
   max-width: 830px;
   margin: 32px 0 0;
   padding: 0;
-}
-
-@media (max-width: 720px) {
-  .title-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 /* 3枚は行数がそろわないことがあるので、中身を上下中央に置いて
@@ -1503,17 +1497,6 @@
 
 .subject-bars.is-title .bar-track {
   height: 6px;
-}
-
-.title-week {
-  width: 100%;
-  max-width: 830px;
-  margin-top: 12px;
-  padding: 14px 18px 12px;
-  box-sizing: border-box;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--panel);
 }
 
 .start-button {
@@ -1765,10 +1748,11 @@ button.star:hover {
   position: relative;
 }
 
-/* 横並びのときは、先頭の線の代わりに「次のライン」を点線で引く */
+/* 目標（100%）の線。棒の右端に点線で引く。端で切れないよう内側に寄せる */
 .leader-line.is-target {
   background: none;
   border-left: 2px dashed var(--accent);
+  margin-left: -2px;
 }
 
 .leader-line {
@@ -1808,57 +1792,130 @@ button.star:hover {
   font-weight: 600;
 }
 
-/* ===== 自信の推移 ===== */
-.history-list {
+/* ===== やることリスト ===== */
+.skill-group {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.skill-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+}
+
+.skill-count {
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.skill-list {
   list-style: none;
-  margin: 0;
+  margin: 0 0 8px;
   padding: 0;
 }
 
-.history-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+.skill-item {
+  display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 7px 10px;
+  gap: 8px;
+  padding: 6px 10px;
   margin-bottom: 4px;
   border-radius: 6px;
   background: var(--bg);
-  font-size: 13px;
 }
 
-.history-when {
-  font-size: 11px;
-  color: var(--ink-dim);
-  white-space: nowrap;
+/* チェックしてから日が経った項目は薄くして、見直しを促す */
+.skill-item.is-stale {
+  opacity: 0.55;
 }
 
-.history-value {
+.skill-label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  cursor: pointer;
 }
 
-/* 上がったら緑、下がったら赤 */
-.history-diff {
+.skill-label input {
+  accent-color: var(--accent);
+}
+
+.skill-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.skill-text.is-done {
+  color: var(--ink-dim);
+  text-decoration: line-through;
+}
+
+.skill-form {
+  display: flex;
+  gap: 8px;
+}
+
+.skill-form .field {
+  flex: 1;
+}
+
+/* 追いつきカードの、科目ごとの「できること n / m」 */
+.skill-note {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.skill-gap {
+  color: #b45309;
+}
+
+/* 「次はこれ」の下に出す、最初の項目 */
+.next-skill {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+/* 自信チェックの中の「今日できるようになった？」 */
+.prompt-skills {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.prompt-skills-title {
+  margin: 0 0 6px;
   font-size: 12px;
   font-weight: 700;
 }
 
-.history-diff.is-up {
-  color: #059669;
+.prompt-skills .skill-list {
+  margin: 0;
 }
 
-.history-diff.is-down {
-  color: var(--danger);
+/* 自信の計算。感覚 ←→ リスト のスライダー */
+.weight-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-@media (max-width: 560px) {
-  .history-row {
-    grid-template-columns: 1fr auto;
-  }
+.weight-picker .confidence-slider {
+  flex: 1;
+  width: auto;
+}
 
-  .history-when {
-    grid-column: 1 / -1;
-  }
+.weight-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-dim);
 }

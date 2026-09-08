@@ -3,20 +3,21 @@ import Icon from "./components/Icon";
 import TitleScreen from "./components/TitleScreen";
 import Menu from "./components/Menu";
 import Timer from "./components/Timer";
-import GoalList from "./components/GoalList";
 import Summary from "./components/Summary";
-import ManualEntry from "./components/ManualEntry";
-import RecordList from "./components/RecordList";
 import SubjectManager from "./components/SubjectManager";
 import Pace from "./components/Pace";
 import SubjectTotals from "./components/SubjectTotals";
+import RecordList from "./components/RecordList";
 import CatchUp from "./components/CatchUp";
-import ConfidenceHistory from "./components/ConfidenceHistory";
+import ConfidenceSettings from "./components/ConfidenceSettings";
+import ConfidenceEditor from "./components/ConfidenceEditor";
+import SkillList from "./components/SkillList";
 import ConfidencePrompt from "./components/ConfidencePrompt";
 import { FEATURES } from "./lib/features";
 import { formatDuration, toDateKey } from "./lib/time";
 import { dayLimitError, remainingOnDay } from "./lib/dayLimit";
 import { recommendSubject } from "./lib/confidence";
+import { withBlendedConfidence } from "./lib/skills";
 import {
   loadSubjects,
   saveSubjects,
@@ -24,10 +25,12 @@ import {
   saveRecords,
   loadRunning,
   saveRunning,
-  loadGoals,
-  saveGoals,
   loadConfidenceLog,
   saveConfidenceLog,
+  loadSkills,
+  saveSkills,
+  loadSettings,
+  saveSettings,
 } from "./lib/storage";
 import "./App.css";
 
@@ -57,11 +60,14 @@ function App() {
   // since が null のときは一時停止中
   const [running, setRunning] = useState(loadRunning);
 
-  // 決めてある目標。いくつでも同時に持てる
-  const [goals, setGoals] = useState(loadGoals);
-
   // 自信を付け直した履歴。科目には今の値だけを持ち、推移はこちらで追う
   const [confidenceLog, setConfidenceLog] = useState(loadConfidenceLog);
+
+  // 「できること」チェックリスト。チェックした割合が自信に混ざる
+  const [skills, setSkills] = useState(loadSkills);
+
+  // 設定。自己申告とチェック率をどの割合で混ぜるか
+  const [settings, setSettings] = useState(loadSettings);
 
   // 計測を止めた直後に出す「今の自信は？」。{ subjectId, seconds } か、聞くことが無ければ null。
   // 開き直したら聞き直さない（保存しない）
@@ -71,13 +77,14 @@ function App() {
   // 開くたびにタイトルから始まるので、保存はしない
   const [screen, setScreen] = useState("title");
 
-  // 直前に足した記録のid。記録の一覧で、どれが今足したぶんかを示すのに使う
-  const [newestRecordId, setNewestRecordId] = useState(null);
-
   // 計測で選ばれている科目。開いたときは「先頭との差がいちばん大きく、最近やっていない科目」を選んでおく。
   // 進んでいる科目ばかりにならないように、最初の一手を遅れている科目に寄せるため
   const [selectedId, setSelectedId] = useState(
-    () => recommendSubject(loadSubjects(), loadRecords())?.id ?? "",
+    () =>
+      recommendSubject(
+        withBlendedConfidence(loadSubjects(), loadSkills(), loadSettings().selfWeight),
+        loadRecords(),
+      )?.id ?? "",
   );
 
   // 経過時間は「今の時刻 − 開始時刻」で出す。
@@ -98,12 +105,20 @@ function App() {
   }, [running]);
 
   useEffect(() => {
-    saveGoals(goals);
-  }, [goals]);
-
-  useEffect(() => {
     saveConfidenceLog(confidenceLog);
   }, [confidenceLog]);
+
+  useEffect(() => {
+    saveSkills(skills);
+  }, [skills]);
+
+  useEffect(() => {
+    saveSettings(settings);
+  }, [settings]);
+
+  // 表示と優先度の計算には、自己申告とチェック率を混ぜた自信を使う。
+  // 自己申告そのものを扱う入力欄（科目画面・自信チェック）は subjects をそのまま使う
+  const blended = withBlendedConfidence(subjects, skills, settings.selfWeight);
 
   // 計測中は1秒ごとに現在時刻を更新する。
   // 一時停止中も休憩の時間が進むので、止めずに動かし続ける
@@ -137,11 +152,9 @@ function App() {
       (running.pausedAt ? secondsSince(running.pausedAt, now) : 0)
     : 0;
 
-  // 記録の追加口はここ1か所にまとめる。
-  // 計測でも手入力でも同じように「今足したぶん」を示せるよう、idもここで覚える
+  // 記録の追加口はここ1か所にまとめる
   const addRecord = (record) => {
     setRecords((prev) => [...prev, record]);
-    setNewestRecordId(record.id);
   };
 
   const startTimer = () => {
@@ -254,34 +267,60 @@ function App() {
     );
   };
 
-  // 手入力ぶんの追加。日付は選べるが、時刻は「今の時刻」を使う。
-  // 入れられなかったときは理由の文言を返す（フォームがそのまま表示する）
-  const addManualRecord = ({ subjectId, seconds, dateKey }) => {
-    const error = dayLimitError(records, dateKey, seconds);
-    if (error) return error;
+  // できることリスト
+  const addSkill = (subjectId, text) => {
+    setSkills((prev) => [
+      ...prev,
+      {
+        id: createId(),
+        subjectId: subjectId,
+        text: text,
+        done: false,
+        doneAt: null,
+        createdAt: new Date().toISOString(),
+      },
+    ]);
+  };
 
-    const [y, m, d] = dateKey.split("-").map(Number);
-    const nowDate = new Date();
-    // 秒まで入れておく。分で切り捨てると、直前に決めた目標より古い記録に
-    // なってしまい、目標のぶんとして数えられなくなる
-    const startedAt = new Date(
-      y,
-      m - 1,
-      d,
-      nowDate.getHours(),
-      nowDate.getMinutes(),
-      nowDate.getSeconds(),
-      nowDate.getMilliseconds(),
-    ).toISOString();
+  // チェックの付け外し。付けたときは時刻も残す（見直しどきの判定に使う）
+  const toggleSkill = (id) => {
+    setSkills((prev) =>
+      prev.map((skill) =>
+        skill.id === id
+          ? { ...skill, done: !skill.done, doneAt: skill.done ? null : new Date().toISOString() }
+          : skill,
+      ),
+    );
+  };
 
-    addRecord({
+  // 自信チェックでまとめてチェックを付ける
+  const checkSkills = (ids) => {
+    if (ids.length === 0) return;
+    const at = new Date().toISOString();
+    const set = new Set(ids);
+    setSkills((prev) =>
+      prev.map((skill) => (set.has(skill.id) ? { ...skill, done: true, doneAt: at } : skill)),
+    );
+  };
+
+  const deleteSkill = (id) => {
+    setSkills((prev) => prev.filter((skill) => skill.id !== id));
+  };
+
+  const setSelfWeight = (value) => {
+    setSettings((prev) => ({ ...prev, selfWeight: value }));
+  };
+
+  const addSubject = (name, color, confidence, feeling) => {
+    const subject = {
       id: createId(),
-      subjectId,
-      seconds,
-      breakSeconds: 0,
-      startedAt,
-    });
-    return "";
+      name: name,
+      color: color,
+      confidence: confidence,
+      feeling: feeling,
+    };
+    setSubjects((prev) => [...prev, subject]);
+    if (!selectedId) setSelectedId(subject.id);
   };
 
   // 記録の修正。日付だけ差し替え、何時に始めたかは元のまま残す。
@@ -312,34 +351,9 @@ function App() {
     return "";
   };
 
+  // 記録の削除。決め直せばすぐ作り直せるので、確認は挟まない
   const deleteRecord = (id) => {
     setRecords((prev) => prev.filter((record) => record.id !== id));
-  };
-
-  const addSubject = (name, color, confidence, feeling) => {
-    const subject = {
-      id: createId(),
-      name: name,
-      color: color,
-      confidence: confidence,
-      feeling: feeling,
-    };
-    setSubjects((prev) => [...prev, subject]);
-    if (!selectedId) setSelectedId(subject.id);
-  };
-
-  // 目標を決める。決めた時刻を覚えておき、それ以降の記録だけを数える
-  const addGoal = (config) => {
-    setGoals((prev) => [
-      ...prev,
-      { ...config, id: createId(), createdAt: new Date().toISOString() },
-    ]);
-  };
-
-  // 目標は名前・期限・時間を決め直せばすぐ作れるので、確認は挟まない
-  // （記録の削除に確認が無いのと同じ扱い）
-  const deleteGoal = (id) => {
-    setGoals((prev) => prev.filter((item) => item.id !== id));
   };
 
   // 科目を消しても記録は残す。過去に積み上げた時間まで失われないようにするため。
@@ -358,6 +372,10 @@ function App() {
     if (isRunningSubject) {
       lines.push("計測中のぶんは、記録してから停止します。");
     }
+    const skillCount = skills.filter((skill) => skill.subjectId === id).length;
+    if (skillCount > 0) {
+      lines.push(`できることリスト${skillCount}件も消えます。`);
+    }
     if (!window.confirm(lines.join("\n"))) return;
 
     // 計測中の科目が消える場合も、計測ぶんは捨てずに記録してから止める
@@ -365,6 +383,7 @@ function App() {
 
     const rest = subjects.filter((item) => item.id !== id);
     setSubjects(rest);
+    setSkills((prev) => prev.filter((skill) => skill.subjectId !== id));
     // 消した科目について自信を聞いている途中なら、その問いかけも消す
     if (pendingConfidence?.subjectId === id) setPendingConfidence(null);
     if (selectedId === id) setSelectedId(rest[0]?.id ?? "");
@@ -374,8 +393,7 @@ function App() {
     return (
       <TitleScreen
         records={records}
-        goals={goals}
-        subjects={subjects}
+        subjects={blended}
         running={running}
         elapsedSeconds={elapsedSeconds}
         onStart={() => setScreen("menu")}
@@ -390,8 +408,6 @@ function App() {
       <Menu
         running={running}
         elapsedSeconds={elapsedSeconds}
-        goals={goals}
-        records={records}
         onSelect={setScreen}
       />
     );
@@ -425,14 +441,16 @@ function App() {
                   key={pendingConfidence.subjectId}
                   subject={subjects.find((s) => s.id === pendingConfidence.subjectId)}
                   seconds={pendingConfidence.seconds}
-                  onSave={(value) => {
+                  skills={skills}
+                  onSave={(value, checkedIds) => {
                     setSubjectConfidence(pendingConfidence.subjectId, value);
+                    checkSkills(checkedIds);
                     setPendingConfidence(null);
                   }}
                 />
               )}
               <Timer
-                subjects={subjects}
+                subjects={blended}
                 records={records}
                 running={running}
                 elapsedSeconds={elapsedSeconds}
@@ -448,47 +466,47 @@ function App() {
             </>
           )}
 
-          {feature.key === "summary" && <Summary subjects={subjects} records={records} />}
-
-          {/* 一覧が主役なので先に置き、そのすぐ下で足せるようにする。
-              足したぶんは一覧の中で色が付き、見える位置まで自動でスクロールする */}
-          {feature.key === "records" && (
+          {/* 合計の下に記録の一覧。消したり直したりできる */}
+          {feature.key === "summary" && (
             <>
+              <Summary subjects={subjects} records={records} />
               <RecordList
                 subjects={subjects}
                 records={records}
-                newestId={newestRecordId}
+                newestId={null}
                 onDelete={deleteRecord}
                 onUpdate={updateRecord}
               />
-              <ManualEntry subjects={subjects} onAdd={addManualRecord} />
             </>
           )}
 
-          {/* 自信の画面。くらべる → 次はこれ → これまでの推移、の順 */}
+          {/* やることチェックリスト。科目ごとに項目を足して、できたらチェックする */}
+          {feature.key === "skills" && (
+            <SkillList
+              subjects={subjects}
+              skills={skills}
+              onAdd={addSkill}
+              onToggle={toggleSkill}
+              onDelete={deleteSkill}
+            />
+          )}
+
           {feature.key === "confidence" && (
             <>
               <CatchUp
-                subjects={subjects}
+                subjects={blended}
+                skills={skills}
                 records={records}
                 selectedId={selectedId}
                 running={running}
                 onSelect={setSelectedId}
               />
-              <ConfidenceHistory subjects={subjects} log={confidenceLog} />
-            </>
-          )}
-
-          {feature.key === "goal" && (
-            <>
-              <GoalList
-                goals={goals}
+              <ConfidenceEditor
                 subjects={subjects}
-                records={records}
-                onAdd={addGoal}
-                onDelete={deleteGoal}
+                onUpdate={setSubjectConfidence}
+                onFeeling={setSubjectFeeling}
               />
-              <Pace records={records} />
+              <ConfidenceSettings selfWeight={settings.selfWeight} onChange={setSelfWeight} />
             </>
           )}
 
@@ -501,7 +519,7 @@ function App() {
                 onUpdate={setSubjectConfidence}
                 onFeeling={setSubjectFeeling}
               />
-              <SubjectTotals subjects={subjects} records={records} />
+              <SubjectTotals subjects={blended} records={records} />
             </>
           )}
         </div>

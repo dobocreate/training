@@ -1,11 +1,9 @@
 import Icon from "./Icon";
 import { FEATURES } from "../lib/features";
-import { goalProgress } from "../lib/goals";
 import { formatClock } from "../lib/time";
 
 // STARTのあとに出るメニュー。アイコンを押すと、その機能の画面に移る
-function Menu({ running, elapsedSeconds, goals, records, onSelect }) {
-  const goalNow = goalProgress(goals, records);
+function Menu({ running, elapsedSeconds, onSelect }) {
   const isPaused = Boolean(running) && running.since === null;
 
   return (
@@ -40,16 +38,6 @@ function Menu({ running, elapsedSeconds, goals, records, onSelect }) {
                   </span>
                 )}
 
-                {/* 目標があれば、開かなくても達成度が分かるようにする */}
-                {feature.key === "goal" && goalNow && (
-                  <span
-                    className={
-                      goalNow.isAlert ? "menu-badge is-alert" : "menu-badge"
-                    }
-                  >
-                    {goalNow.label}
-                  </span>
-                )}
               </button>
             </li>
           ))}

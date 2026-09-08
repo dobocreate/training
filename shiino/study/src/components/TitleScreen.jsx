@@ -1,8 +1,5 @@
 import { useEffect } from "react";
-import { milestoneProgress } from "../lib/milestones";
-import { goalProgress } from "../lib/goals";
 import { studyStreak } from "../lib/streak";
-import WeekChart from "./WeekChart";
 import ConfidenceBadge from "./ConfidenceBadge";
 import StarRating from "./StarRating";
 import {
@@ -12,14 +9,12 @@ import {
   normalizeConfidence,
   isDisliked,
   isLeveled,
-  isRaisingAll,
-  nextTargetOf,
-  goalLineOf,
+  GOAL,
 } from "../lib/confidence";
 import { formatClock, formatDuration, toDateKey, startOfWeekKey } from "../lib/time";
 
 // 最初に出るタイトル画面。STARTを押すと本編に入る
-function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStart }) {
+function TitleScreen({ records, subjects, running, elapsedSeconds, onStart }) {
   // Enter / Space でも始められるようにする
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -45,9 +40,6 @@ function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStar
     .reduce((sum, record) => sum + record.seconds, 0);
   const todayShare = weekSeconds > 0 ? todaySeconds / weekSeconds : 0;
 
-  const totalSeconds = records.reduce((sum, record) => sum + record.seconds, 0);
-  const progress = milestoneProgress(totalSeconds);
-  const goalNow = goalProgress(goals, records);
   const streak = studyStreak(records);
   const isPaused = Boolean(running) && running.since === null;
 
@@ -59,11 +51,6 @@ function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStar
   const leader = leaderSubject(subjects);
   const recommended = recommendSubject(subjects, records);
   const leveled = isLeveled(subjects);
-  const target = nextTargetOf(subjects);
-  const raisingAll = isRaisingAll(subjects);
-  // 次のラインを引くのは、横並びかつ平均 80% 以上のときだけ
-  const raising = leveled && raisingAll;
-  const goal = goalLineOf(subjects);
   const byConfidence = [...subjects].sort(
     (a, b) => normalizeConfidence(b.confidence) - normalizeConfidence(a.confidence),
   );
@@ -109,48 +96,6 @@ function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStar
             )}
           </dd>
         </div>
-        <div className="title-stat">
-          <dt>到達段階</dt>
-          <dd>
-            {progress.current.name}
-            <span className="stat-track">
-              <span
-                className="stat-fill"
-                style={{ width: `${progress.ratio * 100}%` }}
-              />
-            </span>
-            <span className="stat-note">
-              {progress.isComplete
-                ? "すべて達成"
-                : `次は ${progress.next.name} まで`}
-            </span>
-          </dd>
-        </div>
-        <div className="title-stat">
-          <dt>目標の達成度</dt>
-          <dd>
-            {goalNow ? (
-              <>
-                {goalNow.label}
-                <span className="stat-track">
-                  <span
-                    className={
-                      goalNow.isAlert ? "stat-fill is-alert" : "stat-fill"
-                    }
-                    style={{ width: `${goalNow.percent}%` }}
-                  />
-                </span>
-                <span className="stat-note">
-                  {goalNow.others > 0
-                    ? `${goalNow.name} ほか${goalNow.others}件`
-                    : goalNow.name}
-                </span>
-              </>
-            ) : (
-              "なし"
-            )}
-          </dd>
-        </div>
       </dl>
 
       {/* 科目ごとの自信。どれが遅れているかを、開いた瞬間に分かるようにする */}
@@ -159,13 +104,10 @@ function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStar
           <div className="title-confidence-head">
             <span className="chart-title">自信</span>
             <span className="stat-note">
+              {/* 差があるときは何も言わない。棒と線で差が見えるので、文は横並びのときだけ */}
               {subjects.length > 1 && leveled
-                ? raising
-                  ? `横並び！次は全部で ${target}%。まずは ${recommended.name} から`
-                  : `横並び！まずは${isDisliked(recommended) ? "嫌いな" : ""} ${recommended.name} から上げよう`
-                : subjects.length > 1
-                  ? `${!raisingAll && isDisliked(recommended) ? "嫌いな " : ""}${recommended.name} が ${gapOf(recommended, subjects)}% 遅れ。次はこれ！`
-                  : ""}
+                ? `横並び！${GOAL}% を目指そう。まずは${isDisliked(recommended) ? "嫌いな" : ""} ${recommended.name} から`
+                : ""}
             </span>
           </div>
           <ul className="subject-bars is-title">
@@ -190,9 +132,7 @@ function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStar
                       className="bar-fill"
                       style={{ width: `${value}%`, backgroundColor: subject.color }}
                     />
-                    {goal < 100 && (
-                      <span className="leader-line is-target" style={{ left: `${goal}%` }} />
-                    )}
+                    <span className="leader-line is-target" style={{ left: `${GOAL}%` }} />
                     {!leveled && leader && gap > 0 && (
                       <span
                         className="leader-line"
@@ -206,11 +146,6 @@ function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStar
           </ul>
         </div>
       )}
-
-      {/* 数字ばかりなので、形で「どの日にやったか」が分かるものを1つ置く */}
-      <div className="title-week">
-        <WeekChart records={records} compact />
-      </div>
 
       <button type="button" className="start-button" onClick={onStart}>
         START

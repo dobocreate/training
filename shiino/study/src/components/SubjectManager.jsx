@@ -149,9 +149,6 @@ function SubjectManager({ subjects, onAdd, onDelete, onUpdate, onFeeling }) {
           追加
         </button>
       </form>
-      <p className="rating-help">
-        自信は計測を止めるたびに聞くよ。一番自信のある科目に、遅れてる科目が追いつけるように、差の大きいものから勧めるね。同じくらいなら、★の少ない（嫌いな）科目のほうを先に
-      </p>
 
       <p className="error-message">{error}</p>
     </section>
