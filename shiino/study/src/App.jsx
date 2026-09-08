@@ -12,9 +12,12 @@ import SubjectManager from "./components/SubjectManager";
 import RecentRecords from "./components/RecentRecords";
 import Pace from "./components/Pace";
 import SubjectTotals from "./components/SubjectTotals";
+import CatchUp from "./components/CatchUp";
+import ConfidencePrompt from "./components/ConfidencePrompt";
 import { FEATURES } from "./lib/features";
 import { formatDuration, toDateKey } from "./lib/time";
 import { dayLimitError, remainingOnDay } from "./lib/dayLimit";
+import { recommendSubject } from "./lib/confidence";
 import {
   loadSubjects,
   saveSubjects,
@@ -24,6 +27,8 @@ import {
   saveRunning,
   loadGoals,
   saveGoals,
+  loadConfidenceLog,
+  saveConfidenceLog,
 } from "./lib/storage";
 import "./App.css";
 
@@ -56,6 +61,13 @@ function App() {
   // 決めてある目標。いくつでも同時に持てる
   const [goals, setGoals] = useState(loadGoals);
 
+  // 自信を付け直した履歴。科目には今の値だけを持ち、推移はこちらで追う
+  const [confidenceLog, setConfidenceLog] = useState(loadConfidenceLog);
+
+  // 計測を止めた直後に出す「今の自信は？」。{ subjectId, seconds } か、聞くことが無ければ null。
+  // 開き直したら聞き直さない（保存しない）
+  const [pendingConfidence, setPendingConfidence] = useState(null);
+
   // 今どの画面にいるか。"title" → "menu" → 機能のキー（FEATURES）と進む。
   // 開くたびにタイトルから始まるので、保存はしない
   const [screen, setScreen] = useState("title");
@@ -63,8 +75,10 @@ function App() {
   // 直前に足した記録のid。計測・手入力の下で、どれが今足したぶんかを示すのに使う
   const [newestRecordId, setNewestRecordId] = useState(null);
 
+  // 計測で選ばれている科目。開いたときは「先頭との差がいちばん大きく、最近やっていない科目」を選んでおく。
+  // 進んでいる科目ばかりにならないように、最初の一手を遅れている科目に寄せるため
   const [selectedId, setSelectedId] = useState(
-    () => loadSubjects()[0]?.id ?? "",
+    () => recommendSubject(loadSubjects(), loadRecords())?.id ?? "",
   );
 
   // 経過時間は「今の時刻 − 開始時刻」で出す。
@@ -87,6 +101,10 @@ function App() {
   useEffect(() => {
     saveGoals(goals);
   }, [goals]);
+
+  useEffect(() => {
+    saveConfidenceLog(confidenceLog);
+  }, [confidenceLog]);
 
   // 計測中は1秒ごとに現在時刻を更新する。
   // 一時停止中も休憩の時間が進むので、止めずに動かし続ける
@@ -208,8 +226,26 @@ function App() {
         breakSeconds: breakSeconds,
         startedAt: running.startedAt,
       });
+
+      // 記録が残ったときだけ、自信を聞く（科目が消えていれば聞かない）
+      if (subjects.some((subject) => subject.id === running.subjectId)) {
+        setPendingConfidence({ subjectId: running.subjectId, seconds: seconds });
+      }
     }
     setRunning(null);
+  };
+
+  // 自信の書き換えはここ1か所にまとめる。科目の値を直し、履歴にも残す
+  const setSubjectConfidence = (id, value) => {
+    setSubjects((prev) =>
+      prev.map((subject) =>
+        subject.id === id ? { ...subject, confidence: value } : subject,
+      ),
+    );
+    setConfidenceLog((prev) => [
+      ...prev,
+      { id: createId(), subjectId: id, value: value, at: new Date().toISOString() },
+    ]);
   };
 
   // 手入力ぶんの追加。日付は選べるが、時刻は「今の時刻」を使う。
@@ -274,8 +310,8 @@ function App() {
     setRecords((prev) => prev.filter((record) => record.id !== id));
   };
 
-  const addSubject = (name, color) => {
-    const subject = { id: createId(), name: name, color: color };
+  const addSubject = (name, color, confidence) => {
+    const subject = { id: createId(), name: name, color: color, confidence: confidence };
     setSubjects((prev) => [...prev, subject]);
     if (!selectedId) setSelectedId(subject.id);
   };
@@ -317,6 +353,8 @@ function App() {
 
     const rest = subjects.filter((item) => item.id !== id);
     setSubjects(rest);
+    // 消した科目について自信を聞いている途中なら、その問いかけも消す
+    if (pendingConfidence?.subjectId === id) setPendingConfidence(null);
     if (selectedId === id) setSelectedId(rest[0]?.id ?? "");
   };
 
@@ -369,6 +407,19 @@ function App() {
         <div className="screen-body">
           {feature.key === "timer" && (
             <>
+              {/* 止めた直後だけ、計測パネルの上に出す */}
+              {pendingConfidence && (
+                <ConfidencePrompt
+                  key={pendingConfidence.subjectId}
+                  subject={subjects.find((s) => s.id === pendingConfidence.subjectId)}
+                  seconds={pendingConfidence.seconds}
+                  onSave={(value) => {
+                    setSubjectConfidence(pendingConfidence.subjectId, value);
+                    setPendingConfidence(null);
+                  }}
+                  onSkip={() => setPendingConfidence(null)}
+                />
+              )}
               <Timer
                 subjects={subjects}
                 running={running}
@@ -380,6 +431,13 @@ function App() {
                 onPause={pauseTimer}
                 onResume={resumeTimer}
                 onStop={stopTimer}
+              />
+              <CatchUp
+                subjects={subjects}
+                records={records}
+                selectedId={selectedId}
+                running={running}
+                onSelect={setSelectedId}
               />
               <Pace records={records} />
               <RecentRecords
@@ -429,6 +487,7 @@ function App() {
                 subjects={subjects}
                 onAdd={addSubject}
                 onDelete={deleteSubject}
+                onUpdate={setSubjectConfidence}
               />
               <SubjectTotals subjects={subjects} records={records} />
             </>

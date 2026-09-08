@@ -1517,3 +1517,241 @@
     font-size: 16px;
   }
 }
+
+/* ===== 自信 ===== */
+/* 科目名のそばに添える「42%」。先頭より遅れている科目は色を変える */
+.confidence-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  background: var(--bg);
+}
+
+.confidence-badge.is-behind {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.chip .confidence-badge {
+  margin-left: 6px;
+}
+
+.chip.is-active .confidence-badge {
+  background: #fff;
+}
+
+/* 科目の行にある、自信の手直し欄 */
+.subject-confidence {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+}
+
+.field.is-confidence {
+  width: 58px;
+  padding: 4px 6px;
+  font-size: 12px;
+  text-align: right;
+}
+
+/* 科目を登録するフォーム。名前 → 自信 → 色 → 追加、と縦に並べる */
+.subject-form {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.subject-form .add-button.is-wide {
+  align-self: flex-start;
+}
+
+.subject-form .color-picker {
+  margin-top: 0;
+}
+
+/* 自信のスライダーと数字を1行に。狭い画面では折り返す */
+.confidence-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.confidence-picker .confidence-slider {
+  flex: 1 1 160px;
+  width: auto;
+}
+
+.confidence-value {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rating-label {
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-right: 4px;
+}
+
+.rating-help {
+  margin: 6px 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+
+/* ===== 今の自信は？（停止直後） ===== */
+/* 答えてほしいので、枠の色を濃くして目を引く */
+.confidence-prompt {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.confidence-prompt-lead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.confidence-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confidence-slider {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.confidence-value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.confidence-value .field {
+  width: 72px;
+  text-align: right;
+}
+
+.confidence-diff {
+  margin-left: 10px;
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.confidence-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== 追いつき ===== */
+.catch-up-message {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.leader-tag {
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+}
+
+.catch-up .subject-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 先頭の位置に細い線を引く。棒は 100% を全幅にする */
+.catch-up-track {
+  position: relative;
+}
+
+.leader-line {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--accent);
+}
+
+/* 今週の配分。名前と「やった / 目安」を1行に */
+.plan-list {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+}
+
+.plan-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 10px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.plan-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-family: ui-monospace, "Consolas", monospace;
+  color: var(--ink-dim);
+}
+
+.plan-rest {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 11px;
+}
+
+.plan-check {
+  color: #059669;
+}
+
+/* 次にやる科目。名前・自信・ボタンを1行に並べ、狭ければ折り返す */
+.catch-up-recommend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 4px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+}
+
+.catch-up-recommend-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.catch-up-recommend .chip {
+  margin-left: auto;
+}
+
+.chip.is-recommend:not(:disabled) {
+  border-color: var(--chip-color);
+  color: var(--chip-color);
+  font-weight: 600;
+}

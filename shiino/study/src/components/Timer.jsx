@@ -1,5 +1,7 @@
 import Icon from "./Icon";
+import ConfidenceBadge from "./ConfidenceBadge";
 import { formatClock } from "../lib/time";
+import { gapOf, normalizeConfidence } from "../lib/confidence";
 
 // 計測パネル。科目を選んで開始・一時停止・停止する。
 // running.since が null なら一時停止中（時計は止まったまま）
@@ -23,8 +25,16 @@ function Timer({
   const stateText = () => {
     if (!running) return "科目を選んで開始";
     const name = runningSubject?.name ?? "（削除された科目）";
-    return isPaused ? `${name} を一時停止中` : `${name} を計測中`;
+    const base = isPaused ? `${name} を一時停止中` : `${name} を計測中`;
+    // 先頭より遅れている科目に取り組んでいるときは、それが分かるようにひとこと足す
+    const behind = runningSubject && gapOf(runningSubject, subjects) > 0;
+    return behind ? `${base}（追い上げ中）` : base;
   };
+
+  // 遅れている科目を先に並べる。同じ自信なら元の並び順（sort は安定）
+  const ordered = [...subjects].sort(
+    (a, b) => normalizeConfidence(a.confidence) - normalizeConfidence(b.confidence),
+  );
 
   return (
     <section className="card timer">
@@ -37,7 +47,7 @@ function Timer({
       <div className="timer-body">
         {/* 計測中は科目を変えられないようにする（途中で付け替えると記録が曖昧になるため） */}
         <div className="chips">
-          {subjects.map((subject) => (
+          {ordered.map((subject) => (
             <button
               type="button"
               key={subject.id}
@@ -47,6 +57,7 @@ function Timer({
               disabled={Boolean(running)}
             >
               {subject.name}
+              <ConfidenceBadge value={subject.confidence} isBehind={gapOf(subject, subjects) > 0} />
             </button>
           ))}
         </div>

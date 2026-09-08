@@ -1,5 +1,7 @@
 import Icon from "./Icon";
+import ConfidenceBadge from "./ConfidenceBadge";
 import { formatDuration } from "../lib/time";
+import { gapOf } from "../lib/confidence";
 
 // 科目の画面に添える、科目別の累計。
 // どの科目にどれだけ使ったかを見ながら、追加や削除を判断できるようにする。
@@ -32,6 +34,7 @@ function SubjectTotals({ subjects, records }) {
               <span className="subject-name">
                 <span className="dot" style={{ backgroundColor: item.color }} />
                 {item.name}
+                <ConfidenceBadge value={item.confidence} isBehind={gapOf(item, subjects) > 0} />
               </span>
               <span className="subject-time">{formatDuration(item.seconds)}</span>
 
