@@ -1,13 +1,19 @@
 import Icon from "./Icon";
 import ConfidenceBadge from "./ConfidenceBadge";
-import { formatDuration } from "../lib/time";
+import StarRating from "./StarRating";
 import {
   leaderSubject,
   gapOf,
   spread,
   recommendSubject,
-  allocateWeek,
   normalizeConfidence,
+  isDisliked,
+  isLeveled,
+  isRaisingAll,
+  averageConfidence,
+  nextTargetOf,
+  goalLineOf,
+  RAISE_ALL_FROM,
 } from "../lib/confidence";
 
 // 計測の画面に添える「追いつき」のカード。
@@ -16,8 +22,19 @@ import {
 function CatchUp({ subjects, records, selectedId, running, onSelect }) {
   const leader = leaderSubject(subjects);
   const recommended = recommendSubject(subjects, records);
-  const plan = allocateWeek(subjects, records);
   const gapSpread = spread(subjects);
+
+  // 横並び（底上げモード）。差を埋めるのではなく、共通のラインをみんなで目指す
+  const leveled = isLeveled(subjects);
+  const average = averageConfidence(subjects);
+  const target = nextTargetOf(subjects);
+  // 平均 80% 以上なら、嫌い優先をやめて全体を上げる。
+  // 「次のライン」を引いて全体を上げるのは、横並びかつ 80% 以上のときだけ。
+  // それまでの横並びは、ラインを引かずに嫌いな科目から上げていく
+  const raisingAll = isRaisingAll(subjects);
+  const raising = leveled && raisingAll;
+  // 棒に引く目標の線。80% までは 80%、超えたら次の 10 の倍数
+  const goal = goalLineOf(subjects);
 
   // 自信が高い順に並べる（先頭が上）
   const ordered = [...subjects].sort(
@@ -25,12 +42,22 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
   );
 
   const message = () => {
-    if (subjects.length === 0) return "科目を追加すると、ここで進み具合をくらべられます";
-    if (subjects.length === 1) return "科目が1つなので、くらべる相手がまだいません";
-    if (gapSpread === 0) {
-      return "全科目の自信が同じです。計測を止めるたびに自信を聞き直すので、そこから差が見えてきます";
+    if (subjects.length === 0) return "科目を足すと、ここで自信をくらべられるよ";
+    if (subjects.length === 1) return "科目が1つだけだから、まだくらべる相手がいないね";
+    if (leveled) {
+      if (average >= 100) return "全科目 100%！もう言うことないよ。好きな科目を好きなだけやろう";
+      if (raisingAll) {
+        return `みんな ${average}% で ${RAISE_ALL_FROM}% 超え！ここからは全体を上げよう。次は全部で ${target}%。まずは最近やってない ${recommended.name} から`;
+      }
+      const lead = isDisliked(recommended) ? `嫌いな ${recommended.name}` : recommended.name;
+      return `差はもうないよ。みんな ${average}% くらい。${RAISE_ALL_FROM}% までは ${lead} から上げていこう！`;
     }
-    return `先頭は「${leader.name}」の ${normalizeConfidence(leader.confidence)}%。差がいちばん大きい「${recommended.name}」から追いつきましょう`;
+    const top = normalizeConfidence(leader.confidence);
+    const gap = gapOf(recommended, subjects);
+    if (!raisingAll && isDisliked(recommended)) {
+      return `いま一番なのは ${leader.name} の ${top}%。嫌いな ${recommended.name} が ${gap}% 遅れてる。嫌いなものほど先にやっつけよう！`;
+    }
+    return `いま一番なのは ${leader.name} の ${top}%。${recommended.name} が ${gap}% 遅れてるから、まずここから追いかけよう！`;
   };
 
   return (
@@ -41,7 +68,13 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
           追いつき
         </p>
         {subjects.length > 1 && (
-          <span className="milestone-total">いちばんの差 {gapSpread}pt</span>
+          <span className="milestone-total">
+            {raising
+              ? `横並び！次のライン ${target}%`
+              : leveled
+                ? `横並び！嫌いな科目から ${goal}% へ`
+                : `最大の差 ${gapSpread}%・目標 ${goal}%`}
+          </span>
         )}
       </div>
 
@@ -51,28 +84,34 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
         <ul className="subject-bars">
           {ordered.map((subject) => {
             const value = normalizeConfidence(subject.confidence);
-            const gap = gapOf(subject, subjects);
+            // 差があるときは先頭までの残り。横並びのときは目標の線までの残り
+            const gap = leveled ? Math.max(0, goal - value) : gapOf(subject, subjects);
             return (
               <li key={subject.id} className="subject-bar">
                 <span className="subject-name">
                   <span className="dot" style={{ backgroundColor: subject.color }} />
                   {subject.name}
-                  {subject.id === leader?.id && subjects.length > 1 && (
+                  {!leveled && subject.id === leader?.id && subjects.length > 1 && (
                     <span className="leader-tag">先頭</span>
                   )}
+                  <StarRating value={subject.feeling} compact />
                 </span>
                 <span className="subject-time">
-                  {gap > 0 ? `あと ${gap}pt` : ""}
+                  {gap > 0 ? `あと ${gap}%` : ""}
                   <ConfidenceBadge value={value} isBehind={gap > 0} />
                 </span>
 
-                {/* 棒は 100% を全幅にする。先頭の位置に細い線を引いて、そこまでの差を見せる */}
+                {/* 棒は 100% を全幅にする。
+                    目標の線（点線）はいつも引き、差があるときは先頭の位置にも実線を引く */}
                 <span className="bar-track catch-up-track">
                   <span
                     className="bar-fill"
                     style={{ width: `${value}%`, backgroundColor: subject.color }}
                   />
-                  {leader && gap > 0 && (
+                  {goal < 100 && (
+                    <span className="leader-line is-target" style={{ left: `${goal}%` }} />
+                  )}
+                  {!leveled && leader && gap > 0 && (
                     <span
                       className="leader-line"
                       style={{ left: `${normalizeConfidence(leader.confidence)}%` }}
@@ -85,41 +124,14 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
         </ul>
       )}
 
-      {/* 今週の配分。直近7日の勉強時間を、差の大きさに比例して配る */}
-      {plan && (
-        <>
-          <p className="chart-title">今週の配分（{formatDuration(plan.budget)} を差に応じて）</p>
-          <ul className="plan-list">
-            {plan.items.map((item) => (
-              <li key={item.subject.id} className="plan-item">
-                <span className="subject-name">
-                  <span className="dot" style={{ backgroundColor: item.subject.color }} />
-                  {item.subject.name}
-                </span>
-                <span className="plan-time">
-                  {item.seconds === 0 ? (
-                    <span className="plan-rest">今週は他に回す</span>
-                  ) : (
-                    <>
-                      {formatDuration(item.done)} / {formatDuration(item.seconds)}
-                      {item.done >= item.seconds && <Icon name="check" className="card-icon plan-check" />}
-                    </>
-                  )}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {recommended && subjects.length > 1 && gapSpread > 0 && (
+      {recommended && subjects.length > 1 && (leveled ? average < 100 : gapSpread > 0) && (
         <div className="catch-up-recommend">
-          <span className="catch-up-recommend-label">次におすすめ</span>
+          <span className="catch-up-recommend-label">次はこれ</span>
           <span className="subject-name">
             <span className="dot" style={{ backgroundColor: recommended.color }} />
             {recommended.name}
           </span>
-          <ConfidenceBadge value={recommended.confidence} isBehind />
+          <ConfidenceBadge value={recommended.confidence} isBehind={!raising} />
           {/* 計測中は科目を変えられないので、そのときは押せなくする */}
           <button
             type="button"
@@ -128,7 +140,7 @@ function CatchUp({ subjects, records, selectedId, running, onSelect }) {
             disabled={Boolean(running) || recommended.id === selectedId}
             onClick={() => onSelect(recommended.id)}
           >
-            {recommended.id === selectedId ? "選択中" : "この科目にする"}
+            {recommended.id === selectedId ? "選んでるよ" : "これにする"}
           </button>
         </div>
       )}

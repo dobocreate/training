@@ -775,11 +775,6 @@
   color: var(--ink-dim);
 }
 
-/* 「追加した記録」は日付も出すので、そのぶん広く取る */
-.record-list.is-recent .record-time {
-  min-width: 88px;
-}
-
 .record-subject {
   flex: 1;
   min-width: 0;
@@ -824,10 +819,6 @@
 /* 狭い画面では、幅を固定すると科目名が潰れてしまう。
    列はそろわなくなるが、名前が読めるほうを優先する */
 @media (max-width: 560px) {
-  .record-list.is-recent .record-time {
-    min-width: 0;
-  }
-
   .record-times {
     width: auto;
   }
@@ -1472,6 +1463,48 @@
 }
 
 /* 直近7日。カード列と同じ幅にそろえる */
+/* 科目ごとの自信。週のグラフと同じ札に入れる */
+.title-confidence {
+  width: 100%;
+  max-width: 830px;
+  margin-top: 12px;
+  padding: 14px 18px 12px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.title-confidence-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.title-confidence-head .chart-title {
+  margin: 0;
+}
+
+/* タイトル画面では行間を詰めて、科目が多くても縦に伸びすぎないようにする */
+.subject-bars.is-title {
+  margin: 0;
+}
+
+.subject-bars.is-title .subject-bar {
+  margin-bottom: 8px;
+  gap: 2px 10px;
+}
+
+.subject-bars.is-title .subject-bar:last-child {
+  margin-bottom: 0;
+}
+
+.subject-bars.is-title .bar-track {
+  height: 6px;
+}
+
 .title-week {
   width: 100%;
   max-width: 830px;
@@ -1663,6 +1696,55 @@
   line-height: 1.6;
 }
 
+/* ===== 好き嫌いの星 ===== */
+/* 文字の ★ を並べる。付いている星だけ色を付ける */
+.stars {
+  display: inline-flex;
+  gap: 1px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.star {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.star.is-on {
+  color: #f59e0b;
+}
+
+/* 押せる星（button のとき）だけカーソルを変える */
+button.star {
+  cursor: pointer;
+}
+
+button.star:hover {
+  color: #d97706;
+}
+
+/* 科目の行や一覧に添える小さい星 */
+.stars.is-compact .star {
+  font-size: 11px;
+}
+
+.subject-item .stars {
+  flex: none;
+}
+
+/* 科目を登録するときの好き嫌い */
+.feeling-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
 .leader-tag {
   padding: 1px 6px;
   border-radius: 4px;
@@ -1683,6 +1765,12 @@
   position: relative;
 }
 
+/* 横並びのときは、先頭の線の代わりに「次のライン」を点線で引く */
+.leader-line.is-target {
+  background: none;
+  border-left: 2px dashed var(--accent);
+}
+
 .leader-line {
   position: absolute;
   top: -2px;
@@ -1690,42 +1778,6 @@
   width: 2px;
   margin-left: -1px;
   background: var(--accent);
-}
-
-/* 今週の配分。名前と「やった / 目安」を1行に */
-.plan-list {
-  list-style: none;
-  margin: 0 0 14px;
-  padding: 0;
-}
-
-.plan-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 6px 10px;
-  margin-bottom: 4px;
-  border-radius: 6px;
-  background: var(--bg);
-}
-
-.plan-time {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-family: ui-monospace, "Consolas", monospace;
-  color: var(--ink-dim);
-}
-
-.plan-rest {
-  font-family: "Segoe UI", system-ui, sans-serif;
-  font-size: 11px;
-}
-
-.plan-check {
-  color: #059669;
 }
 
 /* 次にやる科目。名前・自信・ボタンを1行に並べ、狭ければ折り返す */
@@ -1754,4 +1806,59 @@
   border-color: var(--chip-color);
   color: var(--chip-color);
   font-weight: 600;
+}
+
+/* ===== 自信の推移 ===== */
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 13px;
+}
+
+.history-when {
+  font-size: 11px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.history-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 上がったら緑、下がったら赤 */
+.history-diff {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.history-diff.is-up {
+  color: #059669;
+}
+
+.history-diff.is-down {
+  color: var(--danger);
+}
+
+@media (max-width: 560px) {
+  .history-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .history-when {
+    grid-column: 1 / -1;
+  }
 }

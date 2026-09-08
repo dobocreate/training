@@ -3,6 +3,19 @@ import { milestoneProgress } from "../lib/milestones";
 import { goalProgress } from "../lib/goals";
 import { studyStreak } from "../lib/streak";
 import WeekChart from "./WeekChart";
+import ConfidenceBadge from "./ConfidenceBadge";
+import StarRating from "./StarRating";
+import {
+  leaderSubject,
+  gapOf,
+  recommendSubject,
+  normalizeConfidence,
+  isDisliked,
+  isLeveled,
+  isRaisingAll,
+  nextTargetOf,
+  goalLineOf,
+} from "../lib/confidence";
 import { formatClock, formatDuration, toDateKey, startOfWeekKey } from "../lib/time";
 
 // 最初に出るタイトル画面。STARTを押すと本編に入る
@@ -41,6 +54,19 @@ function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStar
   const runningSubject = running
     ? subjects.find((subject) => subject.id === running.subjectId)
     : null;
+
+  // 科目ごとの自信。自信が高い順に並べ、先頭との差が見えるようにする
+  const leader = leaderSubject(subjects);
+  const recommended = recommendSubject(subjects, records);
+  const leveled = isLeveled(subjects);
+  const target = nextTargetOf(subjects);
+  const raisingAll = isRaisingAll(subjects);
+  // 次のラインを引くのは、横並びかつ平均 80% 以上のときだけ
+  const raising = leveled && raisingAll;
+  const goal = goalLineOf(subjects);
+  const byConfidence = [...subjects].sort(
+    (a, b) => normalizeConfidence(b.confidence) - normalizeConfidence(a.confidence),
+  );
 
   return (
     <div className="title-screen">
@@ -126,6 +152,60 @@ function TitleScreen({ records, goals, subjects, running, elapsedSeconds, onStar
           </dd>
         </div>
       </dl>
+
+      {/* 科目ごとの自信。どれが遅れているかを、開いた瞬間に分かるようにする */}
+      {subjects.length > 0 && (
+        <div className="title-confidence">
+          <div className="title-confidence-head">
+            <span className="chart-title">自信</span>
+            <span className="stat-note">
+              {subjects.length > 1 && leveled
+                ? raising
+                  ? `横並び！次は全部で ${target}%。まずは ${recommended.name} から`
+                  : `横並び！まずは${isDisliked(recommended) ? "嫌いな" : ""} ${recommended.name} から上げよう`
+                : subjects.length > 1
+                  ? `${!raisingAll && isDisliked(recommended) ? "嫌いな " : ""}${recommended.name} が ${gapOf(recommended, subjects)}% 遅れ。次はこれ！`
+                  : ""}
+            </span>
+          </div>
+          <ul className="subject-bars is-title">
+            {byConfidence.map((subject) => {
+              const value = normalizeConfidence(subject.confidence);
+              const gap = gapOf(subject, subjects);
+              return (
+                <li key={subject.id} className="subject-bar">
+                  <span className="subject-name">
+                    <span className="dot" style={{ backgroundColor: subject.color }} />
+                    {subject.name}
+                    {!leveled && subject.id === leader?.id && subjects.length > 1 && (
+                      <span className="leader-tag">先頭</span>
+                    )}
+                    <StarRating value={subject.feeling} compact />
+                  </span>
+                  <span className="subject-time">
+                    <ConfidenceBadge value={value} isBehind={gap > 0} />
+                  </span>
+                  <span className="bar-track catch-up-track">
+                    <span
+                      className="bar-fill"
+                      style={{ width: `${value}%`, backgroundColor: subject.color }}
+                    />
+                    {goal < 100 && (
+                      <span className="leader-line is-target" style={{ left: `${goal}%` }} />
+                    )}
+                    {!leveled && leader && gap > 0 && (
+                      <span
+                        className="leader-line"
+                        style={{ left: `${normalizeConfidence(leader.confidence)}%` }}
+                      />
+                    )}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
 
       {/* 数字ばかりなので、形で「どの日にやったか」が分かるものを1つ置く */}
       <div className="title-week">

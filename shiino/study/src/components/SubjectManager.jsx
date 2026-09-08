@@ -1,6 +1,14 @@
 import { useState } from "react";
 import Icon from "./Icon";
-import { CONFIDENCE_MIN, CONFIDENCE_MAX, DEFAULT_CONFIDENCE, normalizeConfidence } from "../lib/confidence";
+import StarRating from "./StarRating";
+import ConfidenceInput from "./ConfidenceInput";
+import {
+  CONFIDENCE_MIN,
+  CONFIDENCE_MAX,
+  DEFAULT_CONFIDENCE,
+  DEFAULT_FEELING,
+  feelingLabel,
+} from "../lib/confidence";
 
 // 科目の色。選びやすいように候補を用意しておく
 const COLORS = [
@@ -14,11 +22,13 @@ const COLORS = [
   "#475569",
 ];
 
-function SubjectManager({ subjects, onAdd, onDelete, onUpdate }) {
+function SubjectManager({ subjects, onAdd, onDelete, onUpdate, onFeeling }) {
   const [name, setName] = useState("");
   const [color, setColor] = useState(COLORS[0]);
   // 追加する科目への自信。登録のときに必ず決める（ふつうは低めから始める）
   const [confidence, setConfidence] = useState(DEFAULT_CONFIDENCE);
+  // 好き嫌い（★1〜5）。★2以下の科目は、同じくらい自信が無いときに先に勧められる
+  const [feeling, setFeeling] = useState(DEFAULT_FEELING);
   const [error, setError] = useState("");
 
   const handleSubmit = (event) => {
@@ -34,9 +44,10 @@ function SubjectManager({ subjects, onAdd, onDelete, onUpdate }) {
       return;
     }
 
-    onAdd(trimmed, color, confidence);
+    onAdd(trimmed, color, confidence, feeling);
     setName("");
     setConfidence(DEFAULT_CONFIDENCE);
+    setFeeling(DEFAULT_FEELING);
     setError("");
   };
 
@@ -52,17 +63,18 @@ function SubjectManager({ subjects, onAdd, onDelete, onUpdate }) {
           <li key={subject.id} className="subject-item">
             <span className="dot" style={{ backgroundColor: subject.color }} />
             <span className="subject-item-name">{subject.name}</span>
+            {/* 好き嫌いもあとから直せる */}
+            <StarRating
+              value={subject.feeling}
+              compact
+              onChange={(value) => onFeeling(subject.id, value)}
+            />
             {/* 自信はあとから直せる。計測の停止時に聞くのが基本で、ここは手直し用 */}
             <label className="subject-confidence">
-              <input
-                className="field is-number is-confidence"
-                type="number"
-                min={CONFIDENCE_MIN}
-                max={CONFIDENCE_MAX}
+              <ConfidenceInput
                 value={subject.confidence}
-                onChange={(event) =>
-                  onUpdate(subject.id, normalizeConfidence(event.target.value))
-                }
+                onChange={(next) => onUpdate(subject.id, next)}
+                commitOnBlur
                 aria-label={`${subject.name} の自信`}
               />
               <span className="unit">%</span>
@@ -107,17 +119,16 @@ function SubjectManager({ subjects, onAdd, onDelete, onUpdate }) {
             aria-label="自信"
           />
           <span className="confidence-value">
-            <input
-              className="field is-number is-confidence"
-              type="number"
-              min={CONFIDENCE_MIN}
-              max={CONFIDENCE_MAX}
-              value={confidence}
-              onChange={(event) => setConfidence(normalizeConfidence(event.target.value))}
-              aria-label="自信（数値）"
-            />
+            <ConfidenceInput value={confidence} onChange={setConfidence} aria-label="自信（数値）" />
             <span className="unit">%</span>
           </span>
+        </div>
+
+        {/* 好き嫌い。★1〜5 で付ける */}
+        <div className="feeling-picker">
+          <span className="rating-label">この科目は</span>
+          <StarRating value={feeling} onChange={setFeeling} />
+          <span className="rating-label">{feelingLabel(feeling)}</span>
         </div>
 
         {/* 色は候補から選ぶ */}
@@ -139,7 +150,7 @@ function SubjectManager({ subjects, onAdd, onDelete, onUpdate }) {
         </button>
       </form>
       <p className="rating-help">
-        自信は計測を止めるたびに聞き直します。いちばん自信のある科目に他の科目が追いつくよう、差の大きい科目を優先して勧めます
+        自信は計測を止めるたびに聞くよ。一番自信のある科目に、遅れてる科目が追いつけるように、差の大きいものから勧めるね。同じくらいなら、★の少ない（嫌いな）科目のほうを先に
       </p>
 
       <p className="error-message">{error}</p>

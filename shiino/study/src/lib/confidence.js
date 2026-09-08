@@ -6,6 +6,45 @@
 
 import { toDateKey, recentDateKeys } from "./time.js";
 
+// 好き嫌い。★1〜5 で付ける（★1 大嫌い … ★3 ふつう … ★5 大好き）。
+// 嫌いな科目は後回しにしがちなので、同じくらい自信が無いなら嫌いなほうを先に勧める
+export const FEELING_MIN = 1;
+export const FEELING_MAX = 5;
+export const DEFAULT_FEELING = 3;
+
+// ★2以下を「嫌い」と呼ぶ
+export const DISLIKE_THRESHOLD = 2;
+
+const FEELING_LABELS = {
+  1: "大嫌い",
+  2: "嫌い",
+  3: "ふつう",
+  4: "好き",
+  5: "大好き",
+};
+
+// 星1つぶんで、先頭との差（%）にどれだけ足し引きするか。
+// ★1 なら +20、★3 は 0、★5 なら −20。嫌いなほど差が小さくても先に勧める
+export const FEELING_STEP = 10;
+
+export function normalizeFeeling(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return DEFAULT_FEELING;
+  return Math.min(FEELING_MAX, Math.max(FEELING_MIN, Math.round(number)));
+}
+
+export function feelingLabel(value) {
+  return FEELING_LABELS[normalizeFeeling(value)];
+}
+
+export function feelingBonus(value) {
+  return (DEFAULT_FEELING - normalizeFeeling(value)) * FEELING_STEP;
+}
+
+export function isDisliked(subject) {
+  return normalizeFeeling(subject?.feeling) <= DISLIKE_THRESHOLD;
+}
+
 export const CONFIDENCE_MIN = 0;
 export const CONFIDENCE_MAX = 100;
 export const DEFAULT_CONFIDENCE = 0;
@@ -60,61 +99,94 @@ function recentSecondsBySubject(subjects, records) {
   return map;
 }
 
-// 「次に何をやるべきか」を1つ選ぶ。
-//   1. 先頭との差が大きい科目を優先する
-//   2. 同じ差なら、直近7日でいちばん触っていない科目を優先する
-//   3. それでも同じなら、科目一覧の並び順
-// 科目が無ければ null
-export function recommendSubject(subjects, records) {
-  if (subjects.length === 0) return null;
+// ===== 嫌い優先 → 全体を上げる、の切り替え =====
+// 平均の自信がこれ以上になったら、好き嫌いで差をつけるのをやめて全体を上げる向きにする。
+// それまでは嫌いな科目を優先して勧める
+export const RAISE_ALL_FROM = 80;
 
+export function isRaisingAll(subjects) {
+  return subjects.length > 0 && averageConfidence(subjects) >= RAISE_ALL_FROM;
+}
+
+// 優先度。先頭との差に、好き嫌いのぶんを足し引きする。
+// 「好きで自信が無い」より「嫌いで自信が無い」を先にするため。
+// 平均が 80% を超えたら、好き嫌いは見ずに差だけで決める
+export function priorityOf(subject, subjects) {
+  const bonus = isRaisingAll(subjects) ? 0 : feelingBonus(subject.feeling);
+  return gapOf(subject, subjects) + bonus;
+}
+
+// ===== 横並び（底上げモード） =====
+// 最大の差がこれ以下なら「横並び」とみなす。
+// ぴったり 0 だと、1回の付け直しですぐ崩れてしまうので少し幅を持たせる
+export const LEVEL_THRESHOLD = 5;
+
+// 横並びになったら、みんなで目指す次のライン。平均にこれを足して、10の倍数に切り上げる
+export const LEVEL_STEP = 10;
+
+export function isLeveled(subjects) {
+  return subjects.length > 1 && spread(subjects) <= LEVEL_THRESHOLD;
+}
+
+export function averageConfidence(subjects) {
+  if (subjects.length === 0) return 0;
+  const total = subjects.reduce((sum, subject) => sum + confidenceOf(subject), 0);
+  return Math.round(total / subjects.length);
+}
+
+// グラフに引く目標ライン。
+// 平均 80% までは 80% が目標。80% を超えたら、次の 10 の倍数（nextTargetOf）
+export function goalLineOf(subjects) {
+  return isRaisingAll(subjects) ? nextTargetOf(subjects) : RAISE_ALL_FROM;
+}
+
+// 横並びのときの共通の目標ライン。100 を超えたら 100 で止める
+export function nextTargetOf(subjects) {
+  const average = averageConfidence(subjects);
+  const raised = Math.ceil((average + 1) / LEVEL_STEP) * LEVEL_STEP;
+  return Math.min(CONFIDENCE_MAX, raised);
+}
+
+// 科目を「やるべき順」に並べる。
+//
+// ふだん（差があるとき）
+//   1. 優先度（先頭との差 ± 好き嫌い）が高い科目
+//   2. 同じなら、直近7日でいちばん触っていない科目
+//   3. それでも同じなら、科目一覧の並び順
+//
+// 横並びのとき（底上げモード）
+//   差で選べないので、平均 80% までは嫌いな科目から順に上げていく
+//   1. ★の少ない（嫌いな）科目
+//   2. 同じなら、直近7日でいちばん触っていない科目
+//   3. それでも同じなら、科目一覧の並び順
+//   平均が 80% 以上なら、好き嫌いは見ずに 2 → 3 の順（まんべんなく全体を上げる）
+export function sortByPriority(subjects, records) {
   const recent = recentSecondsBySubject(subjects, records);
+  const leveled = isLeveled(subjects);
+  const raisingAll = isRaisingAll(subjects);
   const scored = subjects.map((subject, index) => ({
     subject: subject,
-    gap: gapOf(subject, subjects),
+    priority: priorityOf(subject, subjects),
+    feeling: normalizeFeeling(subject.feeling),
     recentSeconds: recent.get(subject.id),
     index: index,
   }));
 
-  scored.sort(
-    (a, b) => b.gap - a.gap || a.recentSeconds - b.recentSeconds || a.index - b.index,
-  );
+  scored.sort((a, b) => {
+    if (leveled && raisingAll) {
+      return a.recentSeconds - b.recentSeconds || a.feeling - b.feeling || a.index - b.index;
+    }
+    if (leveled) {
+      return a.feeling - b.feeling || a.recentSeconds - b.recentSeconds || a.index - b.index;
+    }
+    return b.priority - a.priority || a.recentSeconds - b.recentSeconds || a.index - b.index;
+  });
 
-  return scored[0].subject;
+  return scored.map((item) => item.subject);
 }
 
-// 追いつくための「今週の時間配分」。
-// 直近7日の合計勉強時間（少なくとも1時間）を、先頭との差の大きさに比例して配る。
-// 先頭の科目は差が 0 なので配分も 0 になる（今週は他に回す）。
-// 差が1つも無ければ null（全科目が並んでいる）
-export const MIN_WEEK_SECONDS = 60 * 60;
-
-export function allocateWeek(subjects, records) {
+// 「次に何をやるべきか」を1つ選ぶ。科目が無ければ null
+export function recommendSubject(subjects, records) {
   if (subjects.length === 0) return null;
-
-  const gaps = subjects.map((subject) => gapOf(subject, subjects));
-  const gapTotal = gaps.reduce((sum, gap) => sum + gap, 0);
-  if (gapTotal === 0) return null;
-
-  const keys = recentDateKeys(7);
-  const recentTotal = sumSeconds(
-    records.filter((record) => toDateKey(record.startedAt) >= keys[0]),
-  );
-  const budget = Math.max(MIN_WEEK_SECONDS, recentTotal);
-
-  // 今週すでにやったぶんも並べて、達成度が見えるようにする
-  const recent = recentSecondsBySubject(subjects, records);
-
-  return {
-    budget: budget,
-    items: subjects
-      .map((subject, i) => ({
-        subject: subject,
-        gap: gaps[i],
-        // 分単位に丸める（秒までは見せないため）
-        seconds: Math.round((budget * gaps[i]) / gapTotal / 60) * 60,
-        done: recent.get(subject.id),
-      }))
-      .sort((a, b) => b.gap - a.gap),
-  };
+  return sortByPriority(subjects, records)[0];
 }

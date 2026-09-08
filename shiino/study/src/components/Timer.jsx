@@ -1,12 +1,13 @@
 import Icon from "./Icon";
 import ConfidenceBadge from "./ConfidenceBadge";
 import { formatClock } from "../lib/time";
-import { gapOf, normalizeConfidence } from "../lib/confidence";
+import { gapOf, sortByPriority } from "../lib/confidence";
 
 // 計測パネル。科目を選んで開始・一時停止・停止する。
 // running.since が null なら一時停止中（時計は止まったまま）
 function Timer({
   subjects,
+  records,
   running,
   elapsedSeconds,
   breakSeconds,
@@ -28,13 +29,11 @@ function Timer({
     const base = isPaused ? `${name} を一時停止中` : `${name} を計測中`;
     // 先頭より遅れている科目に取り組んでいるときは、それが分かるようにひとこと足す
     const behind = runningSubject && gapOf(runningSubject, subjects) > 0;
-    return behind ? `${base}（追い上げ中）` : base;
+    return behind ? `${base}（追い上げ中！）` : base;
   };
 
-  // 遅れている科目を先に並べる。同じ自信なら元の並び順（sort は安定）
-  const ordered = [...subjects].sort(
-    (a, b) => normalizeConfidence(a.confidence) - normalizeConfidence(b.confidence),
-  );
+  // やるべき順（先頭との差 ± 好き嫌い）に並べる。追いつきカードの「次はこれ」と同じ順
+  const ordered = sortByPriority(subjects, records);
 
   return (
     <section className="card timer">

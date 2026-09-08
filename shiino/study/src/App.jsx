@@ -3,16 +3,15 @@ import Icon from "./components/Icon";
 import TitleScreen from "./components/TitleScreen";
 import Menu from "./components/Menu";
 import Timer from "./components/Timer";
-import Milestones from "./components/Milestones";
 import GoalList from "./components/GoalList";
 import Summary from "./components/Summary";
 import ManualEntry from "./components/ManualEntry";
 import RecordList from "./components/RecordList";
 import SubjectManager from "./components/SubjectManager";
-import RecentRecords from "./components/RecentRecords";
 import Pace from "./components/Pace";
 import SubjectTotals from "./components/SubjectTotals";
 import CatchUp from "./components/CatchUp";
+import ConfidenceHistory from "./components/ConfidenceHistory";
 import ConfidencePrompt from "./components/ConfidencePrompt";
 import { FEATURES } from "./lib/features";
 import { formatDuration, toDateKey } from "./lib/time";
@@ -72,7 +71,7 @@ function App() {
   // 開くたびにタイトルから始まるので、保存はしない
   const [screen, setScreen] = useState("title");
 
-  // 直前に足した記録のid。計測・手入力の下で、どれが今足したぶんかを示すのに使う
+  // 直前に足した記録のid。記録の一覧で、どれが今足したぶんかを示すのに使う
   const [newestRecordId, setNewestRecordId] = useState(null);
 
   // 計測で選ばれている科目。開いたときは「先頭との差がいちばん大きく、最近やっていない科目」を選んでおく。
@@ -248,6 +247,13 @@ function App() {
     ]);
   };
 
+  // 好き嫌いの書き換え。履歴には残さない（自信と違って、推移を追う意味が薄いため）
+  const setSubjectFeeling = (id, feeling) => {
+    setSubjects((prev) =>
+      prev.map((subject) => (subject.id === id ? { ...subject, feeling: feeling } : subject)),
+    );
+  };
+
   // 手入力ぶんの追加。日付は選べるが、時刻は「今の時刻」を使う。
   // 入れられなかったときは理由の文言を返す（フォームがそのまま表示する）
   const addManualRecord = ({ subjectId, seconds, dateKey }) => {
@@ -310,8 +316,14 @@ function App() {
     setRecords((prev) => prev.filter((record) => record.id !== id));
   };
 
-  const addSubject = (name, color, confidence) => {
-    const subject = { id: createId(), name: name, color: color, confidence: confidence };
+  const addSubject = (name, color, confidence, feeling) => {
+    const subject = {
+      id: createId(),
+      name: name,
+      color: color,
+      confidence: confidence,
+      feeling: feeling,
+    };
     setSubjects((prev) => [...prev, subject]);
     if (!selectedId) setSelectedId(subject.id);
   };
@@ -417,11 +429,11 @@ function App() {
                     setSubjectConfidence(pendingConfidence.subjectId, value);
                     setPendingConfidence(null);
                   }}
-                  onSkip={() => setPendingConfidence(null)}
                 />
               )}
               <Timer
                 subjects={subjects}
+                records={records}
                 running={running}
                 elapsedSeconds={elapsedSeconds}
                 breakSeconds={breakSeconds}
@@ -432,20 +444,7 @@ function App() {
                 onResume={resumeTimer}
                 onStop={stopTimer}
               />
-              <CatchUp
-                subjects={subjects}
-                records={records}
-                selectedId={selectedId}
-                running={running}
-                onSelect={setSelectedId}
-              />
               <Pace records={records} />
-              <RecentRecords
-                subjects={subjects}
-                records={records}
-                newestId={newestRecordId}
-                onDelete={deleteRecord}
-              />
             </>
           )}
 
@@ -466,7 +465,19 @@ function App() {
             </>
           )}
 
-          {feature.key === "milestones" && <Milestones records={records} />}
+          {/* 自信の画面。くらべる → 次はこれ → これまでの推移、の順 */}
+          {feature.key === "confidence" && (
+            <>
+              <CatchUp
+                subjects={subjects}
+                records={records}
+                selectedId={selectedId}
+                running={running}
+                onSelect={setSelectedId}
+              />
+              <ConfidenceHistory subjects={subjects} log={confidenceLog} />
+            </>
+          )}
 
           {feature.key === "goal" && (
             <>
@@ -488,6 +499,7 @@ function App() {
                 onAdd={addSubject}
                 onDelete={deleteSubject}
                 onUpdate={setSubjectConfidence}
+                onFeeling={setSubjectFeeling}
               />
               <SubjectTotals subjects={subjects} records={records} />
             </>

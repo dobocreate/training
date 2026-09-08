@@ -1,6 +1,6 @@
 // localStorage への読み書き。壊れた値が入っていても落ちないように、必ず try で包む。
 
-import { normalizeConfidence } from "./confidence.js";
+import { normalizeConfidence, normalizeFeeling } from "./confidence.js";
 
 const KEYS = {
   subjects: "study.subjects",
@@ -35,19 +35,20 @@ function save(key, value) {
 
 // 最初に開いたときに入れておく科目
 const DEFAULT_SUBJECTS = [
-  { id: "s1", name: "数学", color: "#2563eb", confidence: 0 },
-  { id: "s2", name: "英語", color: "#db2777", confidence: 0 },
-  { id: "s3", name: "プログラミング", color: "#059669", confidence: 0 },
+  { id: "s1", name: "数学", color: "#2563eb", confidence: 0, feeling: 3 },
+  { id: "s2", name: "英語", color: "#db2777", confidence: 0, feeling: 3 },
+  { id: "s3", name: "プログラミング", color: "#059669", confidence: 0, feeling: 3 },
 ];
 
-// 科目の形は { id, name, color, confidence }。
-// 自信を付ける前に保存された科目には confidence が無いので、ここで 0 を補う
+// 科目の形は { id, name, color, confidence, feeling }。
+// 前に保存された科目には無いことがあるので、自信は 0、好き嫌いは ★3（ふつう）を補う
 export function loadSubjects() {
   const value = load(KEYS.subjects, null);
   const list = Array.isArray(value) && value.length > 0 ? value : DEFAULT_SUBJECTS;
   return list.map((subject) => ({
     ...subject,
     confidence: normalizeConfidence(subject.confidence),
+    feeling: normalizeFeeling(subject.feeling),
   }));
 }
 
