@@ -1672,7 +1672,7 @@
   gap: 10px;
 }
 
-/* ===== 追いつき ===== */
+/* ===== 進捗度 ===== */
 .catch-up-message {
   margin: 0 0 12px;
   font-size: 13px;
@@ -1866,15 +1866,11 @@ button.star:hover {
   flex: 1;
 }
 
-/* 追いつきカードの、科目ごとの「できること n / m」 */
+/* 進捗度カードの、科目ごとの「できること n / m」 */
 .skill-note {
   grid-column: 1 / -1;
   font-size: 11px;
   color: var(--ink-dim);
-}
-
-.skill-gap {
-  color: #b45309;
 }
 
 /* 「次はこれ」の下に出す、最初の項目 */
@@ -1901,7 +1897,7 @@ button.star:hover {
   margin: 0;
 }
 
-/* 自信の計算。感覚 ←→ リスト のスライダー */
+/* 進捗度の計算。自信 ←→ リスト のスライダー */
 .weight-picker {
   display: flex;
   align-items: center;

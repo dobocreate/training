@@ -2,7 +2,7 @@ import Icon from "./Icon";
 import ConfidenceInput from "./ConfidenceInput";
 import StarRating from "./StarRating";
 
-// 自信の画面で、科目ごとの自信（自分の感覚）と好き嫌いを直す。
+// 進捗度の画面で、科目ごとの自信（自己申告）と好き嫌いを直す。
 // 計測の停止時に聞くのが基本で、ここは手直し用。直すと履歴にも残る
 function ConfidenceEditor({ subjects, onUpdate, onFeeling }) {
   return (
@@ -38,7 +38,7 @@ function ConfidenceEditor({ subjects, onUpdate, onFeeling }) {
           ))}
         </ul>
       )}
-      <p className="rating-help">数字は自分の感覚。やることリストがある科目は、これとチェック率を混ぜた値がグラフに出るよ</p>
+      <p className="rating-help">数字は自信（自己申告）。やることリストがある科目は、これとチェック率を混ぜた進捗度がグラフに出るよ</p>
     </section>
   );
 }

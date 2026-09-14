@@ -47,7 +47,7 @@ function TitleScreen({ records, subjects, running, elapsedSeconds, onStart }) {
     ? subjects.find((subject) => subject.id === running.subjectId)
     : null;
 
-  // 科目ごとの自信。自信が高い順に並べ、先頭との差が見えるようにする
+  // 科目ごとの進捗度。進捗度が高い順に並べ、先頭との差が見えるようにする
   const leader = leaderSubject(subjects);
   const recommended = recommendSubject(subjects, records);
   const leveled = isLeveled(subjects);
@@ -98,11 +98,11 @@ function TitleScreen({ records, subjects, running, elapsedSeconds, onStart }) {
         </div>
       </dl>
 
-      {/* 科目ごとの自信。どれが遅れているかを、開いた瞬間に分かるようにする */}
+      {/* 科目ごとの進捗度。どれが遅れているかを、開いた瞬間に分かるようにする */}
       {subjects.length > 0 && (
         <div className="title-confidence">
           <div className="title-confidence-head">
-            <span className="chart-title">自信</span>
+            <span className="chart-title">進捗度</span>
             <span className="stat-note">
               {/* 差があるときは何も言わない。棒と線で差が見えるので、文は横並びのときだけ */}
               {subjects.length > 1 && leveled

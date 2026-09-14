@@ -32,7 +32,7 @@ function Timer({
     return behind ? `${base}（追い上げ中！）` : base;
   };
 
-  // やるべき順（先頭との差 ± 好き嫌い）に並べる。追いつきカードの「次はこれ」と同じ順
+  // やるべき順（先頭との差 ± 好き嫌い）に並べる。進捗度カードの「次はこれ」と同じ順
   const ordered = sortByPriority(subjects, records);
 
   return (

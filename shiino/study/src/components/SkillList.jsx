@@ -3,7 +3,7 @@ import Icon from "./Icon";
 import { skillsOf, checkRate, isStale } from "../lib/skills";
 
 // 科目ごとの「やること」チェックリスト。
-// 項目を足して、できるようになったらチェックする。チェックした割合が自信の根拠になる
+// 項目を足して、できるようになったらチェックする。チェックした割合が進捗度の根拠になる
 function SkillList({ subjects, skills, onAdd, onToggle, onDelete }) {
   // 科目ごとの入力欄の文字。科目idをキーにして持つ
   const [drafts, setDrafts] = useState({});
@@ -24,7 +24,7 @@ function SkillList({ subjects, skills, onAdd, onToggle, onDelete }) {
       </p>
       <p className="rating-help">
         「二次方程式を解けるようにする」のように、1つの単元・1つの技能を1項目にするとぶれにくいよ。
-        できたらチェック。チェックした割合が自信に混ざる（5項目以上で本来の重みになる）
+        できたらチェック。チェックした割合が進捗度に混ざる（5項目以上で本来の重みになる）
       </p>
 
       {subjects.length === 0 ? (

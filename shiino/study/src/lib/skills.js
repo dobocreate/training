@@ -1,4 +1,4 @@
-// 「やること」チェックリスト。科目ごとに項目を持ち、チェックした割合を自信の根拠にする。
+// 「やること」チェックリスト。科目ごとに項目を持ち、チェックした割合を進捗度の根拠にする。
 // Reactに依存しない純粋な関数だけを置く。
 //
 // 項目の形は { id, subjectId, text, done, doneAt, createdAt }。
@@ -7,7 +7,7 @@
 
 import { normalizeConfidence } from "./confidence.js";
 
-// 自己申告とチェック率を混ぜるときの、自己申告の重み（%）。設定で変えられる
+// 自信とチェック率を混ぜるときの、自信の重み（%）。設定で変えられる
 export const DEFAULT_SELF_WEIGHT = 50;
 
 // 項目がこれより少ない科目は、チェック率の重みを項目数に応じて弱める。
@@ -16,9 +16,6 @@ export const FULL_WEIGHT_ITEMS = 5;
 
 // チェックしてからこれだけ経った項目は「見直しどき」として薄く出す
 export const STALE_DAYS = 30;
-
-// 自己申告とチェック率がこれ以上ずれていたら、ひとこと添える
-export const GAP_NOTICE = 25;
 
 export function normalizeSelfWeight(value) {
   const number = Number(value);
@@ -42,8 +39,8 @@ export function checkRate(subjectId, skills) {
   return Math.round((done / list.length) * 100);
 }
 
-// 自己申告とチェック率を混ぜた自信。
-//   項目が無い     … 自己申告そのまま
+// 自信とチェック率を混ぜた進捗度。
+//   項目が無い     … 自信そのまま
 //   項目が 5 未満  … チェック率の重みを (項目数 / 5) 倍に弱める
 export function blendedConfidence(subject, skills, selfWeight) {
   const self = normalizeConfidence(subject.confidence);
@@ -56,24 +53,14 @@ export function blendedConfidence(subject, skills, selfWeight) {
   return Math.round(self * (1 - rateWeight) + rate * rateWeight);
 }
 
-// 自己申告がチェック率より大きくずれていたら文言を返し、無ければ ""。
-// 逆（できているのに自信が低い）は指摘しない
-export function gapNotice(subject, skills) {
-  const rate = checkRate(subject.id, skills);
-  if (rate === null) return "";
-  const self = normalizeConfidence(subject.confidence);
-  if (self - rate >= GAP_NOTICE) return "自信のわりに、できたことがまだ少ないかも";
-  return "";
-}
-
 export function isStale(skill, now = new Date()) {
   if (!skill.done || !skill.doneAt) return false;
   const days = (now.getTime() - new Date(skill.doneAt).getTime()) / (24 * 60 * 60 * 1000);
   return days >= STALE_DAYS;
 }
 
-// 科目ごとの「混ぜたあとの自信」を持った一覧にして返す。
-// 表示と優先度の計算はこちらを使い、自己申告の入力欄はもとの subjects を使う
+// 科目ごとの「混ぜたあとの進捗度」を持った一覧にして返す。
+// 表示と優先度の計算はこちらを使い、自信の入力欄はもとの subjects を使う
 export function withBlendedConfidence(subjects, skills, selfWeight) {
   return subjects.map((subject) => ({
     ...subject,

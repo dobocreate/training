@@ -13,10 +13,10 @@ import {
   averageConfidence,
   GOAL,
 } from "../lib/confidence";
-import { skillsOf, gapNotice, uncheckedOf } from "../lib/skills";
+import { skillsOf, uncheckedOf } from "../lib/skills";
 
-// 計測の画面に添える「追いつき」のカード。
-// いちばん自信のある科目を先頭にして、他の科目がどれだけ後ろにいるかを見せ、
+// 計測の画面に添える「進捗度」のカード。
+// いちばん進捗度の高い科目を先頭にして、他の科目がどれだけ後ろにいるかを見せ、
 // 差が大きい科目から順に時間を回すよう勧める
 function CatchUp({ subjects, skills = [], records, selectedId, running, onSelect }) {
   const leader = leaderSubject(subjects);
@@ -29,13 +29,13 @@ function CatchUp({ subjects, skills = [], records, selectedId, running, onSelect
   // 平均 80% 以上なら、嫌い優先をやめて全体を上げる
   const raisingAll = isRaisingAll(subjects);
 
-  // 自信が高い順に並べる（先頭が上）
+  // 進捗度が高い順に並べる（先頭が上）
   const ordered = [...subjects].sort(
     (a, b) => normalizeConfidence(b.confidence) - normalizeConfidence(a.confidence),
   );
 
   const message = () => {
-    if (subjects.length === 0) return "科目を足すと、ここで自信をくらべられるよ";
+    if (subjects.length === 0) return "科目を足すと、ここで進捗度をくらべられるよ";
     if (subjects.length === 1) return "科目が1つだけだから、まだくらべる相手がいないね";
     if (leveled) {
       if (average >= GOAL) return `全科目 ${GOAL}%！もう言うことないよ。好きな科目を好きなだけやろう`;
@@ -55,7 +55,7 @@ function CatchUp({ subjects, skills = [], records, selectedId, running, onSelect
       <div className="summary-head">
         <p className="card-title">
           <Icon name="trend" />
-          追いつき
+          進捗度
         </p>
         {/* 横並びのときは本文で伝えるので、右上には差があるときだけ出す */}
         {subjects.length > 1 && !leveled && (
@@ -86,16 +86,11 @@ function CatchUp({ subjects, skills = [], records, selectedId, running, onSelect
                   <ConfidenceBadge value={value} isBehind={gap > 0} />
                 </span>
 
-                {/* やることリストがあれば、何個できたかと、感覚とのずれを添える */}
+                {/* やることリストがあれば、何個できたかを添える */}
                 {skillsOf(subject.id, skills).length > 0 && (
                   <span className="skill-note">
                     やること {skillsOf(subject.id, skills).filter((k) => k.done).length} /{" "}
                     {skillsOf(subject.id, skills).length}
-                    {gapNotice({ ...subject, confidence: subject.selfConfidence ?? subject.confidence }, skills) && (
-                      <span className="skill-gap">
-                        ・{gapNotice({ ...subject, confidence: subject.selfConfidence ?? subject.confidence }, skills)}
-                      </span>
-                    )}
                   </span>
                 )}
 
