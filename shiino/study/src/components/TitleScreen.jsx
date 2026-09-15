@@ -11,10 +11,11 @@ import {
   isLeveled,
   GOAL,
 } from "../lib/confidence";
-import { formatClock, formatDuration, toDateKey, startOfWeekKey } from "../lib/time";
+import { upcomingExams, daysUntil, countdownLabel } from "../lib/exams";
+import { formatClock, formatDuration, formatMonthDay, toDateKey, startOfWeekKey } from "../lib/time";
 
 // 最初に出るタイトル画面。STARTを押すと本編に入る
-function TitleScreen({ records, subjects, running, elapsedSeconds, onStart }) {
+function TitleScreen({ records, subjects, exams, running, elapsedSeconds, onStart }) {
   // Enter / Space でも始められるようにする
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -43,6 +44,14 @@ function TitleScreen({ records, subjects, running, elapsedSeconds, onStart }) {
   const streak = studyStreak(records);
   const isPaused = Boolean(running) && running.since === null;
 
+  // いちばん近いテスト。開いた瞬間に「あと何日か」が目に入るようにする
+  const upcoming = upcomingExams(exams);
+  const nearest = upcoming[0] ?? null;
+  const nearestDays = nearest ? daysUntil(nearest.date) : null;
+  const nearestSubject = nearest
+    ? subjects.find((subject) => subject.id === nearest.subjectId)
+    : null;
+
   // 科目ごとの進捗度。進捗度が高い順に並べ、先頭との差が見えるようにする
   const leader = leaderSubject(subjects);
   const recommended = recommendSubject(subjects, records);
@@ -61,6 +70,34 @@ function TitleScreen({ records, subjects, running, elapsedSeconds, onStart }) {
           <span className={isPaused ? "running-dot is-paused" : "running-dot"} />
           <span className="running-clock">{formatClock(elapsedSeconds)}</span>
         </p>
+      )}
+
+      {/* テストまでのカウントダウン。3日以内は色を変えて急かす */}
+      {nearest && (
+        <div className={nearestDays <= 3 ? "title-countdown is-soon" : "title-countdown"}>
+          <div className="countdown-body">
+            <p className="countdown-name">
+              {nearestSubject && (
+                <span className="dot" style={{ backgroundColor: nearestSubject.color }} />
+              )}
+              {nearest.name}
+            </p>
+            <p className="countdown-note">
+              {formatMonthDay(nearest.date)}
+              {nearestSubject ? ` ／ ${nearestSubject.name}` : ""}
+              {upcoming.length > 1 ? ` ／ ほか ${upcoming.length - 1}件` : ""}
+            </p>
+          </div>
+          <p className="countdown-days">
+            {nearestDays === 0 ? (
+              <strong>今日！</strong>
+            ) : (
+              <>
+                あと <strong>{nearestDays}</strong> 日
+              </>
+            )}
+          </p>
+        </div>
       )}
 
       {/* 前回までの状況を少しだけ見せて、続きから始める感じを出す */}

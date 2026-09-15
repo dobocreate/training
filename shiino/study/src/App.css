@@ -1342,6 +1342,73 @@
   color: var(--ink-dim);
 }
 
+/* テストまでのカウントダウン。名前と日付を左、日数を右に大きく */
+.title-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  max-width: 830px;
+  margin: 24px 0 0;
+  padding: 14px 20px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  text-align: left;
+}
+
+.countdown-body {
+  min-width: 0;
+}
+
+.countdown-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.countdown-note {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.countdown-days {
+  flex: none;
+  margin: 0;
+  font-size: 14px;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.countdown-days strong {
+  font-size: 30px;
+  line-height: 1;
+}
+
+/* 3日以内は赤くして急かす */
+.title-countdown.is-soon {
+  border-color: var(--danger);
+  background: #fef2f2;
+}
+
+.title-countdown.is-soon .countdown-days {
+  color: var(--danger);
+}
+
+/* タイトル画面の帯の下に付く札の並び。カウントダウンがあるときは間を詰める */
+.title-countdown + .title-stats {
+  margin-top: 12px;
+}
+
 /* 計測中の帯。タイトル画面を開いた時点で、動いていることが分かるようにする */
 .title-running {
   display: flex;
@@ -1775,6 +1842,52 @@ button.star:hover {
   border-color: var(--chip-color);
   color: var(--chip-color);
   font-weight: 600;
+}
+
+/* ===== テストの予定 ===== */
+.exam-item.is-past {
+  opacity: 0.55;
+}
+
+.exam-date {
+  flex: none;
+  font-size: 11px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.exam-days {
+  flex: none;
+  min-width: 56px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+  color: var(--accent);
+}
+
+.exam-days.is-soon {
+  color: var(--danger);
+}
+
+.exam-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.exam-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.exam-row .is-date {
+  flex: 1 1 140px;
+}
+
+.exam-row select.field {
+  flex: 1 1 120px;
 }
 
 /* ===== やることリスト ===== */

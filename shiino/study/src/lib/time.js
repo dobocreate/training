@@ -33,6 +33,13 @@ export function toDateKey(date) {
 
 const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
 
+// 「9/28(月)」の形。今日でも「今日」にはしない（予定の日付など、日付そのものを見せたいとき用）
+export function formatMonthDay(dateKey) {
+  const [y, m, d] = dateKey.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  return `${m}/${d}(${WEEKDAYS[date.getDay()]})`;
+}
+
 export function formatDateLabel(dateKey) {
   const [y, m, d] = dateKey.split("-").map(Number);
   const date = new Date(y, m - 1, d);

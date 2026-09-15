@@ -1,6 +1,7 @@
 // localStorage への読み書き。壊れた値が入っていても落ちないように、必ず try で包む。
 
 import { normalizeConfidence, normalizeFeeling } from "./confidence.js";
+import { isExam, daysUntil, KEEP_PAST_DAYS } from "./exams.js";
 import { normalizeSelfWeight, DEFAULT_SELF_WEIGHT } from "./skills.js";
 
 const KEYS = {
@@ -11,6 +12,7 @@ const KEYS = {
   confidenceLog: "study.confidenceLog",
   skills: "study.skills",
   settings: "study.settings",
+  exams: "study.exams",
   // 「ボス戦」と呼んでいたころ・1件しか持てなかったころのキー。
   // 読み込みのときだけ見る
   oldGoals: "study.bosses",
@@ -176,4 +178,22 @@ export function loadSettings() {
 
 export function saveSettings(settings) {
   save(KEYS.settings, settings);
+}
+
+// テストの予定。終わって30日以上経ったものは、ここで捨てる
+export function loadExams() {
+  const value = load(KEYS.exams, []);
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter(isExam)
+    .filter((exam) => daysUntil(exam.date) >= -KEEP_PAST_DAYS)
+    .map((exam) => ({
+      ...exam,
+      subjectId: typeof exam.subjectId === "string" ? exam.subjectId : "",
+      createdAt: typeof exam.createdAt === "string" ? exam.createdAt : "",
+    }));
+}
+
+export function saveExams(exams) {
+  save(KEYS.exams, exams);
 }

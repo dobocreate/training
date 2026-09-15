@@ -11,6 +11,7 @@ import CatchUp from "./components/CatchUp";
 import ConfidenceSettings from "./components/ConfidenceSettings";
 import ConfidenceEditor from "./components/ConfidenceEditor";
 import SkillList from "./components/SkillList";
+import ExamList from "./components/ExamList";
 import ConfidencePrompt from "./components/ConfidencePrompt";
 import { FEATURES } from "./lib/features";
 import { formatDuration, toDateKey } from "./lib/time";
@@ -30,6 +31,8 @@ import {
   saveSkills,
   loadSettings,
   saveSettings,
+  loadExams,
+  saveExams,
 } from "./lib/storage";
 import "./App.css";
 
@@ -67,6 +70,9 @@ function App() {
 
   // 設定。自己申告とチェック率をどの割合で混ぜるか
   const [settings, setSettings] = useState(loadSettings);
+
+  // テストの予定。いちばん近いものをタイトル画面に「あと ○日」と出す
+  const [exams, setExams] = useState(loadExams);
 
   // 計測を止めた直後に出す「今の自信は？」。{ subjectId, seconds } か、聞くことが無ければ null。
   // 開き直したら聞き直さない（保存しない）
@@ -114,6 +120,10 @@ function App() {
   useEffect(() => {
     saveSettings(settings);
   }, [settings]);
+
+  useEffect(() => {
+    saveExams(exams);
+  }, [exams]);
 
   // 表示と優先度の計算には、自己申告とチェック率を混ぜた自信を使う。
   // 自己申告そのものを扱う入力欄（科目画面・自信チェック）は subjects をそのまま使う
@@ -310,6 +320,23 @@ function App() {
     setSettings((prev) => ({ ...prev, selfWeight: value }));
   };
 
+  const addExam = ({ name, date, subjectId }) => {
+    setExams((prev) => [
+      ...prev,
+      {
+        id: createId(),
+        name: name,
+        date: date,
+        subjectId: subjectId,
+        createdAt: new Date().toISOString(),
+      },
+    ]);
+  };
+
+  const deleteExam = (id) => {
+    setExams((prev) => prev.filter((exam) => exam.id !== id));
+  };
+
   const addSubject = (name, color, confidence, feeling) => {
     const subject = {
       id: createId(),
@@ -393,6 +420,7 @@ function App() {
       <TitleScreen
         records={records}
         subjects={blended}
+        exams={exams}
         running={running}
         elapsedSeconds={elapsedSeconds}
         onStart={() => setScreen("menu")}
@@ -509,14 +537,18 @@ function App() {
             </>
           )}
 
+          {/* 科目の下にテストの予定。いちばん近いものはタイトル画面にも出る */}
           {feature.key === "subjects" && (
-            <SubjectManager
-              subjects={subjects}
-              onAdd={addSubject}
-              onDelete={deleteSubject}
-              onUpdate={setSubjectConfidence}
-              onFeeling={setSubjectFeeling}
-            />
+            <>
+              <SubjectManager
+                subjects={subjects}
+                onAdd={addSubject}
+                onDelete={deleteSubject}
+                onUpdate={setSubjectConfidence}
+                onFeeling={setSubjectFeeling}
+              />
+              <ExamList exams={exams} subjects={subjects} onAdd={addExam} onDelete={deleteExam} />
+            </>
           )}
         </div>
       </div>
