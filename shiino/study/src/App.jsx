@@ -163,7 +163,7 @@ function App() {
       (running.pausedAt ? secondsSince(running.pausedAt, now) : 0)
     : 0;
 
-  // タブのアイコン。今日の勉強時間ぶんだけ、鉛筆が輪を描く
+  // タブのアイコンと「STUDY LOG」の横のカップ。今日の勉強時間ぶんだけコーヒーが溜まる
   const todaySeconds = todayStudySeconds(records, running, elapsedSeconds);
   const todayRatio = fillRatio(todaySeconds);
   useEffect(() => {
