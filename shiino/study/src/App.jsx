@@ -140,6 +140,14 @@ function App() {
     return () => clearInterval(timerId);
   }, [running]);
 
+  // タブの名前を今いる画面に合わせる。タイトル画面は「STUDY LOG」だけ、
+  // それ以外は「計測 | STUDY LOG」のように画面名を前に付ける
+  useEffect(() => {
+    const feature = FEATURES.find((item) => item.key === screen);
+    const page = screen === "title" ? null : screen === "menu" ? "メニュー" : feature?.label;
+    document.title = page ? `${page} | STUDY LOG` : "STUDY LOG";
+  }, [screen]);
+
   // 機能の画面では Escape でメニューに戻れるようにする
   useEffect(() => {
     if (screen === "title" || screen === "menu") return undefined;
