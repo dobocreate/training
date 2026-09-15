@@ -454,12 +454,6 @@
   color: var(--ink-dim);
 }
 
-.timer-subject {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: var(--ink-dim);
-}
-
 .big-button {
   border: none;
   border-radius: 8px;
@@ -1728,15 +1722,6 @@ button.star:hover {
   gap: 8px 10px;
 }
 
-.leader-tag {
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 700;
-  color: #fff;
-  background: var(--accent);
-}
-
 .catch-up .subject-time {
   display: flex;
   align-items: center;
@@ -1793,28 +1778,43 @@ button.star:hover {
 }
 
 /* ===== やることリスト ===== */
-.skill-group {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+/* 科目ごとに1枚のカード。見出し（科目名と n / m）→ 棒 → これから → できた → 追加欄 */
+.skill-card-head {
+  justify-content: space-between;
 }
 
-.skill-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 0 0 8px;
+.skill-card-head .subject-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .skill-count {
   font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+
+.skill-track {
+  display: block;
+  margin: -6px 0 14px;
+}
+
+.skill-section {
+  margin-bottom: 12px;
+}
+
+.skill-section-title {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: var(--ink-dim);
 }
 
 .skill-list {
   list-style: none;
-  margin: 0 0 8px;
+  margin: 0;
   padding: 0;
 }
 
@@ -1860,6 +1860,7 @@ button.star:hover {
 .skill-form {
   display: flex;
   gap: 8px;
+  margin-top: 4px;
 }
 
 .skill-form .field {

@@ -6,7 +6,6 @@ import Timer from "./components/Timer";
 import Summary from "./components/Summary";
 import SubjectManager from "./components/SubjectManager";
 import Pace from "./components/Pace";
-import SubjectTotals from "./components/SubjectTotals";
 import RecordList from "./components/RecordList";
 import CatchUp from "./components/CatchUp";
 import ConfidenceSettings from "./components/ConfidenceSettings";
@@ -511,16 +510,13 @@ function App() {
           )}
 
           {feature.key === "subjects" && (
-            <>
-              <SubjectManager
-                subjects={subjects}
-                onAdd={addSubject}
-                onDelete={deleteSubject}
-                onUpdate={setSubjectConfidence}
-                onFeeling={setSubjectFeeling}
-              />
-              <SubjectTotals subjects={blended} records={records} />
-            </>
+            <SubjectManager
+              subjects={subjects}
+              onAdd={addSubject}
+              onDelete={deleteSubject}
+              onUpdate={setSubjectConfidence}
+              onFeeling={setSubjectFeeling}
+            />
           )}
         </div>
       </div>

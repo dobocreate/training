@@ -18,19 +18,7 @@ function Timer({
   onResume,
   onStop,
 }) {
-  const runningSubject = running
-    ? subjects.find((s) => s.id === running.subjectId)
-    : null;
   const isPaused = Boolean(running) && running.since === null;
-
-  const stateText = () => {
-    if (!running) return "科目を選んで開始";
-    const name = runningSubject?.name ?? "（削除された科目）";
-    const base = isPaused ? `${name} を一時停止中` : `${name} を計測中`;
-    // 先頭より遅れている科目に取り組んでいるときは、それが分かるようにひとこと足す
-    const behind = runningSubject && gapOf(runningSubject, subjects) > 0;
-    return behind ? `${base}（追い上げ中！）` : base;
-  };
 
   // やるべき順（先頭との差 ± 好き嫌い）に並べる。進捗度カードの「次はこれ」と同じ順
   const ordered = sortByPriority(subjects, records);
@@ -65,7 +53,6 @@ function Timer({
           <p className={isPaused ? "timer-clock is-paused" : "timer-clock"}>
             {formatClock(elapsedSeconds)}
           </p>
-          <p className="timer-subject">{stateText()}</p>
 
           {/* 一時停止中はここが動く。再開後も、その回にとった休憩の合計を出しておく */}
           {running && breakSeconds > 0 && (

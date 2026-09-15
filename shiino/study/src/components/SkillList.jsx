@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Icon from "./Icon";
-import { skillsOf, checkRate, isStale } from "../lib/skills";
+import { skillsOf, checkRate } from "../lib/skills";
+import SkillItem from "./SkillItem";
 
 // 科目ごとの「やること」チェックリスト。
+// 科目ごとに1枚のカードにして、これからやるものを上、できたものを下にまとめる。
 // 項目を足して、できるようになったらチェックする。チェックした割合が進捗度の根拠になる
 function SkillList({ subjects, skills, onAdd, onToggle, onDelete }) {
   // 科目ごとの入力欄の文字。科目idをキーにして持つ
@@ -16,88 +18,86 @@ function SkillList({ subjects, skills, onAdd, onToggle, onDelete }) {
     setDrafts((prev) => ({ ...prev, [subjectId]: "" }));
   };
 
-  return (
-    <section className="card">
-      <p className="card-title">
-        <Icon name="check" />
-        やることチェックリスト
-      </p>
-      <p className="rating-help">
-        「二次方程式を解けるようにする」のように、1つの単元・1つの技能を1項目にするとぶれにくいよ。
-        できたらチェック。チェックした割合が進捗度に混ざる（5項目以上で本来の重みになる）
-      </p>
-
-      {subjects.length === 0 ? (
+  if (subjects.length === 0) {
+    return (
+      <section className="card">
+        <p className="card-title">
+          <Icon name="check" />
+          やることチェックリスト
+        </p>
         <p className="empty-message">科目がありません</p>
-      ) : (
-        subjects.map((subject) => {
-          const list = skillsOf(subject.id, skills);
-          const rate = checkRate(subject.id, skills);
-          const done = list.filter((skill) => skill.done).length;
-          return (
-            <div key={subject.id} className="skill-group">
-              <p className="skill-head">
-                <span className="subject-name">
-                  <span className="dot" style={{ backgroundColor: subject.color }} />
-                  {subject.name}
-                </span>
-                <span className="skill-count">
-                  {list.length === 0 ? "項目なし" : `${done} / ${list.length}（${rate}%）`}
-                </span>
-              </p>
+      </section>
+    );
+  }
 
-              {list.length > 0 && (
-                <ul className="skill-list">
-                  {list.map((skill) => (
-                    <li
-                      key={skill.id}
-                      className={isStale(skill) ? "skill-item is-stale" : "skill-item"}
-                      title={isStale(skill) ? "チェックしてから30日以上。まだできるか見直してみて" : undefined}
-                    >
-                      <label className="skill-label">
-                        <input
-                          type="checkbox"
-                          checked={skill.done}
-                          onChange={() => onToggle(skill.id)}
-                        />
-                        <span className={skill.done ? "skill-text is-done" : "skill-text"}>
-                          {skill.text}
-                        </span>
-                      </label>
-                      <button
-                        type="button"
-                        className="delete-button"
-                        onClick={() => onDelete(skill.id)}
-                        aria-label={`${skill.text} を削除`}
-                      >
-                        ✕
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+  return subjects.map((subject) => {
+    const list = skillsOf(subject.id, skills);
+    const todo = list.filter((skill) => !skill.done);
+    const done = list.filter((skill) => skill.done);
+    const rate = checkRate(subject.id, skills);
 
-              <form className="skill-form" onSubmit={(event) => submit(event, subject.id)}>
-                <input
-                  className="field"
-                  type="text"
-                  value={drafts[subject.id] ?? ""}
-                  placeholder="やること"
-                  autoComplete="off"
-                  onChange={(event) =>
-                    setDrafts((prev) => ({ ...prev, [subject.id]: event.target.value }))
-                  }
-                />
-                <button type="submit" className="add-button">
-                  追加
-                </button>
-              </form>
-            </div>
-          );
-        })
-      )}
-    </section>
-  );
+    return (
+      <section key={subject.id} className="card skill-card">
+        <p className="card-title skill-card-head">
+          <span className="subject-name">
+            <span className="dot" style={{ backgroundColor: subject.color }} />
+            {subject.name}
+          </span>
+          <span className="skill-count">
+            {list.length === 0 ? "まだ項目なし" : `${done.length} / ${list.length} できた`}
+          </span>
+        </p>
+
+        {/* どれだけできたかを棒で見せる。項目が無いうちは出さない */}
+        {list.length > 0 && (
+          <span className="bar-track skill-track">
+            <span
+              className="bar-fill"
+              style={{ width: `${rate}%`, backgroundColor: subject.color }}
+            />
+          </span>
+        )}
+
+        {todo.length > 0 && (
+          <div className="skill-section">
+            <p className="skill-section-title">これから</p>
+            <ul className="skill-list">
+              {todo.map((skill) => (
+                <SkillItem key={skill.id} skill={skill} onToggle={onToggle} onDelete={onDelete} />
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {done.length > 0 && (
+          <div className="skill-section">
+            <p className="skill-section-title">できた</p>
+            <ul className="skill-list">
+              {done.map((skill) => (
+                <SkillItem key={skill.id} skill={skill} onToggle={onToggle} onDelete={onDelete} />
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <form className="skill-form" onSubmit={(event) => submit(event, subject.id)}>
+          <input
+            className="field"
+            type="text"
+            value={drafts[subject.id] ?? ""}
+            placeholder="やることを追加"
+            autoComplete="off"
+            onChange={(event) =>
+              setDrafts((prev) => ({ ...prev, [subject.id]: event.target.value }))
+            }
+          />
+          <button type="submit" className="add-button">
+            追加
+          </button>
+        </form>
+      </section>
+    );
+  });
 }
 
 export default SkillList;

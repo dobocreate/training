@@ -38,7 +38,6 @@ function ConfidenceEditor({ subjects, onUpdate, onFeeling }) {
           ))}
         </ul>
       )}
-      <p className="rating-help">数字は自信（自己申告）。やることリストがある科目は、これとチェック率を混ぜた進捗度がグラフに出るよ</p>
     </section>
   );
 }

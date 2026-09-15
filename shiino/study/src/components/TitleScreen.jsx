@@ -43,10 +43,6 @@ function TitleScreen({ records, subjects, running, elapsedSeconds, onStart }) {
   const streak = studyStreak(records);
   const isPaused = Boolean(running) && running.since === null;
 
-  const runningSubject = running
-    ? subjects.find((subject) => subject.id === running.subjectId)
-    : null;
-
   // 科目ごとの進捗度。進捗度が高い順に並べ、先頭との差が見えるようにする
   const leader = leaderSubject(subjects);
   const recommended = recommendSubject(subjects, records);
@@ -63,7 +59,6 @@ function TitleScreen({ records, subjects, running, elapsedSeconds, onStart }) {
       {running && (
         <p className="title-running">
           <span className={isPaused ? "running-dot is-paused" : "running-dot"} />
-          {`${runningSubject?.name ?? "（削除された科目）"} を${isPaused ? "一時停止中" : "計測中"}`}
           <span className="running-clock">{formatClock(elapsedSeconds)}</span>
         </p>
       )}
@@ -119,9 +114,6 @@ function TitleScreen({ records, subjects, running, elapsedSeconds, onStart }) {
                   <span className="subject-name">
                     <span className="dot" style={{ backgroundColor: subject.color }} />
                     {subject.name}
-                    {!leveled && subject.id === leader?.id && subjects.length > 1 && (
-                      <span className="leader-tag">先頭</span>
-                    )}
                     <StarRating value={subject.feeling} compact />
                   </span>
                   <span className="subject-time">
