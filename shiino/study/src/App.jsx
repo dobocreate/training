@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Icon from "./components/Icon";
+import CoffeeCup from "./components/CoffeeCup";
 import TitleScreen from "./components/TitleScreen";
 import Menu from "./components/Menu";
 import Timer from "./components/Timer";
@@ -18,6 +19,7 @@ import { formatDuration, toDateKey } from "./lib/time";
 import { dayLimitError, remainingOnDay } from "./lib/dayLimit";
 import { recommendSubject } from "./lib/confidence";
 import { withBlendedConfidence } from "./lib/skills";
+import { todayStudySeconds, fillRatio, updateFavicon } from "./lib/favicon";
 import {
   loadSubjects,
   saveSubjects,
@@ -160,6 +162,13 @@ function App() {
     ? running.breakAccumulated +
       (running.pausedAt ? secondsSince(running.pausedAt, now) : 0)
     : 0;
+
+  // タブのアイコン。今日の勉強時間ぶんだけ、鉛筆が輪を描く
+  const todaySeconds = todayStudySeconds(records, running, elapsedSeconds);
+  const todayRatio = fillRatio(todaySeconds);
+  useEffect(() => {
+    updateFavicon(todayRatio);
+  }, [todayRatio]);
 
   // 記録の追加口はここ1か所にまとめる
   const addRecord = (record) => {
@@ -423,6 +432,7 @@ function App() {
         exams={exams}
         running={running}
         elapsedSeconds={elapsedSeconds}
+        todayRatio={todayRatio}
         onStart={() => setScreen("menu")}
       />
     );
@@ -435,6 +445,7 @@ function App() {
       <Menu
         running={running}
         elapsedSeconds={elapsedSeconds}
+        todayRatio={todayRatio}
         onSelect={setScreen}
       />
     );
@@ -453,7 +464,10 @@ function App() {
             <Icon name={feature.icon} />
             メニューに戻る
           </button>
-          <h1 className="wordmark">STUDY LOG</h1>
+          <h1 className="wordmark">
+            <CoffeeCup ratio={todayRatio} />
+            STUDY LOG
+          </h1>
         </header>
 
         {/* そのページの機能を先頭に置き、続けて「そこで一緒に見たくなるもの」をそえる。

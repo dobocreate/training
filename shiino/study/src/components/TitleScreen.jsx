@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { studyStreak } from "../lib/streak";
 import ConfidenceBadge from "./ConfidenceBadge";
+import CoffeeCup from "./CoffeeCup";
 import StarRating from "./StarRating";
 import {
   leaderSubject,
@@ -12,10 +12,10 @@ import {
   GOAL,
 } from "../lib/confidence";
 import { upcomingExams, daysUntil, countdownLabel } from "../lib/exams";
-import { formatClock, formatDuration, formatMonthDay, toDateKey, startOfWeekKey } from "../lib/time";
+import { formatClock, formatMonthDay } from "../lib/time";
 
 // 最初に出るタイトル画面。STARTを押すと本編に入る
-function TitleScreen({ records, subjects, exams, running, elapsedSeconds, onStart }) {
+function TitleScreen({ records, subjects, exams, running, elapsedSeconds, todayRatio, onStart }) {
   // Enter / Space でも始められるようにする
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -29,19 +29,6 @@ function TitleScreen({ records, subjects, exams, running, elapsedSeconds, onStar
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onStart]);
 
-  const todayKey = toDateKey(new Date());
-  const todaySeconds = records
-    .filter((record) => toDateKey(record.startedAt) === todayKey)
-    .reduce((sum, record) => sum + record.seconds, 0);
-
-  // 今日ぶんが今週のどれくらいかを、帯の長さにする
-  const weekStart = startOfWeekKey();
-  const weekSeconds = records
-    .filter((record) => toDateKey(record.startedAt) >= weekStart)
-    .reduce((sum, record) => sum + record.seconds, 0);
-  const todayShare = weekSeconds > 0 ? todaySeconds / weekSeconds : 0;
-
-  const streak = studyStreak(records);
   const isPaused = Boolean(running) && running.since === null;
 
   // いちばん近いテスト。開いた瞬間に「あと何日か」が目に入るようにする
@@ -62,7 +49,10 @@ function TitleScreen({ records, subjects, exams, running, elapsedSeconds, onStar
 
   return (
     <div className="title-screen">
-      <h1 className="title-logo">STUDY LOG</h1>
+      <h1 className="title-logo">
+        <CoffeeCup ratio={todayRatio} />
+        STUDY LOG
+      </h1>
 
       {/* 計測したまま閉じても計測は続くので、開いた時点で経過時間が分かるようにする */}
       {running && (
@@ -99,36 +89,6 @@ function TitleScreen({ records, subjects, exams, running, elapsedSeconds, onStar
           </p>
         </div>
       )}
-
-      {/* 前回までの状況を少しだけ見せて、続きから始める感じを出す */}
-      <dl className="title-stats">
-        <div className="title-stat">
-          <dt>今日の勉強</dt>
-          <dd>
-            {formatDuration(todaySeconds)}
-            <span className="stat-track">
-              <span
-                className="stat-fill"
-                style={{ width: `${todayShare * 100}%` }}
-              />
-            </span>
-            <span className="stat-note">今週 {formatDuration(weekSeconds)}</span>
-          </dd>
-        </div>
-        {/* 0日でも札は出す（列を欠けさせないため）。
-            今日まだのときだけ補足で伝えて、途切れかけていることを分かるようにする */}
-        <div className="title-stat">
-          <dt>連続日数</dt>
-          <dd>
-            {streak.days > 0 ? `${streak.days}日` : "なし"}
-            {streak.days > 0 && (
-              <span className={streak.hasToday ? "stat-note" : "stat-note is-pending"}>
-                {streak.hasToday ? "今日ぶんは記録ずみ" : "今日はまだ"}
-              </span>
-            )}
-          </dd>
-        </div>
-      </dl>
 
       {/* 科目ごとの進捗度。どれが遅れているかを、開いた瞬間に分かるようにする */}
       {subjects.length > 0 && (

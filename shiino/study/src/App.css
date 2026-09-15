@@ -35,11 +35,32 @@
   margin-bottom: 24px;
 }
 
+/* 「STUDY LOG」の見出しは Bebas Neue（縦長の太字）。3か所とも同じ */
+.app-title,
+.wordmark,
+.title-logo {
+  font-family: "Bebas Neue", "Segoe UI", system-ui, sans-serif;
+  font-weight: 400;
+}
+
 .app-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
   margin: 0;
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-size: 52px;
+  letter-spacing: 4px;
+}
+
+/* 「STUDY LOG」の左のコーヒーカップ。
+   Bebas Neue の大文字の高さ（約 0.7em）に合わせて少し大きめにし、
+   大文字の中心（行の中心より少し上）に合わせる */
+.logo-cup {
+  flex: none;
+  width: 0.95em;
+  height: 0.95em;
+  border-radius: 0.2em;
+  transform: translateY(-0.05em);
 }
 
 .app-subtitle {
@@ -81,8 +102,7 @@
 }
 
 /* 幅は機能の画面とそろえたまま、1行3つに固定する。
-   7つだと3＋3＋1の3行になり、縦にも横にも画面を使い切れる。
-   あふれたぶんは中央に寄るので、右側だけ大きく空くことがない */
+   5つだと3＋2の2行になり、あふれたぶんは中央に寄るので右側だけ大きく空くことがない */
 .menu-grid {
   display: flex;
   flex-wrap: wrap;
@@ -95,9 +115,10 @@
   padding: 0;
 }
 
-/* 伸ばさずに縮むだけにして、どの行もタイルの幅をそろえる */
+/* 1行3つになる幅。伸ばさずに縮むだけにして、どの行もタイルの幅をそろえる。
+   幅が足りないときもタイルのほうが縮むので、2つ＋2つ＋1つのような余りが出ない */
 .menu-grid li {
-  flex: 0 1 241px;
+  flex: 0 1 calc((100% - 14px * 2) / 3);
 }
 
 .menu-tile {
@@ -153,10 +174,6 @@
     border-radius: 12px;
   }
 
-  .menu-grid li {
-    flex: 0 1 176px;
-  }
-
   .menu-tile {
     gap: 9px;
     padding: 24px 12px;
@@ -172,7 +189,77 @@
   }
 
   .app-title {
-    font-size: 26px;
+    font-size: 40px;
+  }
+}
+
+/* 横向きのスマホなど低い画面では、PCと同じ3つ＋2つの2段のまま、
+   タイルを薄くして2段が画面に収まるようにする */
+@media (max-height: 700px) and (min-width: 561px) {
+  .menu-panel {
+    gap: 14px;
+    padding: 18px 16px;
+  }
+
+  /* 薄いぶん幅も絞って、横長になりすぎないようにする。
+     一覧の幅を「タイル3つぶん」に止めて、4つ＋1つにならないようにする */
+  .menu-grid {
+    gap: 10px;
+    max-width: calc(168px * 3 + 10px * 2);
+  }
+
+  .menu-grid li {
+    flex: 0 1 calc((100% - 10px * 2) / 3);
+  }
+
+  .menu-tile {
+    gap: 6px;
+    padding: 14px 8px;
+  }
+
+  .menu-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .menu-label {
+    font-size: 14px;
+  }
+}
+
+/* スマホ幅では、タイルを2列で幅いっぱいに並べる。
+   固定幅のままだと1列に落ちて両側が空くため。
+   5つだと1つ余るので、最後のタイルは横長にして1行に収める */
+@media (max-width: 560px) {
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .menu-grid li {
+    flex: none;
+    min-width: 0;
+  }
+
+  .menu-tile {
+    padding: 20px 10px;
+  }
+
+  .menu-grid li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .menu-grid li:last-child:nth-child(odd) .menu-tile {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 12px;
+  }
+
+  .menu-grid li:last-child:nth-child(odd) .menu-icon {
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -237,9 +324,11 @@
 }
 
 .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
   margin: 0;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 18px;
   letter-spacing: 2px;
   color: var(--ink-dim);
 }
@@ -1329,11 +1418,13 @@
 }
 
 .title-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
   margin: 0;
-  font-size: 56px;
-  font-weight: 700;
+  font-size: 72px;
   line-height: 1;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
 }
 
 .title-lead {
@@ -1404,11 +1495,6 @@
   color: var(--danger);
 }
 
-/* タイトル画面の帯の下に付く札の並び。カウントダウンがあるときは間を詰める */
-.title-countdown + .title-stats {
-  margin-top: 12px;
-}
-
 /* 計測中の帯。タイトル画面を開いた時点で、動いていることが分かるようにする */
 .title-running {
   display: flex;
@@ -1442,70 +1528,7 @@
   color: var(--ink);
 }
 
-/* 前回までの状況。4枚を等幅で割り付け、下の棒グラフと横幅をそろえる */
-.title-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  width: 100%;
-  max-width: 830px;
-  margin: 32px 0 0;
-  padding: 0;
-}
-
-/* 3枚は行数がそろわないことがあるので、中身を上下中央に置いて
-   下だけ空いて見えないようにする */
-.title-stat {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  /* 割り付けはグリッド側でするので、札は枠の幅にそのまま従わせる。
-     border-box にしないと padding が足されて、狭い画面ではみ出す */
-  box-sizing: border-box;
-  min-width: 0;
-  padding: 14px 20px;
-  border-radius: 10px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-}
-
-.title-stat dt {
-  font-size: 11px;
-  color: var(--ink-dim);
-}
-
-.title-stat dd {
-  margin: 6px 0 0;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-/* 目標の達成度。数字の下に細い帯を出す */
-.stat-track {
-  display: block;
-  height: 5px;
-  margin-top: 8px;
-  border-radius: 999px;
-  background: var(--bg);
-  overflow: hidden;
-}
-
-.stat-fill {
-  display: block;
-  height: 100%;
-  border-radius: 999px;
-  background: var(--accent);
-}
-
-.stat-fill.is-alert {
-  background: var(--danger);
-}
-
-/* 目標の名前。長くても札の幅を押し広げないように省略する */
-.stat-note.is-pending {
-  color: var(--accent);
-}
-
+/* 進捗度カードの右上の一言。長くても幅を押し広げないように省略する */
 .stat-note {
   display: block;
   margin-top: 6px;
@@ -1522,7 +1545,7 @@
 .title-confidence {
   width: 100%;
   max-width: 830px;
-  margin-top: 12px;
+  margin-top: 24px;
   padding: 14px 18px 12px;
   box-sizing: border-box;
   border-radius: 10px;
@@ -1585,7 +1608,7 @@
 
 @media (max-width: 640px) {
   .title-logo {
-    font-size: 38px;
+    font-size: 48px;
     letter-spacing: 2px;
   }
 
