@@ -1,0 +1,101 @@
+import { useState } from "react";
+import Icon from "./Icon";
+import WeekChart from "./WeekChart";
+import { formatDuration, toDateKey, startOfWeekKey } from "../lib/time";
+
+const RANGES = [
+  { key: "today", label: "今日" },
+  { key: "week", label: "今週" },
+  { key: "all", label: "全期間" },
+];
+
+// 日付キーは YYYY-MM-DD なので、文字列のまま大小比較できる
+function inRange(record, range) {
+  const key = toDateKey(record.startedAt);
+  if (range === "today") return key === toDateKey(new Date());
+  if (range === "week") return key >= startOfWeekKey();
+  return true;
+}
+
+function Summary({ subjects, records }) {
+  const [range, setRange] = useState("today");
+
+  const target = records.filter((record) => inRange(record, range));
+  const total = target.reduce((sum, record) => sum + record.seconds, 0);
+  // 休憩は勉強時間には入れない。参考として横に添えるだけ
+  const breakTotal = target.reduce((sum, record) => sum + (record.breakSeconds ?? 0), 0);
+
+  // 科目ごとの合計を出して、多い順に並べる
+  const perSubject = subjects
+    .map((subject) => ({
+      ...subject,
+      seconds: target
+        .filter((record) => record.subjectId === subject.id)
+        .reduce((sum, record) => sum + record.seconds, 0),
+    }))
+    .filter((item) => item.seconds > 0)
+    .sort((a, b) => b.seconds - a.seconds);
+
+  return (
+    <section className="card">
+      <div className="summary-head">
+        <p className="card-title">
+          <Icon name="chart" />
+          合計
+        </p>
+        <div className="range-tabs">
+          {RANGES.map((item) => (
+            <button
+              type="button"
+              key={item.key}
+              className={item.key === range ? "range-tab is-active" : "range-tab"}
+              onClick={() => setRange(item.key)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <p className="summary-total">
+        {formatDuration(total)}
+        {breakTotal > 0 && (
+          <span className="summary-break">休憩 {formatDuration(breakTotal)}</span>
+        )}
+      </p>
+
+      {perSubject.length === 0 ? (
+        <p className="empty-message">この期間の記録はまだありません</p>
+      ) : (
+        <ul className="subject-bars">
+          {perSubject.map((item) => (
+            <li key={item.id} className="subject-bar">
+              <span className="subject-name">
+                <span className="dot" style={{ backgroundColor: item.color }} />
+                {item.name}
+              </span>
+              <span className="subject-time">{formatDuration(item.seconds)}</span>
+
+              {/* 棒の長さは合計に対する割合。色は科目の色をそのまま使う */}
+              <span className="bar-track">
+                <span
+                  className="bar-fill"
+                  style={{
+                    width: `${(item.seconds / total) * 100}%`,
+                    backgroundColor: item.color,
+                  }}
+                />
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* 直近7日は範囲切り替えの影響を受けず、いつも同じものを出す */}
+      <p className="chart-title">直近7日</p>
+      <WeekChart records={records} />
+    </section>
+  );
+}
+
+export default Summary;

@@ -1,0 +1,147 @@
+import { useEffect } from "react";
+import ConfidenceBadge from "./ConfidenceBadge";
+import CoffeeCup from "./CoffeeCup";
+import StarRating from "./StarRating";
+import {
+  leaderSubject,
+  gapOf,
+  recommendSubject,
+  normalizeConfidence,
+  isDisliked,
+  isLeveled,
+  GOAL,
+} from "../lib/confidence";
+import { upcomingExams, daysUntil } from "../lib/exams";
+import { formatClock, formatMonthDay } from "../lib/time";
+
+// 最初に出るタイトル画面。STARTを押すと本編に入る
+function TitleScreen({ records, subjects, exams, running, elapsedSeconds, todayRatio, onStart }) {
+  // Enter / Space でも始められるようにする
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      // Space はページが下にスクロールしてしまうので止める
+      event.preventDefault();
+      onStart();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onStart]);
+
+  const isPaused = Boolean(running) && running.since === null;
+
+  // いちばん近いテスト。開いた瞬間に「あと何日か」が目に入るようにする
+  const upcoming = upcomingExams(exams);
+  const nearest = upcoming[0] ?? null;
+  const nearestDays = nearest ? daysUntil(nearest.date) : null;
+  const nearestSubject = nearest
+    ? subjects.find((subject) => subject.id === nearest.subjectId)
+    : null;
+
+  // 科目ごとの進捗度。進捗度が高い順に並べ、先頭との差が見えるようにする
+  const leader = leaderSubject(subjects);
+  const recommended = recommendSubject(subjects, records);
+  const leveled = isLeveled(subjects);
+  const byConfidence = [...subjects].sort(
+    (a, b) => normalizeConfidence(b.confidence) - normalizeConfidence(a.confidence),
+  );
+
+  return (
+    <div className="title-screen">
+      <h1 className="title-logo">
+        <CoffeeCup ratio={todayRatio} />
+        STUDY LOG
+      </h1>
+
+      {/* 計測したまま閉じても計測は続くので、開いた時点で経過時間が分かるようにする */}
+      {running && (
+        <p className="title-running">
+          <span className={isPaused ? "running-dot is-paused" : "running-dot"} />
+          <span className="running-clock">{formatClock(elapsedSeconds)}</span>
+        </p>
+      )}
+
+      {/* テストまでのカウントダウン。3日以内は色を変えて急かす */}
+      {nearest && (
+        <div className={nearestDays <= 3 ? "title-countdown is-soon" : "title-countdown"}>
+          <div className="countdown-body">
+            <p className="countdown-name">
+              {nearestSubject && (
+                <span className="dot" style={{ backgroundColor: nearestSubject.color }} />
+              )}
+              {nearest.name}
+            </p>
+            <p className="countdown-note">
+              {formatMonthDay(nearest.date)}
+              {nearestSubject ? ` ／ ${nearestSubject.name}` : ""}
+              {upcoming.length > 1 ? ` ／ ほか ${upcoming.length - 1}件` : ""}
+            </p>
+          </div>
+          <p className="countdown-days">
+            {nearestDays === 0 ? (
+              <strong>今日！</strong>
+            ) : (
+              <>
+                あと <strong>{nearestDays}</strong> 日
+              </>
+            )}
+          </p>
+        </div>
+      )}
+
+      {/* 科目ごとの進捗度。どれが遅れているかを、開いた瞬間に分かるようにする */}
+      {subjects.length > 0 && (
+        <div className="title-confidence">
+          <div className="title-confidence-head">
+            <span className="chart-title">進捗度</span>
+            <span className="stat-note">
+              {/* 差があるときは何も言わない。棒と線で差が見えるので、文は横並びのときだけ */}
+              {subjects.length > 1 && leveled
+                ? `横並び！${GOAL}% を目指そう。まずは${isDisliked(recommended) ? "嫌いな" : ""} ${recommended.name} から`
+                : ""}
+            </span>
+          </div>
+          <ul className="subject-bars is-title">
+            {byConfidence.map((subject) => {
+              const value = normalizeConfidence(subject.confidence);
+              const gap = gapOf(subject, subjects);
+              return (
+                <li key={subject.id} className="subject-bar">
+                  <span className="subject-name">
+                    <span className="dot" style={{ backgroundColor: subject.color }} />
+                    {subject.name}
+                    <StarRating value={subject.feeling} compact />
+                  </span>
+                  <span className="subject-time">
+                    <ConfidenceBadge value={value} isBehind={gap > 0} />
+                  </span>
+                  <span className="bar-track catch-up-track">
+                    <span
+                      className="bar-fill"
+                      style={{ width: `${value}%`, backgroundColor: subject.color }}
+                    />
+                    <span className="leader-line is-target" style={{ left: `${GOAL}%` }} />
+                    {!leveled && leader && gap > 0 && (
+                      <span
+                        className="leader-line"
+                        style={{ left: `${normalizeConfidence(leader.confidence)}%` }}
+                      />
+                    )}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
+      <button type="button" className="start-button" onClick={onStart}>
+        START
+      </button>
+      <p className="title-hint">Enter キー</p>
+    </div>
+  );
+}
+
+export default TitleScreen;

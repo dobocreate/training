@@ -1,0 +1,1651 @@
+/* 機能の画面。幅はメニューとそろえる。
+   中身が少ないページでも下だけ大きく空かないよう、画面の高さいっぱいを取って
+   本文を上下中央に置く（中身が画面より高いときは、そのまま下に伸びる） */
+.app {
+  /* 中身は752px。それを囲む枠の余白と線のぶんだけ広げる（メニューの枠と同じ幅） */
+  width: calc(752px + 28px * 2 + 2px * 2);
+  max-width: 100%;
+  min-height: calc(100vh - 64px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 機能の画面を囲む枠。メニューの枠（.menu-panel）と同じ見た目にそろえる */
+.screen-panel {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 28px 28px 36px;
+  border: 2px solid var(--frame);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: 0 6px 24px rgba(31, 41, 55, 0.06);
+}
+
+@media (max-width: 560px) {
+  .screen-panel {
+    padding: 16px 12px 24px;
+    border-radius: 12px;
+  }
+}
+
+/* ===== ヘッダー ===== */
+.app-header {
+  margin-bottom: 24px;
+}
+
+/* 「STUDY LOG」の見出しは Bebas Neue（縦長の太字）。3か所とも同じ */
+.app-title,
+.wordmark,
+.title-logo {
+  font-family: "Bebas Neue", "Segoe UI", system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.app-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  margin: 0;
+  font-size: 60px;
+  letter-spacing: 4px;
+}
+
+/* 「STUDY LOG」の左のコーヒーカップ。
+   Bebas Neue の大文字の高さ（約 0.7em）に合わせて少し大きめにし、
+   大文字の中心（行の中心より少し上）に合わせる */
+.logo-cup {
+  flex: none;
+  width: 0.95em;
+  height: 0.95em;
+  border-radius: 0.2em;
+  transform: translateY(-0.05em);
+}
+
+.app-subtitle {
+  margin: 6px 0 0;
+  font-size: 16px;
+  color: var(--ink-dim);
+}
+
+/* ===== メニュー ===== */
+/* 項目は7つだけなので、画面いっぱいに広げず中央にまとめる */
+.menu-screen {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+/* タイトルと項目をまとめて囲む枠。背景を一段明るくして、メニューの範囲がひと目で分かるようにする */
+.menu-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  /* 中のタイル一覧が今までどおり752pxで1行3つに並ぶよう、余白と枠線のぶんだけ広げる */
+  max-width: calc(752px + 28px * 2 + 2px * 2);
+  box-sizing: border-box;
+  padding: 36px 28px;
+  border: 2px solid var(--frame);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: 0 6px 24px rgba(31, 41, 55, 0.06);
+}
+
+.menu-header {
+  text-align: center;
+}
+
+/* 幅は機能の画面とそろえたまま、1行3つに固定する。
+   5つだと3＋2の2行になり、あふれたぶんは中央に寄るので右側だけ大きく空くことがない */
+.menu-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 752px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 1行3つになる幅。伸ばさずに縮むだけにして、どの行もタイルの幅をそろえる。
+   幅が足りないときもタイルのほうが縮むので、2つ＋2つ＋1つのような余りが出ない */
+.menu-grid li {
+  flex: 0 1 calc((100% - 14px * 2) / 3);
+}
+
+.menu-tile {
+  /* 計測中バッジを角に置くための基準 */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  padding: 36px 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.menu-tile:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.menu-icon {
+  width: 52px;
+  height: 52px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.menu-label {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* 大きいままだと具合が悪い画面では、詰まった大きさに切り替える。
+   ・狭い画面 … 1列になって間延びするため
+   ・低い画面 … 3行が入りきらず、メニューがスクロールしてしまうため
+   この大きさなら1行4つに収まる */
+@media (max-width: 560px), (max-height: 700px) {
+  .menu-panel {
+    gap: 20px;
+    padding: 24px 16px;
+    border-radius: 12px;
+  }
+
+  .menu-tile {
+    gap: 9px;
+    padding: 24px 12px;
+  }
+
+  .menu-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .menu-label {
+    font-size: 17px;
+  }
+
+  .app-title {
+    font-size: 46px;
+  }
+}
+
+/* 横向きのスマホなど低い画面では、PCと同じ3つ＋2つの2段のまま、
+   タイルを薄くして2段が画面に収まるようにする */
+@media (max-height: 700px) and (min-width: 561px) {
+  .menu-panel {
+    gap: 14px;
+    padding: 18px 16px;
+  }
+
+  /* 薄いぶん幅も絞って、横長になりすぎないようにする。
+     一覧の幅を「タイル3つぶん」に止めて、4つ＋1つにならないようにする */
+  .menu-grid {
+    gap: 10px;
+    max-width: calc(168px * 3 + 10px * 2);
+  }
+
+  .menu-grid li {
+    flex: 0 1 calc((100% - 10px * 2) / 3);
+  }
+
+  .menu-tile {
+    gap: 6px;
+    padding: 14px 8px;
+  }
+
+  .menu-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .menu-label {
+    font-size: 17px;
+  }
+}
+
+/* スマホ幅では、タイルを2列で幅いっぱいに並べる。
+   固定幅のままだと1列に落ちて両側が空くため。
+   5つだと1つ余るので、最後のタイルは横長にして1行に収める */
+@media (max-width: 560px) {
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .menu-grid li {
+    flex: none;
+    min-width: 0;
+  }
+
+  .menu-tile {
+    padding: 20px 10px;
+  }
+
+  .menu-grid li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .menu-grid li:last-child:nth-child(odd) .menu-tile {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 12px;
+  }
+
+  .menu-grid li:last-child:nth-child(odd) .menu-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.menu-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+}
+
+/* 計測中と期限切れは、気づいてほしいので赤にする */
+.menu-badge.is-alert {
+  background: var(--danger);
+}
+
+/* 経過時間はけた数が多いので、少し広げて等幅で出す（数字が動いても幅が揺れない） */
+.menu-badge.is-clock {
+  padding: 2px 7px;
+  font-family: "Share Tech Mono", ui-monospace, "Consolas", monospace;
+  font-size: 15px;
+}
+
+/* ===== 機能の画面 ===== */
+.screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--panel);
+  cursor: pointer;
+}
+
+.back-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 1画面に複数のカードが並ぶことがあるので、間隔をここでつける。
+   カードが2〜3枚並ぶ画面が多いので、詰まって見えないよう広めに取る */
+.screen-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: 2px;
+  color: var(--ink-dim);
+}
+
+/* ===== カード共通 ===== */
+.card {
+  padding: 18px;
+  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink-dim);
+}
+
+/* 見出しのアイコン。線の色は currentColor なので、見出しの文字色に合う */
+.card-icon {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.empty-message {
+  margin: 0;
+  padding: 18px 0;
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  font-size: 16px;
+  text-align: center;
+  color: var(--ink-dim);
+}
+
+.error-message {
+  min-height: 16px;
+  margin: 8px 2px 0;
+  font-size: 15px;
+  color: var(--danger);
+}
+
+/* 科目の色を示す丸 */
+.dot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* 入力欄・選択欄の共通見た目 */
+.field {
+  min-width: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 17px;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--panel);
+  outline: none;
+}
+
+.field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.add-button {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 18px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  background: var(--accent);
+}
+
+.add-button:hover {
+  background: #1d4ed8;
+}
+
+.delete-button {
+  flex-shrink: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 14px;
+  color: var(--ink-dim);
+  background: transparent;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+/* 消す操作ではない、控えめな全幅ボタン（目標を追加するなど） */
+.delete-button.is-wide {
+  width: 100%;
+  padding: 9px;
+  font-size: 16px;
+}
+
+.delete-button.is-wide:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ===== 計測 ===== */
+/* 科目・時計・ボタンを横一列に。狭い画面では縦に積む */
+.timer-body {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 18px 26px;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .timer-body {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .timer-body .big-button {
+    width: 100%;
+  }
+
+  .timer-buttons {
+    flex-direction: column;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 7px 15px;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--panel);
+  cursor: pointer;
+}
+
+.chip:hover:not(:disabled) {
+  border-color: var(--chip-color);
+}
+
+/* 選ばれている科目は、その科目の色で縁取る */
+.chip.is-active {
+  border-color: var(--chip-color);
+  background: color-mix(in srgb, var(--chip-color) 12%, #fff);
+  font-weight: 600;
+}
+
+.chip:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.chip.is-active:disabled {
+  opacity: 1;
+}
+
+.timer-display {
+  text-align: center;
+}
+
+/* 時計の数字は Share Tech Mono（細いデジタル時計風）。太字が無いので大きさで見せる */
+.timer-clock {
+  margin: 0;
+  font-family: "Share Tech Mono", ui-monospace, "Consolas", monospace;
+  font-size: 60px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 3px;
+}
+
+/* 休憩の時間。一時停止中はこちらが動いているので、色を戻して目立たせる */
+.timer-break {
+  margin: 3px 0 0;
+  font-family: "Share Tech Mono", ui-monospace, "Consolas", monospace;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.timer-break.is-running {
+  color: var(--ink-dim);
+  font-weight: 700;
+}
+
+/* 一時停止中は数字が動かないので、止まっていることを色でも示す */
+.timer-clock.is-paused {
+  color: var(--ink-dim);
+}
+
+.big-button {
+  border: none;
+  border-radius: 8px;
+  padding: 14px 32px;
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #fff;
+  cursor: pointer;
+  background: var(--accent);
+}
+
+.big-button:hover {
+  background: #1d4ed8;
+}
+
+/* 計測中は「一時停止」と「停止して記録」の2つ出す */
+.timer-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.big-button.is-pause {
+  background: var(--ink-dim);
+}
+
+.big-button.is-pause:hover {
+  background: #4b5563;
+}
+
+.big-button.is-stop {
+  background: var(--danger);
+}
+
+.big-button.is-stop:hover {
+  background: #b91c1c;
+}
+
+.big-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ===== 入力欄の調整（記録の編集・テストの予定で使う） ===== */
+.field.is-date {
+  flex: 0 0 auto;
+}
+
+.field.is-number {
+  width: 62px;
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.unit {
+  font-size: 15px;
+  color: var(--ink-dim);
+}
+
+/* ===== 合計 ===== */
+.summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.summary-head .card-title {
+  margin: 0;
+}
+
+.range-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.range-tab {
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 15px;
+  color: var(--ink-dim);
+  background: transparent;
+  cursor: pointer;
+}
+
+.range-tab.is-active {
+  color: var(--accent);
+  background: var(--panel);
+  font-weight: 600;
+}
+
+.summary-total {
+  margin: 0 0 16px;
+  font-size: 37px;
+  font-weight: 700;
+}
+
+.summary-break {
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+
+.subject-bars {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+/* 名前・時間・棒を2行のグリッドで並べる */
+.subject-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  margin-bottom: 12px;
+}
+
+.subject-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 16px;
+}
+
+.subject-time {
+  font-size: 16px;
+  color: var(--ink-dim);
+}
+
+.bar-track {
+  grid-column: 1 / -1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s;
+}
+
+/* カードの最後に来たときは、下の余白を持たせない */
+.subject-bars:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== 今のペース ===== */
+/* 3つの数字を横に並べる。狭い画面では縦に積む */
+.pace {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+}
+
+.pace-item {
+  flex: 1 1 140px;
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.pace-item dt {
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
+.pace-item dd {
+  margin: 5px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ===== 直近7日のグラフ ===== */
+.chart-title {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-dim);
+}
+
+.week-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.week-day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.week-value {
+  font-size: 12px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+/* 棒は下から伸ばしたいので、枠を flex-end にして高さだけ変える */
+.week-track {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 70px;
+  border-radius: 6px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.week-fill {
+  width: 100%;
+  border-radius: 6px;
+  background: var(--accent);
+  transition: height 0.3s;
+}
+
+.week-label {
+  font-size: 13px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+/* タイトル画面では数字を省き、形だけ見せる */
+.week-chart.is-compact .week-track {
+  height: 56px;
+}
+
+/* ===== 記録一覧 ===== */
+.record-scroll {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.record-group {
+  margin-bottom: 16px;
+}
+
+.record-date {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-dim);
+}
+
+.record-date-total {
+  color: var(--accent);
+}
+
+.record-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.record-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+/* 時刻は左にそろえる。上から時系列で追えるようにするため。
+   等幅にしておくと、けたが変わっても縦の線がずれない */
+.record-time {
+  flex-shrink: 0;
+  min-width: 38px;
+  font-family: ui-monospace, "Consolas", monospace;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
+.record-subject {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 時間は右にそろえる。枠の幅を決めておくことで、
+   休憩があってもなくても勉強時間が同じ位置に来る */
+.record-times {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 150px;
+}
+
+/* 休憩は勉強時間より控えめに出す */
+.record-break {
+  font-size: 14px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.record-duration {
+  min-width: 68px;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.record-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+}
+
+/* 狭い画面では、幅を固定すると科目名が潰れてしまう。
+   列はそろわなくなるが、名前が読めるほうを優先する */
+@media (max-width: 560px) {
+  .record-times {
+    width: auto;
+  }
+
+  .record-duration {
+    min-width: 0;
+  }
+}
+
+/* 編集は消す操作ではないので、削除ボタンと見た目を分ける */
+.edit-button {
+  flex-shrink: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink-dim);
+  background: transparent;
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* 編集中の行。フォームを縦に置くので、行の見た目をいったん外す */
+.record-row.is-editing {
+  display: block;
+  padding: 12px 10px;
+  background: var(--accent-soft);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.edit-row .is-date {
+  flex: 1 1 130px;
+}
+
+.edit-form .error-message {
+  margin: 0 2px;
+}
+
+/* 足したばかりの1件。どれが今の操作で増えたのか分かるようにする */
+.record-row.is-new {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* ===== 科目の管理 ===== */
+.subject-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.subject-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.subject-item-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subject-form {
+  display: flex;
+  gap: 8px;
+}
+
+.subject-form .field {
+  flex: 1;
+}
+
+.color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.color-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.color-swatch.is-active {
+  border-color: var(--ink);
+}
+
+/* ===== タイトル画面 ===== */
+.title-screen {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.title-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  margin: 0;
+  font-size: 83px;
+  line-height: 1;
+  letter-spacing: 5px;
+}
+
+.title-lead {
+  margin: 14px 0 0;
+  font-size: 16px;
+  color: var(--ink-dim);
+}
+
+/* テストまでのカウントダウン。名前と日付を左、日数を右に大きく */
+.title-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  max-width: 830px;
+  margin: 24px 0 0;
+  padding: 14px 20px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  text-align: left;
+}
+
+.countdown-body {
+  min-width: 0;
+}
+
+.countdown-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.countdown-note {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
+.countdown-days {
+  flex: none;
+  margin: 0;
+  font-size: 17px;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.countdown-days strong {
+  font-size: 35px;
+  line-height: 1;
+}
+
+/* 3日以内は赤くして急かす */
+.title-countdown.is-soon {
+  border-color: var(--danger);
+  background: #fef2f2;
+}
+
+.title-countdown.is-soon .countdown-days {
+  color: var(--danger);
+}
+
+/* 計測中の帯。タイトル画面を開いた時点で、動いていることが分かるようにする */
+.title-running {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  font-size: 16px;
+  color: var(--ink-dim);
+}
+
+.running-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+/* 一時停止中は動いていないので、赤ではなく灰色にする */
+.running-dot.is-paused {
+  background: var(--ink-dim);
+}
+
+.running-clock {
+  font-family: "Share Tech Mono", ui-monospace, "Consolas", monospace;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+/* 進捗度カードの右上の一言。長くても幅を押し広げないように省略する */
+.stat-note {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 直近7日。カード列と同じ幅にそろえる */
+/* 科目ごとの自信。週のグラフと同じ札に入れる */
+.title-confidence {
+  width: 100%;
+  max-width: 830px;
+  margin-top: 24px;
+  padding: 14px 18px 12px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.title-confidence-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.title-confidence-head .chart-title {
+  margin: 0;
+}
+
+/* タイトル画面では行間を詰めて、科目が多くても縦に伸びすぎないようにする */
+.subject-bars.is-title {
+  margin: 0;
+}
+
+.subject-bars.is-title .subject-bar {
+  margin-bottom: 8px;
+  gap: 2px 10px;
+}
+
+.subject-bars.is-title .subject-bar:last-child {
+  margin-bottom: 0;
+}
+
+.subject-bars.is-title .bar-track {
+  height: 6px;
+}
+
+.start-button {
+  margin-top: 40px;
+  border: none;
+  border-radius: 999px;
+  padding: 15px 60px;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #fff;
+  cursor: pointer;
+  background: var(--accent);
+}
+
+.start-button:hover {
+  background: #1d4ed8;
+}
+
+.title-hint {
+  margin: 16px 0 0;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
+@media (max-width: 640px) {
+  .title-logo {
+    font-size: 55px;
+    letter-spacing: 2px;
+  }
+
+  .start-button {
+    padding: 14px 44px;
+    font-size: 18px;
+  }
+}
+
+/* ===== 自信 ===== */
+/* 科目名のそばに添える「42%」。先頭より遅れている科目は色を変える */
+.confidence-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  background: var(--bg);
+}
+
+.confidence-badge.is-behind {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.chip .confidence-badge {
+  margin-left: 6px;
+}
+
+.chip.is-active .confidence-badge {
+  background: #fff;
+}
+
+/* 科目の行にある、自信の手直し欄 */
+.subject-confidence {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+}
+
+.field.is-confidence {
+  width: 58px;
+  padding: 4px 6px;
+  font-size: 15px;
+  text-align: right;
+}
+
+/* 科目を登録するフォーム。名前 → 自信 → 色 → 追加、と縦に並べる */
+.subject-form {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.subject-form .add-button.is-wide {
+  align-self: flex-start;
+}
+
+.subject-form .color-picker {
+  margin-top: 0;
+}
+
+/* 自信のスライダーと数字を1行に。狭い画面では折り返す */
+.confidence-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.confidence-picker .confidence-slider {
+  flex: 1 1 160px;
+  width: auto;
+}
+
+.confidence-value {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rating-label {
+  font-size: 15px;
+  color: var(--ink-dim);
+  margin-right: 4px;
+}
+
+.rating-help {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-dim);
+}
+
+/* ===== 今の自信は？（停止直後） ===== */
+/* 答えてほしいので、枠の色を濃くして目を引く */
+.confidence-prompt {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.confidence-prompt-lead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 12px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.confidence-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confidence-slider {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.confidence-value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.confidence-value .field {
+  width: 72px;
+  text-align: right;
+}
+
+.confidence-diff {
+  margin-left: 10px;
+  font-size: 15px;
+  color: var(--ink-dim);
+}
+
+.confidence-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== 進捗度 ===== */
+.catch-up-message {
+  margin: 0 0 12px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* 進捗度カードの見出しの右に添える「最大の差 ○%・目標 100%」 */
+.catch-up-note {
+  font-size: 15px;
+  color: var(--ink-dim);
+}
+
+/* ===== 好き嫌いの星 ===== */
+/* 文字の ★ を並べる。付いている星だけ色を付ける */
+.stars {
+  display: inline-flex;
+  gap: 1px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.star {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+  font-size: 21px;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.star.is-on {
+  color: #f59e0b;
+}
+
+/* 押せる星（button のとき）だけカーソルを変える */
+button.star {
+  cursor: pointer;
+}
+
+button.star:hover {
+  color: #d97706;
+}
+
+/* 科目の行や一覧に添える小さい星 */
+.stars.is-compact .star {
+  font-size: 14px;
+}
+
+.subject-item .stars {
+  flex: none;
+}
+
+/* 科目を登録するときの好き嫌い */
+.feeling-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.catch-up .subject-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 先頭の位置に細い線を引く。棒は 100% を全幅にする */
+.catch-up-track {
+  position: relative;
+}
+
+/* 目標（100%）の線。棒の右端に点線で引く。端で切れないよう内側に寄せる */
+.leader-line.is-target {
+  background: none;
+  border-left: 2px dashed var(--accent);
+  margin-left: -2px;
+}
+
+.leader-line {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--accent);
+}
+
+/* 次にやる科目。名前・自信・ボタンを1行に並べ、狭ければ折り返す */
+.catch-up-recommend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 4px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+}
+
+.catch-up-recommend-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.catch-up-recommend .chip {
+  margin-left: auto;
+}
+
+.chip.is-recommend:not(:disabled) {
+  border-color: var(--chip-color);
+  color: var(--chip-color);
+  font-weight: 600;
+}
+
+/* ===== テストの予定 ===== */
+.exam-item.is-past {
+  opacity: 0.55;
+}
+
+.exam-date {
+  flex: none;
+  font-size: 14px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.exam-days {
+  flex: none;
+  min-width: 56px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: right;
+  color: var(--accent);
+}
+
+.exam-days.is-soon {
+  color: var(--danger);
+}
+
+.exam-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.exam-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.exam-row .is-date {
+  flex: 1 1 140px;
+}
+
+.exam-row select.field {
+  flex: 1 1 120px;
+}
+
+/* ===== やることリスト ===== */
+/* 科目ごとに1枚のカード。見出し（科目名と n / m）→ 棒 → これから → できた → 追加欄 */
+.skill-card-head {
+  justify-content: space-between;
+}
+
+.skill-card-head .subject-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.skill-count {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+
+.skill-track {
+  display: block;
+  margin: -6px 0 14px;
+}
+
+.skill-section {
+  margin-bottom: 12px;
+}
+
+.skill-section-title {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+}
+
+.skill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+/* チェックしてから日が経った項目は薄くして、見直しを促す */
+.skill-item.is-stale {
+  opacity: 0.55;
+}
+
+.skill-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.skill-label input {
+  accent-color: var(--accent);
+}
+
+.skill-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.skill-text.is-done {
+  color: var(--ink-dim);
+  text-decoration: line-through;
+}
+
+.skill-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.skill-form .field {
+  flex: 1;
+}
+
+/* 進捗度カードの、科目ごとの「できること n / m」 */
+.skill-note {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
+/* 「次はこれ」の下に出す、最初の項目 */
+.next-skill {
+  flex-basis: 100%;
+  font-size: 15px;
+  color: var(--accent);
+}
+
+/* 自信チェックの中の「今日できるようになった？」 */
+.prompt-skills {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.prompt-skills-title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.prompt-skills .skill-list {
+  margin: 0;
+}
+
+/* 進捗度の計算。自信 ←→ リスト のスライダー */
+.weight-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.weight-picker .confidence-slider {
+  flex: 1;
+  width: auto;
+}
+
+.weight-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-dim);
+}
