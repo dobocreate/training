@@ -41,11 +41,6 @@ export function upcomingExams(exams, now = new Date()) {
   return sortByDate(exams.filter((exam) => daysUntil(exam.date, now) >= 0));
 }
 
-// タイトル画面に出す、いちばん近い予定。無ければ null
-export function nearestExam(exams, now = new Date()) {
-  return upcomingExams(exams, now)[0] ?? null;
-}
-
 // 「あと 12日」「今日！」のような言い方
 export function countdownLabel(days) {
   if (days < 0) return "終了";

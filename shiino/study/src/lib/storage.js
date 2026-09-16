@@ -8,15 +8,10 @@ const KEYS = {
   subjects: "study.subjects",
   records: "study.records",
   running: "study.running",
-  goals: "study.goals",
   confidenceLog: "study.confidenceLog",
   skills: "study.skills",
   settings: "study.settings",
   exams: "study.exams",
-  // 「ボス戦」と呼んでいたころ・1件しか持てなかったころのキー。
-  // 読み込みのときだけ見る
-  oldGoals: "study.bosses",
-  oldGoal: "study.boss",
 };
 
 function load(key, fallback) {
@@ -109,32 +104,6 @@ export function loadRunning() {
 
 export function saveRunning(running) {
   save(KEYS.running, running);
-}
-
-function isGoal(value) {
-  return (
-    Boolean(value) &&
-    typeof value.deadline === "string" &&
-    typeof value.createdAt === "string"
-  );
-}
-
-// 決めてある目標。1つも無ければ空の配列
-export function loadGoals() {
-  const value = load(KEYS.goals, null);
-  if (Array.isArray(value)) return value.filter(isGoal);
-
-  // 古い名前で保存されたデータを引き継ぐ。
-  // 一度 saveGoals が走れば新しいキーができるので、ここを通るのは移行のときだけ
-  const oldList = load(KEYS.oldGoals, null);
-  if (Array.isArray(oldList)) return oldList.filter(isGoal);
-
-  const single = load(KEYS.oldGoal, null);
-  return isGoal(single) ? [{ ...single, id: single.id ?? "goal-1" }] : [];
-}
-
-export function saveGoals(goals) {
-  save(KEYS.goals, goals);
 }
 
 // 自信を付け直した履歴。形は { id, subjectId, value, at }。

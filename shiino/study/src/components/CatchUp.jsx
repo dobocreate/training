@@ -72,7 +72,7 @@ function CatchUp({
         </p>
         {/* 横並びのときは本文で伝えるので、右上には差があるときだけ出す */}
         {subjects.length > 1 && !leveled && (
-          <span className="milestone-total">
+          <span className="catch-up-note">
             最大の差 {gapSpread}%・目標 {GOAL}%
           </span>
         )}

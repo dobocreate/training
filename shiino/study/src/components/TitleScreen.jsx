@@ -11,7 +11,7 @@ import {
   isLeveled,
   GOAL,
 } from "../lib/confidence";
-import { upcomingExams, daysUntil, countdownLabel } from "../lib/exams";
+import { upcomingExams, daysUntil } from "../lib/exams";
 import { formatClock, formatMonthDay } from "../lib/time";
 
 // 最初に出るタイトル画面。STARTを押すと本編に入る
